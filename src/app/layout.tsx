@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Header from "@/components/Header";
 import JsonLd from "@/components/JsonLd";
+import ChatWidget from "@/components/ChatWidget";
 import ScrollToTop from "@/components/ScrollToTop";
 import ServiceDetailPanel from "@/components/ServiceDetailPanel";
 import { SelectedMenuProvider } from "@/contexts/SelectedMenuContext";
@@ -74,6 +75,7 @@ export default function RootLayout({
             <ServiceDetailPanel />
             {children}
             <ScrollToTop />
+            <ChatWidget />
           </SelectedServiceProvider>
         </SelectedMenuProvider>
       </body>
