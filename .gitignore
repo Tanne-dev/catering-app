@@ -22,7 +22,7 @@
 
 # misc
 .DS_Store
-.pip-pillow
+.pip-pillow/
 *.pem
 
 # debug
@@ -33,7 +33,6 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
-.env.deploy
 
 # vercel
 .vercel
