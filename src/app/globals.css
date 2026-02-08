@@ -1,8 +1,12 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #12110D;
+  --foreground: #E5E7E3;
+  /* Guld/amber – ljusare toner för bättre läsbarhet */
+  --color-gold: #EAC84E;
+  --color-gold-dark: #C49B38;
+  --color-gold-hover: #D4A83E;
 }
 
 @theme inline {
@@ -12,15 +16,111 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+@keyframes menuFadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes menuLoadingPulse {
+  0%, 100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.animate-menu-enter {
+  animation: menuFadeInUp 0.35s ease-out forwards;
+}
+
+.animate-menu-loading {
+  animation: menuLoadingPulse 1s ease-in-out infinite;
+}
+
+@keyframes dishSliderScroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.dish-slider-track {
+  animation: dishSliderScroll 35s linear infinite;
+  width: max-content;
+}
+
+.dish-slider-track:hover {
+  animation-play-state: paused;
+}
+
+/* Form success state */
+@keyframes formSuccessIn {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes formSuccessCheckmark {
+  0% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.08);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes formSuccessLine {
+  from {
+    opacity: 0;
+    transform: scaleX(0);
+  }
+  to {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+}
+
+.form-success-enter {
+  animation: formSuccessIn 0.45s cubic-bezier(0.21, 0.61, 0.35, 1) forwards;
+}
+
+.form-success-checkmark {
+  animation: formSuccessCheckmark 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.15s forwards;
+  opacity: 0;
+}
+
+.form-success-line {
+  animation: formSuccessLine 0.4s ease-out 0.35s forwards;
+  opacity: 0;
+  transform-origin: center;
 }

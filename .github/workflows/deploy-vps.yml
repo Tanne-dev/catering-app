@@ -1,0 +1,28 @@
+# Tự động deploy lên VPS (Vultr, Hetzner, ...) mỗi khi push lên branch main.
+# Cần cấu hình Secrets trong GitHub: VPS_HOST, VPS_USER, VPS_SSH_KEY, VPS_APP_PATH.
+
+name: Deploy to VPS
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: # Cho phép chạy tay từ tab Actions
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: |
+            set -e
+            cd ${{ secrets.VPS_APP_PATH }}
+            git pull origin main
+            npm ci --production=false
+            npm run build
+            pm2 restart catering-tanne
+            echo "Deploy done."
