@@ -1,5 +1,6 @@
 "use client";
 
+import ImageLightbox from "@/components/ImageLightbox";
 import {
   ASIATISK_MENU_TITLE,
   ASIATISK_MENU_ITEMS,
@@ -18,6 +19,17 @@ export default function AsiatiskMenuContent() {
       <ul className="space-y-6" role="list">
         {ASIATISK_MENU_ITEMS.map((item) => (
           <li key={item.name} className="border-b border-[#707164]/30 pb-5 last:border-0 last:pb-0">
+            {item.image && (
+              <div className="mx-auto mb-3 max-w-xs">
+                <ImageLightbox
+                  src={item.image}
+                  alt={item.name}
+                  caption={`${item.name} – ${item.price}`}
+                  width={320}
+                  height={240}
+                />
+              </div>
+            )}
             <div className="text-lg font-semibold text-[#E5E7E3]">{item.name}</div>
             <p className="mt-1.5 text-base text-[#E5E7E3]/95">{item.description}</p>
             {item.allergens && (

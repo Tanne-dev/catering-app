@@ -3,6 +3,8 @@ export type AsiatiskMenuItem = {
   price: string;
   description: string;
   allergens?: string;
+  /** Bild på rätten (sökväg i public), t.ex. /dishes/dish-bun-cha.png */
+  image?: string;
 };
 
 export const ASIATISK_MENU_TITLE = "ASIATISK MENY";
@@ -28,6 +30,7 @@ export const ASIATISK_MENU_ITEMS: AsiatiskMenuItem[] = [
     description:
       "Vietnamesisk kryddstark nudelsoppa med rik och aromatisk buljong.",
     allergens: "gluten",
+    image: "/dishes/dish-bun-cha.png",
   },
   {
     name: "PAD THAI",
@@ -35,6 +38,7 @@ export const ASIATISK_MENU_ITEMS: AsiatiskMenuItem[] = [
     description:
       "Klassiska thailändska wokade nudlar med ägg, grönsaker och sötsur sås.",
     allergens: "jordnötter, ägg, gluten",
+    image: "/dishes/dish-extra.png",
   },
   {
     name: "STEKTA RIS MED KYCKLING",
@@ -49,6 +53,7 @@ export const ASIATISK_MENU_ITEMS: AsiatiskMenuItem[] = [
     description:
       "Wokade grönsaker med asiatisk kryddning, lämplig för vegetarianer.",
     allergens: "soja",
+    image: "/dishes/dish-poke-bowl.png",
   },
   {
     name: "ASIATISK GRYTA",
@@ -63,6 +68,7 @@ export const ASIATISK_MENU_ITEMS: AsiatiskMenuItem[] = [
     description:
       "Räkor wokade i sötsur sås, serveras med ris.",
     allergens: "skaldjur",
+    image: "/dishes/dish-shrimp-avocado-rolls.png",
   },
   {
     name: "TERIYAKI LAX",
@@ -70,6 +76,7 @@ export const ASIATISK_MENU_ITEMS: AsiatiskMenuItem[] = [
     description:
       "Stekt lax med teriyakisås, serveras med grönsaker och ris.",
     allergens: "fisk, soja",
+    image: "/dishes/dish-salmon-platter.png",
   },
   {
     name: "BARNMENY – STEKT RIS",
