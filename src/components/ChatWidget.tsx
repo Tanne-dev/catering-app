@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useState, useRef, useEffect } from "react";
 
 type Message = { role: "user" | "assistant"; content: string };
@@ -72,23 +73,33 @@ export default function ChatWidget() {
 
       {open && (
         <div
-          className="fixed bottom-20 right-5 z-[89] flex h-[420px] w-[340px] max-w-[calc(100vw-2rem)] flex-col rounded-2xl border border-[#707164]/30 bg-[#1a1916] shadow-xl"
+          className="fixed bottom-20 right-5 z-[89] flex h-[480px] w-[340px] max-w-[calc(100vw-2rem)] flex-col rounded-2xl border border-[#707164]/30 bg-[#1a1916] shadow-xl overflow-hidden"
           aria-label="Chatt med Catering Tanne"
         >
-          <div className="flex items-center justify-between border-b border-[#707164]/30 px-4 py-3">
-            <span className="font-semibold text-[#EAC84E]">Chatt</span>
-            <button
-              type="button"
-              onClick={() => setOpen(false)}
-              className="rounded p-1 text-[#E5E7E3]/70 hover:bg-[#707164]/20 hover:text-[#E5E7E3]"
-              aria-label="Stäng"
-            >
-              <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
+          <div className="relative flex-shrink-0 h-24 w-full border-b border-[#707164]/30">
+            <Image
+              src="/vara-tjanster-sushi.png"
+              alt=""
+              fill
+              className="object-cover"
+              sizes="340px"
+            />
+            <div className="absolute inset-0 bg-[#12110D]/60" aria-hidden />
+            <div className="absolute inset-0 flex items-center justify-between px-4">
+              <span className="font-semibold text-[#EAC84E] drop-shadow-md">Chatt</span>
+              <button
+                type="button"
+                onClick={() => setOpen(false)}
+                className="rounded p-1 text-white/90 hover:bg-white/20 hover:text-white drop-shadow-md"
+                aria-label="Stäng"
+              >
+                <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
           </div>
-          <div ref={listRef} className="flex-1 overflow-y-auto p-3 space-y-3">
+          <div ref={listRef} className="flex-1 overflow-y-auto p-3 space-y-3 min-h-0">
             {messages.length === 0 && (
               <p className="text-sm text-[#E5E7E3]/70">
                 Hej! Fråga om våra menyer, priser eller bokning. Vi svarar så gott vi kan.

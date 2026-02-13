@@ -112,7 +112,7 @@ export default function ServicesSection() {
           >
             <div className="overflow-hidden rounded-lg border border-[#707164]/25 bg-[#1a1916]/50 shadow-lg">
               <Image
-                src="/contact-catering.png"
+                src="/vara-tjanster-sushi.png"
                 alt="Catering och leverans"
                 width={380}
                 height={507}

@@ -10,6 +10,8 @@ export type SushiTier = {
   nigiri: string[];
   uramaki?: string[];
   maki?: string[];
+  /** Bild på sushitallrik (sökväg i public) */
+  image?: string;
 };
 
 export const VARATJANSTER_HERO = {
@@ -29,6 +31,7 @@ export const CATERINGMENY_SUSHI = {
       price: "11 kr / bit",
       description: "50 % maki, 50 % nigiri. Du kan välja själv eller låta kocken komponera.",
       nigiri: ["Lax", "Räkor", "Avokado", "Omelett", "Friterad tofu"],
+      image: "/sushi-standard.png",
       uramaki: [
         "California (krabbröra, lax, gurka, avokado, sesam)",
         "Lax, gurka & avokado med sesam",
@@ -39,6 +42,7 @@ export const CATERINGMENY_SUSHI = {
       name: "Lyx Sushi",
       price: "14 kr / bit",
       description: "Maki säljs i paket om 8 bitar. Du kan välja själv eller låta kocken blanda.",
+      image: "/sushi-lyx.png",
       nigiri: [
         "Grillad lax (teriyaki, picklad & rostad lök)",
         "Lax med kimcheemajonnäs & vårlök",
@@ -62,6 +66,7 @@ export const CATERINGMENY_SUSHI = {
       name: "Lyx Vegan / Vegetarisk Sushi",
       price: "13 kr / bit",
       description: "Maki säljs i paket om 8 bitar. Du kan välja själv eller låta kocken blanda.",
+      image: "/sushi-lyx-vegan.png",
       nigiri: ["Crispy mushroom nigiri", "Tofu deluxe nigiri"],
       maki: [
         "Vegan Super Crunch",

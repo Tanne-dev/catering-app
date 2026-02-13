@@ -2,6 +2,7 @@
  * Bilder till slidern "Rätter vi serverat". Lägg till eller ta bort sökvägar här.
  */
 export const DISH_SLIDER_IMAGES: string[] = [
+  "/dishes/dish-sushi-takeout.png",
   "/dishes/dish-bun-cha.png",
   "/dishes/dish-gua-bao.png",
   "/dishes/dish-sushi-roll.png",

@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { CATERINGMENY_SUSHI } from "@/data/vara-tjanster-content";
 
 const styles = {
@@ -26,6 +27,18 @@ export default function SushiMenuContent() {
             {tier.name} – {tier.price}
           </p>
           <p className={`mt-1.5 ${styles.body}`}>{tier.description}</p>
+          {tier.image && (
+            <div className="mx-auto mt-4 max-w-md overflow-hidden rounded-lg border border-[#707164]/30">
+              <Image
+                src={tier.image}
+                alt={tier.name}
+                width={448}
+                height={300}
+                className="h-auto w-full object-cover"
+                sizes="(max-width: 640px) 100vw, 448px"
+              />
+            </div>
+          )}
           {tier.nigiri.length > 0 && (
             <p className={`mt-3 ${styles.body}`}>
               <strong className="text-[#E5E7E3]">Nigiri:</strong>{" "}
