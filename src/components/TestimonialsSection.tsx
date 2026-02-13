@@ -103,10 +103,16 @@ export default function TestimonialsSection() {
   return (
     <section
       id="testimonials"
-      className="border-t border-[#707164]/25 bg-[#12110D] py-16 md:py-20"
+      className="relative border-t border-[#707164]/25 py-16 md:py-20 overflow-hidden"
       aria-labelledby="testimonials-heading"
     >
-      <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+      <div
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: "url(/omdomen-bg.png)" }}
+        aria-hidden
+      />
+      <div className="absolute inset-0 bg-[#12110D]/85" aria-hidden />
+      <div className="relative z-10 mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-2xl text-center">
           <h2
             id="testimonials-heading"

@@ -25,17 +25,17 @@ const AsiatiskMenuContent = dynamic(
   { ssr: false, loading: () => <MenuLoadingPlaceholder /> }
 );
 
-const MENU_CONTENT: Record<"dessert", { title: string; description: string }> = {
-  dessert: {
-    title: "Dessertmeny",
+const MENU_CONTENT: Record<"sallader", { title: string; description: string }> = {
+  sallader: {
+    title: "Sallader Bufféer",
     description:
-      "Söta avslut: tårtor, fruktfat och asiatiskt inspirerade desserter. Anpassade alternativ på förfrågan.",
+      "Färska sallader och bufféer anpassade efter ert evenemang. Kontakta oss för utbud och priser.",
   },
 };
 
 export default function MenusSection() {
   const { selectedMenu } = useSelectedMenu();
-  const simpleContent = selectedMenu && selectedMenu !== "sushi" && selectedMenu !== "asiatisk" ? MENU_CONTENT[selectedMenu] : null;
+  const simpleContent = selectedMenu && selectedMenu !== "sushi" && selectedMenu !== "asiatisk" ? MENU_CONTENT[selectedMenu as keyof typeof MENU_CONTENT] : null;
 
   return (
     <section

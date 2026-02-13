@@ -10,7 +10,7 @@ import { SERVICES as SERVICES_DATA } from "@/data/services";
 const MENUS: { label: string; id: MenuId }[] = [
   { label: "Sushimeny", id: "sushi" },
   { label: "Asiatisk meny", id: "asiatisk" },
-  { label: "Dessertmeny", id: "dessert" },
+  { label: "Sallader Bufféer", id: "sallader" },
 ];
 
 function PhoneIcon() {

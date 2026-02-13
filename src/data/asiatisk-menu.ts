@@ -16,6 +16,7 @@ export const ASIATISK_MENU_ITEMS: AsiatiskMenuItem[] = [
     description:
       "Vietnamesisk risnudelsoppa med långkokt nötbuljong, möra nötstrimlor och färska örter.",
     allergens: "gluten (kan tillagas utan nudlar på begäran)",
+    image: "/dishes/dish-pho-beef.png",
   },
   {
     name: "KYCKLING PHO",
@@ -23,14 +24,7 @@ export const ASIATISK_MENU_ITEMS: AsiatiskMenuItem[] = [
     description:
       "Lätt och aromatisk vietnamesisk nudelsoppa med kyckling och färska örter.",
     allergens: "gluten",
-  },
-  {
-    name: "BUN BO HUE",
-    price: "165,00 kr",
-    description:
-      "Vietnamesisk kryddstark nudelsoppa med rik och aromatisk buljong.",
-    allergens: "gluten",
-    image: "/dishes/dish-bun-cha.png",
+    image: "/dishes/dish-pho-ga.png",
   },
   {
     name: "PAD THAI",
@@ -38,7 +32,7 @@ export const ASIATISK_MENU_ITEMS: AsiatiskMenuItem[] = [
     description:
       "Klassiska thailändska wokade nudlar med ägg, grönsaker och sötsur sås.",
     allergens: "jordnötter, ägg, gluten",
-    image: "/dishes/dish-extra.png",
+    image: "/dishes/dish-pad-thai.png",
   },
   {
     name: "STEKTA RIS MED KYCKLING",
@@ -46,29 +40,15 @@ export const ASIATISK_MENU_ITEMS: AsiatiskMenuItem[] = [
     description:
       "Asiatiskt wokat ris med kyckling och blandade grönsaker.",
     allergens: "ägg, soja",
+    image: "/dishes/dish-stekta-ris-kyckling.png",
   },
   {
-    name: "VEGETARISK WOK",
-    price: "139,00 kr",
-    description:
-      "Wokade grönsaker med asiatisk kryddning, lämplig för vegetarianer.",
-    allergens: "soja",
-    image: "/dishes/dish-poke-bowl.png",
-  },
-  {
-    name: "ASIATISK GRYTA",
+    name: "OXGRYTA I RÖDVIN",
     price: "159,00 kr",
     description:
-      "Långkokt gryta i asiatisk stil serverad med ris.",
-    allergens: "soja, kan innehålla skaldjur",
-  },
-  {
-    name: "SÖT & SUR RÄK",
-    price: "169,00 kr",
-    description:
-      "Räkor wokade i sötsur sås, serveras med ris.",
-    allergens: "skaldjur",
-    image: "/dishes/dish-shrimp-avocado-rolls.png",
+      "Långkokt oxgryta i rödvinssås, serveras med ris eller potatis.",
+    allergens: "gluten, alkohol (rödvin)",
+    image: "/dishes/dish-oxgryta-rodvin.png",
   },
   {
     name: "TERIYAKI LAX",
@@ -76,7 +56,7 @@ export const ASIATISK_MENU_ITEMS: AsiatiskMenuItem[] = [
     description:
       "Stekt lax med teriyakisås, serveras med grönsaker och ris.",
     allergens: "fisk, soja",
-    image: "/dishes/dish-salmon-platter.png",
+    image: "/dishes/dish-teriyaki-lax.png",
   },
   {
     name: "BARNMENY – STEKT RIS",
