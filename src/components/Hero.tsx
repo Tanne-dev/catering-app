@@ -81,10 +81,22 @@ export default function Hero() {
                 Begär offert
               </Link>
               <Link
-                href="#services"
-                className="inline-flex h-11 w-full items-center justify-center rounded-[13px] border border-[#707164] bg-black/30 px-5 text-sm font-semibold text-[#D5D7D3] backdrop-blur-sm transition-colors hover:border-[#C49B38] hover:bg-black/40 sm:w-auto sm:min-w-[140px] sm:text-base"
+                href="/admin/tables"
+                className="inline-flex h-11 w-full items-center justify-center rounded-[13px] px-5 text-sm font-semibold text-[#12110D] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg sm:w-auto sm:min-w-[140px] sm:text-base"
+                style={{
+                  backgroundColor: "#EAC84E",
+                  boxShadow: "0 0 0 2px rgba(234, 200, 78, 0.5), 0 4px 14px rgba(234, 200, 78, 0.35)",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = "#f5d84a";
+                  e.currentTarget.style.boxShadow = "0 0 0 2px rgba(234, 200, 78, 0.8), 0 6px 20px rgba(234, 200, 78, 0.45)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = "#EAC84E";
+                  e.currentTarget.style.boxShadow = "0 0 0 2px rgba(234, 200, 78, 0.5), 0 4px 14px rgba(234, 200, 78, 0.35)";
+                }}
               >
-                Våra tjänster
+                Hantera bord
               </Link>
             </div>
           </div>

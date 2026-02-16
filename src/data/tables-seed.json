@@ -1,0 +1,13 @@
+[
+  {"id":"1","name":"Bord 1","capacity":2,"status":"available","booking":null,"layout":{"x":80,"y":80,"shape":"square","w":50,"h":50}},
+  {"id":"2","name":"Bord 2","capacity":2,"status":"available","booking":null,"layout":{"x":180,"y":70,"shape":"rect","w":70,"h":45}},
+  {"id":"3","name":"Bord 3","capacity":6,"status":"available","booking":null,"layout":{"x":300,"y":75,"shape":"rect","w":100,"h":50}},
+  {"id":"4","name":"Bord 4","capacity":4,"status":"available","booking":null,"layout":{"x":450,"y":80,"shape":"rect","w":65,"h":55}},
+  {"id":"5","name":"Bord 5","capacity":4,"status":"available","booking":null,"layout":{"x":250,"y":200,"shape":"round","r":45}},
+  {"id":"6","name":"Bord 6","capacity":2,"status":"available","booking":null,"layout":{"x":120,"y":200,"shape":"round","r":35}},
+  {"id":"7","name":"Bord 7","capacity":2,"status":"available","booking":null,"layout":{"x":380,"y":200,"shape":"round","r":35}},
+  {"id":"8","name":"Bord 8","capacity":4,"status":"available","booking":null,"layout":{"x":250,"y":320,"shape":"round","r":45}},
+  {"id":"9","name":"Bord 9","capacity":4,"status":"available","booking":null,"layout":{"x":100,"y":320,"shape":"rect","w":70,"h":55}},
+  {"id":"10","name":"Bord 10","capacity":4,"status":"available","booking":null,"layout":{"x":400,"y":320,"shape":"rect","w":70,"h":55}},
+  {"id":"11","name":"Bord 11","capacity":2,"status":"available","booking":null,"layout":{"x":250,"y":420,"shape":"square","w":50,"h":50}}
+]

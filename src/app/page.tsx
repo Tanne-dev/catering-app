@@ -66,6 +66,9 @@ export default function Home() {
               <a href="#contact" className="text-sm text-[#E5E7E3]/90 underline-offset-4 hover:text-[#EAC84E] hover:underline">
                 Kontakt
               </a>
+              <a href="/admin/tables" className="text-sm text-[#E5E7E3]/70 underline-offset-4 hover:text-[#EAC84E] hover:underline">
+                Hantera bord
+              </a>
             </nav>
             <div className="flex flex-col items-center gap-1 text-sm text-[#D5D7D3]/80 sm:items-end">
               <a href={`tel:${CONTACT.phone.replace(/\s/g, "")}`} className="hover:text-[#EAC84E]">
