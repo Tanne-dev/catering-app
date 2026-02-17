@@ -12,10 +12,12 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = await request.json();
-    const { message, sessionId, conversation } = body as {
+    const { message, sessionId, userId, conversation, customer } = body as {
       message?: string;
       sessionId?: string;
+      userId?: string;
       conversation?: Array<{ role: string; content: string }>;
+      customer?: { fullnamn?: string; email?: string };
     };
 
     if (!message || typeof message !== "string") {
@@ -28,22 +30,48 @@ export async function POST(request: NextRequest) {
       body: JSON.stringify({
         message: message.trim(),
         sessionId: sessionId ?? null,
+        userId: userId ?? null,
         conversation: conversation ?? [],
+        customer: customer ?? null,
       }),
     });
 
     if (!res.ok) {
       const text = await res.text();
-      console.error("n8n webhook error", res.status, text);
+      console.error("[api/chat] n8n webhook error", res.status, text);
       return NextResponse.json(
         { reply: "Något gick fel. Försök igen eller kontakta oss direkt.", error: "upstream_error" },
         { status: 200 }
       );
     }
 
-    const data = (await res.json()) as { reply?: string; action?: string; collected?: Record<string, string> };
+    const contentType = res.headers.get("content-type") || "";
+    let data: any = {};
+
+    if (contentType.includes("application/json")) {
+      data = await res.json();
+    } else {
+      const text = await res.text();
+      // Nếu n8n trả về plain text, coi như đó là reply
+      if (text) {
+        data = { reply: text };
+      }
+    }
+
+    // Log để debug
+    console.log("[api/chat] n8n response:", JSON.stringify(data, null, 2));
+
+    // Tìm reply từ nhiều format khác nhau
+    const reply =
+      data.reply ||
+      data.text ||
+      data.output ||
+      data.response ||
+      data.message?.content ||
+      (typeof data === "string" ? data : null);
+
     return NextResponse.json({
-      reply: data.reply ?? "Tack för ditt meddelande. Vi återkommer!",
+      reply: reply || "Tack för ditt meddelande. Vi återkommer!",
       action: data.action,
       collected: data.collected,
     });

@@ -1,0 +1,126 @@
+{
+  "name": "Catering Tanne – Bordbokningar",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "tables",
+        "responseMode": "onReceived",
+        "options": {}
+      },
+      "id": "webhook-tables",
+      "name": "Webhook Tables",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": [
+                {
+                  "id": "cond-booked",
+                  "leftValue": "={{ $json.body.event }}",
+                  "rightValue": "table_booked",
+                  "operator": { "type": "string", "operation": "equals" }
+                }
+              ],
+              "renameOutput": true,
+              "outputKey": "Bokad"
+            },
+            {
+              "conditions": [
+                {
+                  "id": "cond-cancelled",
+                  "leftValue": "={{ $json.body.event }}",
+                  "rightValue": "table_cancelled",
+                  "operator": { "type": "string", "operation": "equals" }
+                }
+              ],
+              "renameOutput": true,
+              "outputKey": "Avbokad"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "switch",
+      "name": "Switch Event",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [470, 300]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": { "value": "", "__rl": true },
+        "sheetName": { "value": "Bokningar", "__rl": true },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Datum": "={{ $json.body.data.date }}",
+            "Tid": "={{ $json.body.data.time }}",
+            "Bord": "={{ $json.body.data.tableName }}",
+            "Namn": "={{ $json.body.data.customerName }}",
+            "Telefon": "={{ $json.body.data.phone }}",
+            "Email": "={{ $json.body.data.email }}",
+            "Anteckning": "={{ $json.body.data.note }}",
+            "Booking ID": "={{ $json.body.data.bookingId }}",
+            "Skapad": "={{ $json.body.data.createdAt }}"
+          }
+        },
+        "options": {}
+      },
+      "id": "gs-append",
+      "name": "Google Sheets – Lägg till bokning",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4,
+      "position": [700, 180]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": { "value": "", "__rl": true },
+        "sheetName": { "value": "Avbokningar", "__rl": true },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Händelse": "Avbokad",
+            "Bord": "={{ $json.body.data.tableName }}",
+            "Namn": "={{ $json.body.data.previousBooking?.customerName }}",
+            "Datum": "={{ $json.body.data.previousBooking?.date }}",
+            "Tid": "={{ $json.body.data.previousBooking?.time }}"
+          }
+        },
+        "options": {}
+      },
+      "id": "gs-cancel",
+      "name": "Google Sheets – Avbokning",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4,
+      "position": [700, 420]
+    }
+  ],
+  "connections": {
+    "Webhook Tables": {
+      "main": [[{ "node": "Switch Event", "type": "main", "index": 0 }]]
+    },
+    "Switch Event": {
+      "main": [
+        [{ "node": "Google Sheets – Lägg till bokning", "type": "main", "index": 0 }],
+        [{ "node": "Google Sheets – Avbokning", "type": "main", "index": 0 }]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2026-02-16T22:00:00.000Z",
+  "versionId": "1"
+}

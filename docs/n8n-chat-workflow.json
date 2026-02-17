@@ -1,0 +1,69 @@
+{
+  "name": "Catering Tanne – Chatbot",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "chat",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-chat",
+      "name": "Webhook Chat",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o-mini",
+        "options": {},
+        "messages": {
+          "values": [
+            {
+              "content": "Du är assistenten för Catering Tanne – vietnamesisk och svensk catering. Svara alltid på svenska, vänligt och kort.\n\nDu hjälper med:\n- Cateringleverans (Malmö, Skanör, Höllviken, Falsterbo, Lund)\n- Menyer: Standard Sushi 11 kr/bit, Lyx Sushi 14 kr/bit, asiatisk meny, sallader\n- Bokning: Begär offert via formuläret eller Hantera bord\n- Kontakt: +46 709394679, info@cateringtanne.se\n- Svarar inom 24h vardagar\n\nOm osäker: uppmana att ringa eller skicka offertförfrågan.",
+              "role": "system"
+            },
+            {
+              "content": "={{ JSON.stringify($json.body.conversation || []) }}",
+              "role": "user"
+            }
+          ]
+        }
+      },
+      "id": "openai",
+      "name": "OpenAI Chat",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1,
+      "position": [470, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { reply: $json.message?.content || 'Tack för ditt meddelande!' } }}"
+      },
+      "id": "respond",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [690, 300]
+    }
+  ],
+  "connections": {
+    "Webhook Chat": {
+      "main": [[{ "node": "OpenAI Chat", "type": "main", "index": 0 }]]
+    },
+    "OpenAI Chat": {
+      "main": [[{ "node": "Respond to Webhook", "type": "main", "index": 0 }]]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2026-02-16T22:00:00.000Z",
+  "versionId": "1"
+}

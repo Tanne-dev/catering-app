@@ -1,13 +1,17 @@
 "use client";
 
 import Image from "next/image";
+import { useState } from "react";
 import type { RefObject } from "react";
+import type { CustomerInfo } from "./ChatWidget";
 
 export type ChatMessage = { role: "user" | "assistant"; content: string };
 
 type ChatWidgetUIProps = {
   open: boolean;
   onToggleOpen: () => void;
+  customerInfo: CustomerInfo | null;
+  onCustomerSubmit: (info: CustomerInfo) => void;
   messages: ChatMessage[];
   input: string;
   onInputChange: (value: string) => void;
@@ -19,6 +23,8 @@ type ChatWidgetUIProps = {
 export function ChatWidgetUI({
   open,
   onToggleOpen,
+  customerInfo,
+  onCustomerSubmit,
   messages,
   input,
   onInputChange,
@@ -26,6 +32,8 @@ export function ChatWidgetUI({
   onSubmit,
   messagesListRef,
 }: ChatWidgetUIProps) {
+  const [formFullnamn, setFormFullnamn] = useState("");
+  const [formEmail, setFormEmail] = useState("");
   return (
     <>
       <button
@@ -74,54 +82,100 @@ export function ChatWidgetUI({
             </div>
           </div>
           <div ref={messagesListRef} className="flex-1 overflow-y-auto p-3 space-y-3 min-h-0">
-            {messages.length === 0 && (
-              <p className="text-sm text-[#E5E7E3]/70">
-                Hej! Fråga om våra menyer, priser eller bokning. Vi svarar så gott vi kan.
-              </p>
-            )}
-            {messages.map((msg, i) => (
-              <div
-                key={i}
-                className={`max-w-[85%] rounded-lg px-3 py-2 text-sm ${
-                  msg.role === "user"
-                    ? "ml-auto bg-[#C49B38] text-[#12110D]"
-                    : "mr-auto bg-[#12110D] border border-[#707164]/30 text-[#E5E7E3]"
-                }`}
-              >
-                {msg.content}
+            {!customerInfo ? (
+              <div className="space-y-3">
+                <p className="text-sm text-[#E5E7E3]/90">
+                  Ange dina uppgifter nedan för att starta chatten.
+                </p>
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    const fn = formFullnamn.trim();
+                    const em = formEmail.trim();
+                    if (!fn || !em) return;
+                    onCustomerSubmit({ fullnamn: fn, email: em });
+                  }}
+                  className="space-y-3"
+                >
+                  <input
+                    type="text"
+                    value={formFullnamn}
+                    onChange={(e) => setFormFullnamn(e.target.value)}
+                    placeholder="Fullnämn *"
+                    required
+                    className="w-full rounded-lg border border-[#707164]/50 bg-[#12110D] px-3 py-2 text-sm text-[#E5E7E3] placeholder-[#707164] focus:border-[#C49B38] focus:outline-none focus:ring-1 focus:ring-[#C49B38]"
+                  />
+                  <input
+                    type="email"
+                    value={formEmail}
+                    onChange={(e) => setFormEmail(e.target.value)}
+                    placeholder="E-post *"
+                    required
+                    className="w-full rounded-lg border border-[#707164]/50 bg-[#12110D] px-3 py-2 text-sm text-[#E5E7E3] placeholder-[#707164] focus:border-[#C49B38] focus:outline-none focus:ring-1 focus:ring-[#C49B38]"
+                  />
+                  <button
+                    type="submit"
+                    disabled={!formFullnamn.trim() || !formEmail.trim()}
+                    className="w-full rounded-lg bg-[#C49B38] px-4 py-2 text-sm font-medium text-[#12110D] hover:bg-[#D4A83E] disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    Starta chatt
+                  </button>
+                </form>
               </div>
-            ))}
-            {loading && (
-              <div className="mr-auto max-w-[85%] rounded-lg border border-[#707164]/30 bg-[#12110D] px-3 py-2 text-sm text-[#E5E7E3]/70">
-                ...
-              </div>
+            ) : (
+              <>
+                {messages.length === 0 && (
+                  <p className="text-sm text-[#E5E7E3]/70">
+                    Hej {customerInfo.fullnamn}! Fråga om våra menyer, priser eller bokning. Vi svarar så gott vi kan.
+                  </p>
+                )}
+                {messages.map((msg, i) => (
+                  <div
+                    key={i}
+                    className={`max-w-[85%] rounded-lg px-3 py-2 text-sm ${
+                      msg.role === "user"
+                        ? "ml-auto bg-[#C49B38] text-[#12110D]"
+                        : "mr-auto bg-[#12110D] border border-[#707164]/30 text-[#E5E7E3]"
+                    }`}
+                  >
+                    {msg.content}
+                  </div>
+                ))}
+                {loading && (
+                  <div className="mr-auto max-w-[85%] rounded-lg border border-[#707164]/30 bg-[#12110D] px-3 py-2 text-sm text-[#E5E7E3]/70">
+                    ...
+                  </div>
+                )}
+              </>
             )}
           </div>
-          <form
-            className="border-t border-[#707164]/30 p-3"
-            onSubmit={(e) => {
-              e.preventDefault();
-              onSubmit();
-            }}
-          >
-            <div className="flex gap-2">
-              <input
-                type="text"
-                value={input}
-                onChange={(e) => onInputChange(e.target.value)}
-                placeholder="Skriv ditt meddelande..."
-                className="flex-1 rounded-lg border border-[#707164]/50 bg-[#12110D] px-3 py-2 text-sm text-[#E5E7E3] placeholder-[#707164] focus:border-[#C49B38] focus:outline-none focus:ring-1 focus:ring-[#C49B38]"
-                disabled={loading}
-              />
-              <button
-                type="submit"
-                disabled={loading || !input.trim()}
-                className="rounded-lg bg-[#C49B38] px-4 py-2 text-sm font-medium text-white hover:bg-[#D4A83E] disabled:opacity-50"
-              >
-                Skicka
-              </button>
-            </div>
-          </form>
+          {customerInfo && (
+            <form
+              className="border-t border-[#707164]/30 p-3"
+              onSubmit={(e) => {
+                e.preventDefault();
+                onSubmit();
+              }}
+            >
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={input}
+                  onChange={(e) => onInputChange(e.target.value)}
+                  placeholder="Skriv ditt meddelande..."
+                  className="flex-1 rounded-lg border border-[#707164]/50 bg-[#12110D] px-3 py-2 text-sm text-[#E5E7E3] placeholder-[#707164] focus:border-[#C49B38] focus:outline-none focus:ring-1 focus:ring-[#C49B38]"
+                  disabled={loading}
+                />
+                <button
+                  type="submit"
+                  disabled={loading || !input.trim()}
+                  className="rounded-lg bg-[#C49B38] px-4 py-2 text-sm font-medium text-white hover:bg-[#D4A83E] disabled:opacity-50"
+                >
+                  Skicka
+                </button>
+              </div>
+            </form>
+          )}
         </div>
       )}
     </>
