@@ -78,10 +78,12 @@ export default function ChatWidget() {
     const text = input.trim();
     if (!text || loading || !customerInfo) return;
     setInput("");
-    setMessages((m) => [...m, { role: "user", content: text }]);
+    const newUserMessage: ChatMessage = { role: "user", content: text };
+    setMessages((m) => [...m, newUserMessage]);
     setLoading(true);
     try {
       const sessionId = getSessionId();
+      const conversationWithNew = [...messages.map((msg) => ({ role: msg.role, content: msg.content })), { role: "user" as const, content: text }];
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -89,7 +91,7 @@ export default function ChatWidget() {
           message: text,
           sessionId,
           userId: getUserId(),
-          conversation: messages.map((msg) => ({ role: msg.role, content: msg.content })),
+          conversation: conversationWithNew,
           customer: {
             fullnamn: customerInfo.fullnamn,
             email: customerInfo.email,

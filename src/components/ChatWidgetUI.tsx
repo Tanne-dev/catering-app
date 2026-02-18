@@ -101,7 +101,7 @@ export function ChatWidgetUI({
                     type="text"
                     value={formFullnamn}
                     onChange={(e) => setFormFullnamn(e.target.value)}
-                    placeholder="Fullnämn *"
+                    placeholder="Fullständigt namn *"
                     required
                     className="w-full rounded-lg border border-[#707164]/50 bg-[#12110D] px-3 py-2 text-sm text-[#E5E7E3] placeholder-[#707164] focus:border-[#C49B38] focus:outline-none focus:ring-1 focus:ring-[#C49B38]"
                   />
