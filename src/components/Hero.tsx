@@ -32,14 +32,16 @@ export default function Hero() {
       className="relative min-h-[85vh] w-full overflow-hidden py-16 md:py-20 lg:min-h-[90vh] lg:py-24"
       aria-labelledby="hero-heading"
     >
-      <img
-        src="/img-hero.png"
-        alt="Catering och matservering – vietnamesisk och svensk mat"
+      <video
+        autoPlay
+        muted
+        loop
+        playsInline
         className="absolute inset-0 h-full w-full object-cover object-center"
-        loading="eager"
-        fetchPriority="high"
-        decoding="async"
-      />
+        aria-hidden
+      >
+        <source src="/hero-video.mp4" type="video/mp4" />
+      </video>
       <div
         className="absolute inset-0"
         style={{

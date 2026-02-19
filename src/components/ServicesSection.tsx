@@ -26,10 +26,23 @@ export default function ServicesSection() {
   return (
     <section
       id="services"
-      className="border-t border-[#707164]/25 bg-[#12110D] py-16 md:py-20 lg:py-24"
+      className="relative border-t border-[#707164]/25 overflow-hidden py-16 md:py-20 lg:py-24"
       aria-labelledby="services-heading"
     >
-      <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+      <div
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: "url(/vara-tjanster-bg.png)" }}
+        aria-hidden
+      />
+      <div
+        className="absolute inset-0"
+        style={{
+          background:
+            "linear-gradient(to bottom, rgba(18,17,13,0.92) 0%, rgba(18,17,13,0.85) 50%, rgba(18,17,13,0.92) 100%)",
+        }}
+        aria-hidden
+      />
+      <div className="relative z-10 mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         <header className="mx-auto mb-12 max-w-2xl border-b border-[#707164]/20 pb-10 text-center md:mb-14 md:pb-12">
           <h2
             id="services-heading"
