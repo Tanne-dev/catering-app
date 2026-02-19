@@ -55,11 +55,35 @@ function getSessionId(): string {
   return s;
 }
 
+function fileToDataUrl(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+function fileToBase64(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const dataUrl = reader.result as string;
+      const base64 = dataUrl.split(",")[1] ?? "";
+      resolve(base64);
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
 export default function ChatWidget() {
   const [open, setOpen] = useState(false);
   const [customerInfo, setCustomerInfo] = useState<CustomerInfo | null>(() => getStoredCustomer());
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const listRef = useRef<HTMLDivElement>(null);
 
@@ -74,24 +98,50 @@ export default function ChatWidget() {
     storeCustomer(info);
   }
 
+  function handleImageSelect(file: File | null) {
+    setSelectedImage(file);
+    if (file) {
+      fileToDataUrl(file).then(setImagePreview);
+    } else {
+      setImagePreview(null);
+    }
+  }
+
   async function send() {
     const text = input.trim();
-    if (!text || loading || !customerInfo) return;
+    const imageToSend = selectedImage;
+    const hasImage = !!imageToSend;
+    if ((!text && !hasImage) || loading || !customerInfo) return;
+    const displayText = text || "Se bifogad bild";
     setInput("");
-    const newUserMessage: ChatMessage = { role: "user", content: text };
+    setSelectedImage(null);
+    setImagePreview(null);
+    const imageDataUrl = imageToSend ? await fileToDataUrl(imageToSend) : undefined;
+    const newUserMessage: ChatMessage = {
+      role: "user",
+      content: displayText,
+      ...(imageDataUrl && { imageUrl: imageDataUrl }),
+    };
     setMessages((m) => [...m, newUserMessage]);
     setLoading(true);
     try {
       const sessionId = getSessionId();
-      const conversationWithNew = [...messages.map((msg) => ({ role: msg.role, content: msg.content })), { role: "user" as const, content: text }];
+      const conversationWithNew = [
+        ...messages.map((msg) => ({ role: msg.role, content: msg.content })),
+        { role: "user" as const, content: displayText },
+      ];
+      const imageBase64 = imageToSend ? await fileToBase64(imageToSend) : undefined;
+      const mimeType = imageToSend?.type ?? "image/jpeg";
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          message: text,
+          message: displayText,
           sessionId,
           userId: getUserId(),
           conversation: conversationWithNew,
+          imageBase64: imageBase64 ?? undefined,
+          imageMimeType: imageBase64 ? mimeType : undefined,
           customer: {
             fullnamn: customerInfo.fullnamn,
             email: customerInfo.email,
@@ -116,6 +166,8 @@ export default function ChatWidget() {
       messages={messages}
       input={input}
       onInputChange={setInput}
+      imagePreview={imagePreview}
+      onImageSelect={handleImageSelect}
       loading={loading}
       onSubmit={send}
       messagesListRef={listRef}

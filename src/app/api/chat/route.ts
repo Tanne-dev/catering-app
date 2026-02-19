@@ -12,27 +12,33 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = await request.json();
-    const { message, sessionId, userId, conversation, customer } = body as {
+    const { message, sessionId, userId, conversation, customer, imageBase64, imageMimeType } = body as {
       message?: string;
       sessionId?: string;
       userId?: string;
       conversation?: Array<{ role: string; content: string }>;
       customer?: { fullnamn?: string; email?: string };
+      imageBase64?: string;
+      imageMimeType?: string;
     };
 
-    if (!message || typeof message !== "string") {
-      return NextResponse.json({ reply: "Skicka ett meddelande.", error: "invalid_body" }, { status: 400 });
+    const trimmedMessage = typeof message === "string" ? message.trim() : "";
+    const hasImage = !!imageBase64 && typeof imageBase64 === "string";
+    if (!trimmedMessage && !hasImage) {
+      return NextResponse.json({ reply: "Skicka ett meddelande eller bifoga en bild.", error: "invalid_body" }, { status: 400 });
     }
 
     const res = await fetch(N8N_WEBHOOK_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        message: message.trim(),
+        message: trimmedMessage || "Se bifogad bild",
         sessionId: sessionId ?? null,
         userId: userId ?? null,
         conversation: conversation ?? [],
         customer: customer ?? null,
+        imageBase64: imageBase64 ?? null,
+        imageMimeType: imageMimeType ?? "image/jpeg",
       }),
     });
 
