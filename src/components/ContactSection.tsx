@@ -273,7 +273,7 @@ export default function ContactSection() {
                 <button
                   type="submit"
                   disabled={sending}
-                  className="w-full rounded-lg bg-[#C49B38] py-3 text-base font-semibold text-white transition-colors hover:bg-[#D4A83E] focus:outline-none focus:ring-2 focus:ring-[#EAC84E] focus:ring-offset-2 focus:ring-offset-[#12110D] disabled:opacity-70 disabled:cursor-not-allowed"
+                  className="btn-outline w-full py-3 text-base"
                 >
                   {sending ? "Skickar…" : "Skicka förfrågan"}
                 </button>

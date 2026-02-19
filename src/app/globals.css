@@ -12,7 +12,7 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+  --font-sans: var(--font-lato), 'Lato', system-ui, sans-serif;
   --font-mono: var(--font-geist-mono);
 }
 
@@ -23,7 +23,39 @@ html {
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-lato), 'Lato', system-ui, sans-serif;
+}
+
+/* Outline button – subtle fill, orange border, white text, uppercase */
+.btn-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.75rem;
+  padding: 0.75rem 1.5rem;
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #E5E7E3;
+  background: rgba(196, 155, 56, 0.15);
+  border: 1px solid #C49B38;
+  border-radius: 4px;
+  transition: background-color 0.2s, border-color 0.2s, color 0.2s;
+}
+.btn-outline:hover:not(:disabled) {
+  background: rgba(196, 155, 56, 0.25);
+  border-color: #EAC84E;
+  color: #fff;
+}
+.btn-outline:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(234, 200, 78, 0.4);
+}
+.btn-outline:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 @keyframes menuFadeInUp {

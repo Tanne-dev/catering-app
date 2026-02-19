@@ -25,18 +25,13 @@ const AsiatiskMenuContent = dynamic(
   { ssr: false, loading: () => <MenuLoadingPlaceholder /> }
 );
 
-const MENU_CONTENT: Record<"sallader", { title: string; description: string }> = {
-  sallader: {
-    title: "Sallader Bufféer",
-    description:
-      "Färska sallader och bufféer anpassade efter ert evenemang. Kontakta oss för utbud och priser.",
-  },
-};
+const SalladerMenuContent = dynamic(
+  () => import("@/components/MenusContent/SalladerMenuContent"),
+  { ssr: false, loading: () => <MenuLoadingPlaceholder /> }
+);
 
 export default function MenusSection() {
   const { selectedMenu } = useSelectedMenu();
-  const simpleContent = selectedMenu && selectedMenu !== "sushi" && selectedMenu !== "asiatisk" ? MENU_CONTENT[selectedMenu as keyof typeof MENU_CONTENT] : null;
-
   return (
     <section
       id="menus"
@@ -70,18 +65,9 @@ export default function MenusSection() {
           <div className="animate-menu-enter">
             <AsiatiskMenuContent />
           </div>
-        ) : simpleContent ? (
+        ) : selectedMenu === "sallader" ? (
           <div className="animate-menu-enter">
-            <div
-              className="mx-auto mt-10 max-w-2xl rounded-xl border border-[#707164]/50 bg-[#12110D] p-6 text-center"
-              style={{ borderColor: "rgba(112, 113, 100, 0.5)" }}
-            >
-              <h3 className="text-2xl font-semibold text-[#EAC84E]">{simpleContent.title}</h3>
-              <p className="mt-3 text-lg text-[#E5E7E3]">{simpleContent.description}</p>
-              <p className="mt-4 text-base text-[#E5E7E3]/90">
-                Fullständig meny och priser på förfrågan. Kontakta oss för en offert.
-              </p>
-            </div>
+            <SalladerMenuContent />
           </div>
         ) : (
           <p className="mt-8 text-base text-[#E5E7E3]/90">

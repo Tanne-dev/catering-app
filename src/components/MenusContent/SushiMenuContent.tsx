@@ -17,7 +17,12 @@ export default function SushiMenuContent() {
       <h3 className="mb-6 text-2xl font-semibold tracking-wide text-[#EAC84E]">
         {CATERINGMENY_SUSHI.title}
       </h3>
-      {CATERINGMENY_SUSHI.tiers.map((tier, i) => (
+      {CATERINGMENY_SUSHI.tiers.length === 0 ? (
+        <p className="text-[#E5E7E3]/80">
+          Nya sushier kommer snart. Kontakta oss för att höra vad vi kan erbjuda.
+        </p>
+      ) : (
+      CATERINGMENY_SUSHI.tiers.map((tier, i) => (
         <div
           key={i}
           className="border-t border-[#707164]/30 pt-6 first:border-0 first:pt-0 first:mt-0 mt-6"
@@ -66,7 +71,8 @@ export default function SushiMenuContent() {
             </p>
           )}
         </div>
-      ))}
+      ))
+      )}
     </div>
   );
 }

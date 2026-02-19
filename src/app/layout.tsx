@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Lato, Geist_Mono } from "next/font/google";
 import Header from "@/components/Header";
 import JsonLd from "@/components/JsonLd";
 import ChatWidget from "@/components/ChatWidget";
@@ -10,10 +10,11 @@ import { SelectedServiceProvider } from "@/contexts/SelectedServiceContext";
 import { SITE } from "@/data/site";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const lato = Lato({
+  variable: "--font-lato",
   subsets: ["latin"],
   display: "swap",
+  weight: ["400", "700"],
 });
 
 const geistMono = Geist_Mono({
@@ -63,7 +64,7 @@ export default function RootLayout({
   return (
     <html lang="sv" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${lato.variable} ${geistMono.variable} antialiased`}
         suppressHydrationWarning
       >
         <JsonLd />

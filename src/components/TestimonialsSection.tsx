@@ -270,7 +270,7 @@ export default function TestimonialsSection() {
               <button
                 type="submit"
                 disabled={sending}
-                className="rounded-lg bg-[#C49B38] px-6 py-2.5 text-base font-semibold text-white transition-colors hover:bg-[#D4A83E] focus:outline-none focus:ring-2 focus:ring-[#EAC84E] focus:ring-offset-2 focus:ring-offset-[#12110D] disabled:opacity-70 disabled:cursor-not-allowed"
+                className="btn-outline w-full sm:w-auto px-6 py-2.5 text-base"
               >
                 {sending ? "Skickar…" : "Skicka omdöme"}
               </button>

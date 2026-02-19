@@ -83,7 +83,7 @@ export default function ServicesSection() {
                 <button
                   type="button"
                   onClick={() => setSelectedServiceId(service.id as ServiceId)}
-                  className="mt-4 inline-flex h-10 items-center justify-center rounded-lg bg-[#C49B38] px-5 text-sm font-medium text-white transition-colors hover:bg-[#D4A83E] focus:outline-none focus:ring-2 focus:ring-[#EAC84E] focus:ring-offset-2 focus:ring-offset-[#12110D]"
+                  className="btn-outline mt-4"
                   aria-label={`Läs mer om ${service.title}`}
                 >
                   Läs mer
