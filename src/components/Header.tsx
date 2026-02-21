@@ -1,11 +1,10 @@
 "use client";
 
 import Image from "next/image";
+import { signIn, signOut, useSession } from "next-auth/react";
 import { useState, useRef, useEffect } from "react";
 import { useSelectedMenu, type MenuId } from "@/contexts/SelectedMenuContext";
-import { useSelectedService } from "@/contexts/SelectedServiceContext";
 import { CONTACT } from "@/data/contact";
-import { SERVICES as SERVICES_DATA } from "@/data/services";
 
 const MENUS: { label: string; id: MenuId }[] = [
   { label: "Sushimeny", id: "sushi" },
@@ -52,9 +51,15 @@ function ChevronDownIcon() {
 }
 
 export default function Header() {
+  const { data: session, status } = useSession();
   const { setSelectedMenu } = useSelectedMenu();
   const [menusDropdownOpen, setMenusDropdownOpen] = useState(false);
   const menusDropdownRef = useRef<HTMLDivElement>(null);
+
+  const [loginDropdownOpen, setLoginDropdownOpen] = useState(false);
+  const loginDropdownRef = useRef<HTMLDivElement>(null);
+
+  const isAdmin = status === "authenticated" && (session?.user as { role?: string })?.role === "admin";
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
@@ -62,9 +67,15 @@ export default function Header() {
       if (menusDropdownRef.current && !menusDropdownRef.current.contains(target)) {
         setMenusDropdownOpen(false);
       }
+      if (loginDropdownRef.current && !loginDropdownRef.current.contains(target)) {
+        setLoginDropdownOpen(false);
+      }
     }
     function handleEscape(e: KeyboardEvent) {
-      if (e.key === "Escape") setMenusDropdownOpen(false);
+      if (e.key === "Escape") {
+        setMenusDropdownOpen(false);
+        setLoginDropdownOpen(false);
+      }
     }
     document.addEventListener("mousedown", handleClickOutside);
     document.addEventListener("keydown", handleEscape);
@@ -73,13 +84,6 @@ export default function Header() {
       document.removeEventListener("keydown", handleEscape);
     };
   }, []);
-
-  const { setSelectedServiceId } = useSelectedService();
-
-  function openServicesPanel() {
-    const firstService = SERVICES_DATA[0];
-    if (firstService) setSelectedServiceId(firstService.id);
-  }
 
   function handleMenuClick(menuId: MenuId) {
     setSelectedMenu(menuId);
@@ -192,29 +196,126 @@ export default function Header() {
               )}
             </div>
 
-            <button
-              type="button"
-              onClick={openServicesPanel}
-              className="flex h-9 items-center gap-1 rounded-[13px] border px-2.5 text-xs font-semibold text-white transition-colors sm:h-10 sm:gap-1.5 sm:px-3 sm:text-sm md:px-4"
-              style={{
-                backgroundColor: "#3C4454",
-                borderColor: "#707164",
-              }}
-              aria-haspopup="dialog"
-              aria-label="Öppna Våra tjänster"
-              onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = "#8a8d7a";
-                e.currentTarget.style.backgroundColor = "#4a5264";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = "#707164";
-                e.currentTarget.style.backgroundColor = "#3C4454";
-              }}
-            >
-              <span className="hidden sm:inline">Våra tjänster</span>
-              <span className="sm:hidden">Tjänster</span>
-              <ChevronDownIcon />
-            </button>
+            <div className="relative" ref={loginDropdownRef}>
+              <button
+                type="button"
+                onClick={() => setLoginDropdownOpen((o) => !o)}
+                className="flex h-9 items-center gap-1 rounded-[13px] border px-2.5 text-xs font-semibold text-white transition-colors sm:h-10 sm:gap-1.5 sm:px-3 sm:text-sm md:px-4"
+                style={{
+                  backgroundColor: isAdmin ? "#2d4a2d" : "#3C4454",
+                  borderColor: "#707164",
+                }}
+                aria-haspopup="menu"
+                aria-expanded={loginDropdownOpen}
+                aria-label={isAdmin ? "Inloggad som admin" : "Logga in som gäst eller admin"}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = "#8a8d7a";
+                  e.currentTarget.style.backgroundColor = isAdmin ? "#3d5a3d" : "#4a5264";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = "#707164";
+                  e.currentTarget.style.backgroundColor = isAdmin ? "#2d4a2d" : "#3C4454";
+                }}
+              >
+                {isAdmin ? (
+                  <>
+                    Tanne Side
+                    <ChevronDownIcon />
+                  </>
+                ) : (
+                  <>
+                    <span className="hidden sm:inline">Logga in</span>
+                    <span className="sm:hidden">Inloggning</span>
+                    <ChevronDownIcon />
+                  </>
+                )}
+              </button>
+              {loginDropdownOpen && (
+                <div className="absolute right-0 top-full z-50 mt-1.5 flex justify-end">
+                  <div
+                    role="menu"
+                    className="min-w-[160px] rounded-[14px] border py-1 shadow-xl"
+                    style={{
+                      backgroundColor: "#12110D",
+                      borderColor: "#707164",
+                    }}
+                  >
+                    {isAdmin ? (
+                      <>
+                        <a
+                          href="/admin/dashboard"
+                          role="menuitem"
+                          onClick={() => setLoginDropdownOpen(false)}
+                          className="block w-full px-4 py-2.5 text-left text-sm transition-colors"
+                          style={{ color: "#D5D7D3" }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.backgroundColor = "#ffffff08";
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.backgroundColor = "transparent";
+                          }}
+                        >
+                          Dashboard
+                        </a>
+                        <button
+                          type="button"
+                          role="menuitem"
+                          onClick={() => {
+                            setLoginDropdownOpen(false);
+                            signOut({ callbackUrl: "/" });
+                          }}
+                          className="w-full px-4 py-2.5 text-left text-sm transition-colors"
+                          style={{ color: "#D5D7D3" }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.backgroundColor = "#ffffff08";
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.backgroundColor = "transparent";
+                          }}
+                        >
+                          Logga ut
+                        </button>
+                      </>
+                    ) : (
+                      <>
+                        <button
+                          type="button"
+                          role="menuitem"
+                          onClick={() => {
+                            setLoginDropdownOpen(false);
+                            signIn("google", { callbackUrl: "/" });
+                          }}
+                          className="w-full px-4 py-2.5 text-left text-sm transition-colors"
+                          style={{ color: "#D5D7D3" }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.backgroundColor = "#ffffff08";
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.backgroundColor = "transparent";
+                          }}
+                        >
+                          Gäst (Google)
+                        </button>
+                        <a
+                          href="/admin/login"
+                          role="menuitem"
+                          className="block w-full px-4 py-2.5 text-left text-sm transition-colors"
+                          style={{ color: "#D5D7D3" }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.backgroundColor = "#ffffff08";
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.backgroundColor = "transparent";
+                          }}
+                        >
+                          Admin
+                        </a>
+                      </>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>

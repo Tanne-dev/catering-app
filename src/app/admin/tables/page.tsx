@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
+import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 
 interface TableBooking {
   id: string;
@@ -74,6 +76,8 @@ const MONTHS = [
 ];
 
 export default function AdminTablesPage() {
+  const router = useRouter();
+  const { data: session, status } = useSession();
   const [tables, setTables] = useState<Table[]>([]);
   const [stats, setStats] = useState<Stats | null>(null);
   const [loading, setLoading] = useState(true);
@@ -114,8 +118,14 @@ export default function AdminTablesPage() {
   }
 
   useEffect(() => {
+    if (status === "loading") return;
+    const role = (session?.user as { role?: string })?.role;
+    if (role !== "admin") {
+      router.replace("/admin/login");
+      return;
+    }
     fetchTables();
-  }, []);
+  }, [router, session, status]);
 
   const calDays = useMemo(() => getMonthDays(calYear, calMonth), [calYear, calMonth]);
 
@@ -207,7 +217,7 @@ export default function AdminTablesPage() {
   const dayName = displayDate.toLocaleDateString("sv-SE", { weekday: "long" });
   const dateStr = displayDate.toLocaleDateString("sv-SE", { day: "numeric", month: "long", year: "numeric" });
 
-  if (loading) {
+  if (loading || status === "loading") {
     return (
       <div className="flex min-h-[60vh] items-center justify-center">
         <div className="text-[#EAC84E]">Laddar...</div>
@@ -385,9 +395,12 @@ export default function AdminTablesPage() {
             </div>
           </div>
 
-          <div className="mt-8 border-t border-[#707164]/20 pt-4">
+          <div className="mt-8 flex flex-wrap gap-4 border-t border-[#707164]/20 pt-4">
+            <a href="/admin/dashboard" className="text-sm text-[#EAC84E] underline-offset-4 hover:underline">
+              ← Dashboard
+            </a>
             <a href="/" className="text-sm text-[#EAC84E] underline-offset-4 hover:underline">
-              ← Tillbaka till startsidan
+              Till startsidan
             </a>
           </div>
         </div>

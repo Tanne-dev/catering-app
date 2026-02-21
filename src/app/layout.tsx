@@ -5,6 +5,7 @@ import JsonLd from "@/components/JsonLd";
 import ChatWidget from "@/components/ChatWidget";
 import ScrollToTop from "@/components/ScrollToTop";
 import ServiceDetailPanel from "@/components/ServiceDetailPanel";
+import SessionProvider from "@/components/SessionProvider";
 import { SelectedMenuProvider } from "@/contexts/SelectedMenuContext";
 import { SelectedServiceProvider } from "@/contexts/SelectedServiceContext";
 import { SITE } from "@/data/site";
@@ -68,6 +69,7 @@ export default function RootLayout({
         suppressHydrationWarning
       >
         <JsonLd />
+        <SessionProvider>
         <SelectedMenuProvider>
           <SelectedServiceProvider>
             <a
@@ -83,6 +85,7 @@ export default function RootLayout({
             <ChatWidget />
           </SelectedServiceProvider>
         </SelectedMenuProvider>
+        </SessionProvider>
       </body>
     </html>
   );
