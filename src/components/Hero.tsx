@@ -38,6 +38,7 @@ export default function Hero() {
         loop
         playsInline
         className="absolute inset-0 h-full w-full object-cover object-center"
+        style={{ filter: "brightness(1.35)" }}
         aria-hidden
       >
         <source src="/hero-video.mp4" type="video/mp4" />
