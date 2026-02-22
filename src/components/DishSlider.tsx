@@ -76,6 +76,8 @@ export default function DishSlider() {
                 height={276}
                 sizes="(max-width: 640px) 280px, (max-width: 768px) 322px, 368px"
                 className="h-[200px] w-[280px] object-cover sm:h-[230px] sm:w-[322px] md:h-[276px] md:w-[368px]"
+                loading="lazy"
+                unoptimized
               />
             </button>
           ))}

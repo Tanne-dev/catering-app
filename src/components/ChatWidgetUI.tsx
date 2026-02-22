@@ -95,6 +95,7 @@ export function ChatWidgetUI({
               fill
               className="object-cover"
               sizes="340px"
+              loading="lazy"
             />
             <div className="absolute inset-0 bg-[#12110D]/60" aria-hidden />
             <div className="absolute inset-0 flex items-center justify-between px-4">
@@ -178,7 +179,7 @@ export function ChatWidgetUI({
                   >
                     {msg.imageUrl && (
                       <div className="relative aspect-video w-full max-w-[200px] overflow-hidden rounded-lg">
-                        <Image src={msg.imageUrl} alt="" fill className="object-cover" sizes="200px" />
+                        <Image src={msg.imageUrl} alt="" fill className="object-cover" sizes="200px" loading="lazy" />
                       </div>
                     )}
                     {msg.content && <span>{msg.content}</span>}
@@ -205,7 +206,7 @@ export function ChatWidgetUI({
               {imagePreview && (
                 <div className="relative inline-block">
                   <div className="relative h-16 w-16 overflow-hidden rounded-lg border border-[#707164]/50">
-                    <Image src={imagePreview} alt="" fill className="object-cover" sizes="64px" />
+                    <Image src={imagePreview} alt="" fill className="object-cover" sizes="64px" loading="lazy" />
                   </div>
                   <button
                     type="button"

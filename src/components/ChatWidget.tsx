@@ -78,8 +78,28 @@ function fileToBase64(file: File): Promise<string> {
 }
 
 export default function ChatWidget() {
+  // #region agent log
+  if (typeof window !== "undefined") {
+    fetch("http://127.0.0.1:7242/ingest/0cdeab99-f7cb-4cee-9943-94270784127d", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        location: "ChatWidget.tsx:init",
+        message: "H1 customerInfo post-fix",
+        data: { hasStoredCustomer: !!getStoredCustomer(), stateStartsNull: true },
+        timestamp: Date.now(),
+        hypothesisId: "H1",
+        runId: "post-fix",
+      }),
+    }).catch(() => {});
+  }
+  // #endregion
   const [open, setOpen] = useState(false);
-  const [customerInfo, setCustomerInfo] = useState<CustomerInfo | null>(() => getStoredCustomer());
+  const [customerInfo, setCustomerInfo] = useState<CustomerInfo | null>(null);
+  useEffect(() => {
+    const stored = getStoredCustomer();
+    if (stored) setCustomerInfo(stored);
+  }, []);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
   const [selectedImage, setSelectedImage] = useState<File | null>(null);

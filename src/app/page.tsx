@@ -79,7 +79,7 @@ export default function Home() {
               </a>
             </div>
           </div>
-          <p className="mt-8 border-t border-[#707164]/30 pt-6 text-center text-sm text-[#D5D7D3]/70">
+          <p className="mt-8 border-t border-[#707164]/30 pt-6 text-center text-sm text-[#D5D7D3]/70" suppressHydrationWarning>
             © {new Date().getFullYear()} Catering Tanne. Alla rättigheter förbehållna.
           </p>
           <p className="mt-2 text-center text-xs text-[#D5D7D3]/50">

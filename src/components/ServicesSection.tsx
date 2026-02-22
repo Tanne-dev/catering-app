@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import LazyBackground from "@/components/LazyBackground";
 import { useSelectedService } from "@/contexts/SelectedServiceContext";
 import { SERVICES } from "@/data/services";
 import type { ServiceId } from "@/data/services";
@@ -29,11 +30,13 @@ export default function ServicesSection() {
       className="relative border-t border-[#707164]/25 overflow-hidden py-16 md:py-20 lg:py-24"
       aria-labelledby="services-heading"
     >
-      <div
+      <LazyBackground
+        src="/vara-tjanster-bg.png"
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: "url(/vara-tjanster-bg.png)" }}
         aria-hidden
-      />
+      >
+        {null}
+      </LazyBackground>
       <div
         className="absolute inset-0"
         style={{
@@ -131,6 +134,7 @@ export default function ServicesSection() {
                 height={507}
                 sizes="(max-width: 1024px) 100vw, 380px"
                 className="h-auto w-full object-cover"
+                loading="lazy"
               />
             </div>
           </aside>

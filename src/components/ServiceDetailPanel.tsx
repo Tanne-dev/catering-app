@@ -98,6 +98,7 @@ export default function ServiceDetailPanel() {
                     height={360}
                     sizes="(max-width: 640px) 100vw, 480px"
                     className="h-48 w-full object-cover sm:h-56"
+                    loading="lazy"
                   />
                 </div>
                 <div className="overflow-hidden rounded-lg border border-[#707164]/40">
@@ -108,6 +109,7 @@ export default function ServiceDetailPanel() {
                     height={360}
                     sizes="(max-width: 640px) 100vw, 480px"
                     className="h-48 w-full object-cover sm:h-56"
+                    loading="lazy"
                   />
                 </div>
               </div>

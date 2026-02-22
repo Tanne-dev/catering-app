@@ -1,14 +1,42 @@
 "use client";
 
 import Image from "next/image";
+import OrderQuantityInput from "@/components/OrderQuantityInput";
+import { useMenuItems } from "@/hooks/useMenus";
 import { CATERINGMENY_SUSHI } from "@/data/vara-tjanster-content";
+import { resolveMenuImageUrl } from "@/lib/supabase";
 
 const styles = {
   body: "text-base leading-relaxed text-[#E5E7E3]/92",
   bullet: "text-[#C49B38] shrink-0",
 } as const;
 
+function getStaticImageByName(name: string): string | undefined {
+  const tier = CATERINGMENY_SUSHI.tiers.find((t) =>
+    t.name.toLowerCase().trim() === name.toLowerCase().trim()
+  );
+  return tier?.image;
+}
+
+function toTier(item: { name: string; price: string; description: string | null; nigiri?: string[]; uramaki?: string[]; maki?: string[]; image?: string | null }) {
+  const apiImage = item.image ?? undefined;
+  const fallbackImage = !apiImage ? getStaticImageByName(item.name) : undefined;
+  const rawImage = apiImage || fallbackImage;
+  return {
+    name: item.name,
+    price: item.price,
+    description: item.description ?? "",
+    nigiri: item.nigiri ?? [],
+    uramaki: item.uramaki ?? [],
+    maki: item.maki ?? [],
+    image: resolveMenuImageUrl(rawImage),
+  };
+}
+
 export default function SushiMenuContent() {
+  const { items, loading } = useMenuItems("sushi");
+  const tiers = items.length > 0 ? items.map(toTier) : CATERINGMENY_SUSHI.tiers;
+
   return (
     <div
       className="mx-auto mt-10 max-w-2xl rounded-xl border border-[#707164]/50 bg-[#12110D] p-6 text-center sm:p-8"
@@ -17,12 +45,14 @@ export default function SushiMenuContent() {
       <h3 className="mb-6 text-2xl font-semibold tracking-wide text-[#EAC84E]">
         {CATERINGMENY_SUSHI.title}
       </h3>
-      {CATERINGMENY_SUSHI.tiers.length === 0 ? (
+      {loading ? (
+        <p className="text-[#E5E7E3]/80">Laddar meny…</p>
+      ) : tiers.length === 0 ? (
         <p className="text-[#E5E7E3]/80">
           Nya sushier kommer snart. Kontakta oss för att höra vad vi kan erbjuda.
         </p>
       ) : (
-      CATERINGMENY_SUSHI.tiers.map((tier, i) => (
+      tiers.map((tier, i) => (
         <div
           key={i}
           className="border-t border-[#707164]/30 pt-6 first:border-0 first:pt-0 first:mt-0 mt-6"
@@ -41,6 +71,8 @@ export default function SushiMenuContent() {
                 height={300}
                 className="h-auto w-full object-cover"
                 sizes="(max-width: 640px) 100vw, 448px"
+                loading="lazy"
+                unoptimized={tier.image?.startsWith("http")}
               />
             </div>
           )}
@@ -70,6 +102,7 @@ export default function SushiMenuContent() {
               {tier.maki.join(" · ")}
             </p>
           )}
+          <OrderQuantityInput menuSlug="sushi" itemName={tier.name} price={tier.price} unit="bitar" />
         </div>
       ))
       )}

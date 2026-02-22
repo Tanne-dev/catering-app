@@ -1,18 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import LazyBackground from "@/components/LazyBackground";
 import { FORMSPREE_FORM_ID } from "@/data/contact";
 import { TESTIMONIALS, type Testimonial } from "@/data/testimonials";
 
-const FEEDBACK_PER_COLUMN = 6;
-
-function chunk<T>(arr: T[], size: number): T[][] {
-  const result: T[][] = [];
-  for (let i = 0; i < arr.length; i += size) {
-    result.push(arr.slice(i, i + size));
-  }
-  return result;
-}
+const AUTO_SLIDE_INTERVAL_MS = 3500;
 
 function StarRating({ rating, max = 5 }: { rating: number; max?: number }) {
   return (
@@ -32,12 +25,12 @@ function StarRating({ rating, max = 5 }: { rating: number; max?: number }) {
 
 function TestimonialCard({ item }: { item: Testimonial }) {
   return (
-    <article className="flex flex-col rounded-xl border border-[#707164]/30 bg-[#1a1916]/80 p-5 backdrop-blur-sm sm:p-6">
+    <article className="flex min-h-[200px] sm:min-h-[220px] flex-col rounded-xl border border-[#707164]/30 bg-[#1a1916]/80 p-5 backdrop-blur-sm sm:p-6">
       <StarRating rating={item.rating} />
-      <blockquote className="mt-3 flex-1 text-[#E5E7E3]/90 leading-relaxed">
+      <blockquote className="mt-3 min-h-[5.5rem] flex-1 text-[#E5E7E3]/90 leading-relaxed sm:min-h-[6rem]">
         &ldquo;{item.text}&rdquo;
       </blockquote>
-      <footer className="mt-4 flex items-center justify-between gap-2 border-t border-[#707164]/20 pt-3">
+      <footer className="mt-4 flex shrink-0 items-center justify-between gap-2 border-t border-[#707164]/20 pt-3">
         <span className="font-medium text-[#E5E7E3]">{item.name}</span>
         {item.date && (
           <span className="text-sm text-[#707164]">{item.date}</span>
@@ -53,11 +46,18 @@ export default function TestimonialsSection() {
   const [submitted, setSubmitted] = useState(false);
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [currentPage, setCurrentPage] = useState(0);
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   const displayRating = hoverRating || rating;
-  const columns = chunk(TESTIMONIALS, FEEDBACK_PER_COLUMN);
-  const currentFeedback = columns[currentPage] ?? [];
+  const currentFeedback = TESTIMONIALS[currentIndex];
+
+  useEffect(() => {
+    if (TESTIMONIALS.length <= 1) return;
+    const timer = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % TESTIMONIALS.length);
+    }, AUTO_SLIDE_INTERVAL_MS);
+    return () => clearInterval(timer);
+  }, []);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -106,11 +106,13 @@ export default function TestimonialsSection() {
       className="relative border-t border-[#707164]/25 py-16 md:py-20 overflow-hidden"
       aria-labelledby="testimonials-heading"
     >
-      <div
+      <LazyBackground
+        src="/omdomen-bg.png"
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: "url(/omdomen-bg.png)" }}
         aria-hidden
-      />
+      >
+        {null}
+      </LazyBackground>
       <div className="absolute inset-0 bg-[#12110D]/85" aria-hidden />
       <div className="relative z-10 mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-2xl text-center">
@@ -127,41 +129,35 @@ export default function TestimonialsSection() {
           </p>
         </div>
 
-        {/* Lista omdömen: visa en sida (6 st) i taget */}
+        {/* Omdömen: 1 feedback i taget, auto-slide var 2:a sekund, fade-effekt */}
         <div className="mt-10">
-          <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3" role="list">
-            {currentFeedback.map((item, i) => (
-              <li key={currentPage * FEEDBACK_PER_COLUMN + i}>
-                <TestimonialCard item={item} />
-              </li>
-            ))}
-          </ul>
+          {currentFeedback ? (
+            <div key={currentIndex} className="mx-auto max-w-2xl animate-testimonial-fade" role="list">
+              <TestimonialCard item={currentFeedback} />
+            </div>
+          ) : null}
 
-          {/* Indikatorer: klicka för att byta sida (fler / äldre omdömen) */}
-          {columns.length > 1 && (
+          {TESTIMONIALS.length > 1 && (
             <div className="mt-6 flex flex-wrap items-center justify-center gap-2 sm:mt-8 sm:gap-3">
-              <span className="mr-1 text-xs text-[#E5E7E3]/70 sm:mr-2 sm:text-sm">Sida:</span>
-              <div className="flex flex-wrap justify-center gap-1.5 sm:gap-2" role="tablist" aria-label="Välj sida med omdömen">
-                {columns.map((_, pageIndex) => (
+              <div className="flex flex-wrap justify-center gap-1.5 sm:gap-2" role="tablist" aria-label="Välj omdöme">
+                {TESTIMONIALS.map((_, idx) => (
                   <button
-                    key={pageIndex}
+                    key={idx}
                     type="button"
                     role="tab"
-                    aria-selected={currentPage === pageIndex}
-                    aria-label={`Sida ${pageIndex + 1}, ${columns[pageIndex].length} omdömen`}
-                    onClick={() => setCurrentPage(pageIndex)}
-                    className={`flex h-9 w-9 items-center justify-center rounded-full text-xs font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-[#EAC84E] focus:ring-offset-2 focus:ring-offset-[#12110D] sm:h-10 sm:w-10 sm:text-sm ${
-                      currentPage === pageIndex
-                        ? "bg-[#EAC84E] text-[#12110D]"
-                        : "bg-[#707164]/30 text-[#E5E7E3]/80 hover:bg-[#707164]/50 hover:text-[#E5E7E3]"
+                    aria-selected={currentIndex === idx}
+                    aria-label={`Omdöme ${idx + 1}: ${TESTIMONIALS[idx].name}`}
+                    onClick={() => setCurrentIndex(idx)}
+                    className={`h-2.5 w-2.5 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-[#EAC84E] focus:ring-offset-2 focus:ring-offset-[#12110D] sm:h-3 sm:w-3 ${
+                      currentIndex === idx
+                        ? "bg-[#EAC84E] scale-125"
+                        : "bg-[#707164]/40 hover:bg-[#707164]/60"
                     }`}
-                  >
-                    {pageIndex + 1}
-                  </button>
+                  />
                 ))}
               </div>
-              <span className="ml-1 text-xs text-[#E5E7E3]/70 sm:ml-2 sm:text-sm">
-                {currentPage + 1} / {columns.length}
+              <span className="ml-2 text-xs text-[#E5E7E3]/70 sm:text-sm">
+                {currentIndex + 1} / {TESTIMONIALS.length}
               </span>
             </div>
           )}

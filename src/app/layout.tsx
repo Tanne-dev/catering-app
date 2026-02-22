@@ -8,6 +8,7 @@ import ServiceDetailPanel from "@/components/ServiceDetailPanel";
 import SessionProvider from "@/components/SessionProvider";
 import { SelectedMenuProvider } from "@/contexts/SelectedMenuContext";
 import { SelectedServiceProvider } from "@/contexts/SelectedServiceContext";
+import { CartProvider } from "@/contexts/CartContext";
 import { SITE } from "@/data/site";
 import "./globals.css";
 
@@ -71,6 +72,7 @@ export default function RootLayout({
         <JsonLd />
         <SessionProvider>
         <SelectedMenuProvider>
+          <CartProvider>
           <SelectedServiceProvider>
             <a
               href="#services"
@@ -84,6 +86,7 @@ export default function RootLayout({
             <ScrollToTop />
             <ChatWidget />
           </SelectedServiceProvider>
+          </CartProvider>
         </SelectedMenuProvider>
         </SessionProvider>
       </body>

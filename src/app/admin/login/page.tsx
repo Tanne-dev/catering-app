@@ -4,6 +4,7 @@ import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import LazyBackground from "@/components/LazyBackground";
 
 function GoogleIcon() {
   return (
@@ -85,9 +86,9 @@ export default function AdminLoginPage() {
   return (
     <div className="relative min-h-[70vh] flex flex-col items-center justify-center px-4 py-16">
       {/* Background */}
-      <div
+      <LazyBackground
+        src="/admin-bg.png"
         className="fixed inset-y-0 left-5 right-5 -z-10 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: "url(/admin-bg.png)" }}
         aria-hidden
       />
       <div className="fixed inset-y-0 left-5 right-5 -z-10 bg-white/55" aria-hidden />
@@ -100,6 +101,7 @@ export default function AdminLoginPage() {
               width={200}
               height={28}
               className="h-8 w-auto object-contain"
+              loading="lazy"
             />
           </div>
           <h1 className="text-center text-xl font-semibold text-[#EAC84E]">

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
+import LazyBackground from "@/components/LazyBackground";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 
@@ -228,9 +229,9 @@ export default function AdminTablesPage() {
   return (
     <main className="relative flex min-h-[calc(100vh-120px)] flex-col lg:flex-row">
       {/* Background image */}
-      <div
+      <LazyBackground
+        src="/admin-tables-bg.png"
         className="fixed inset-0 -z-10 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: "url(/admin-tables-bg.png)" }}
         aria-hidden
       />
       <div

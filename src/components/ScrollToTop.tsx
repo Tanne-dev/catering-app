@@ -35,6 +35,7 @@ export default function ScrollToTop() {
         height={88}
         sizes="100px"
         className="h-auto w-[100px] sm:w-[120px] md:w-[140px]"
+        loading="lazy"
       />
     </button>
   );

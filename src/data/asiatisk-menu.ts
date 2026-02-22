@@ -1,3 +1,5 @@
+import { MENU_IMAGES_BASE_URL } from "@/lib/supabase";
+
 export type AsiatiskMenuItem = {
   name: string;
   price: string;
@@ -16,7 +18,7 @@ export const ASIATISK_MENU_ITEMS: AsiatiskMenuItem[] = [
     description:
       "Stekta japanska dumplings med krispig botten, fyllda med köttfärs och grönsaker. Serveras med dipsås.",
     allergens: "gluten, soja",
-    image: "/dishes/dish-gyoza.png",
+    image: `${MENU_IMAGES_BASE_URL}/dishes/dish-gyoza.png`,
   },
   {
     name: "VÅRRULLAR – STEKTA",
@@ -24,7 +26,7 @@ export const ASIATISK_MENU_ITEMS: AsiatiskMenuItem[] = [
     description:
       "Krispiga stekta vårrullar med färska grönsaker. Serveras med sötsur dipsås och färska örter.",
     allergens: "gluten, ägg",
-    image: "/dishes/dish-spring-rolls.png",
+    image: `${MENU_IMAGES_BASE_URL}/dishes/dish-spring-rolls.png`,
   },
   {
     name: "FÄRSKA VÅRRULLAR – GỎI CUỐN",
@@ -32,7 +34,7 @@ export const ASIATISK_MENU_ITEMS: AsiatiskMenuItem[] = [
     description:
       "Vietnamesiska färska vårrullar i rispapper med räkor, sallad och risnudlar. Serveras med kryddig nuoc cham-dipsås.",
     allergens: "skaldjur",
-    image: "/dishes/dish-fresh-spring-rolls.png",
+    image: `${MENU_IMAGES_BASE_URL}/dishes/dish-fresh-spring-rolls.png`,
   },
   {
     name: "BAO BUNS – FLÄSKMAGE",
@@ -40,7 +42,7 @@ export const ASIATISK_MENU_ITEMS: AsiatiskMenuItem[] = [
     description:
       "Mjuka ångade bao-bullar fyllda med glaserad fläskmage, inlagda morötter, grönlök och sesamfrön.",
     allergens: "gluten, soja",
-    image: "/dishes/dish-bao-pork.png",
+    image: `${MENU_IMAGES_BASE_URL}/dishes/dish-bao-pork.png`,
   },
   {
     name: "BÁNH MÌ – VIETNAMESISK SANDWICH",
@@ -48,7 +50,7 @@ export const ASIATISK_MENU_ITEMS: AsiatiskMenuItem[] = [
     description:
       "Krispig baguette med fläsk, inlagda morötter och rättika, färsk koriander, gurka och jalapeño.",
     allergens: "gluten, jordnötter (kan tillagas utan)",
-    image: "/dishes/dish-banh-mi.png",
+    image: `${MENU_IMAGES_BASE_URL}/dishes/dish-banh-mi.png`,
   },
   {
     name: "PAD THAI",
@@ -56,7 +58,7 @@ export const ASIATISK_MENU_ITEMS: AsiatiskMenuItem[] = [
     description:
       "Klassiska thailändska wokade nudlar med ägg, grönsaker och sötsur sås.",
     allergens: "jordnötter, ägg, gluten",
-    image: "/dishes/dish-pad-thai.png",
+    image: `${MENU_IMAGES_BASE_URL}/dishes/dish-pad-thai.png`,
   },
   {
     name: "STEKTA RIS MED KYCKLING",
@@ -64,7 +66,7 @@ export const ASIATISK_MENU_ITEMS: AsiatiskMenuItem[] = [
     description:
       "Asiatiskt wokat ris med kyckling och blandade grönsaker.",
     allergens: "ägg, soja",
-    image: "/dishes/dish-stekta-ris-kyckling.png",
+    image: `${MENU_IMAGES_BASE_URL}/dishes/dish-stekta-ris-kyckling.png`,
   },
   {
     name: "WOK MED RYGGBIFF OCH HARICOTS VERTS",
@@ -72,7 +74,7 @@ export const ASIATISK_MENU_ITEMS: AsiatiskMenuItem[] = [
     description:
       "Wokade nudlar med möra ryggbiffstrimlor, krispiga haricots verts och kryddig sås.",
     allergens: "gluten, soja",
-    image: "/dishes/dish-wok-ryggbiff-haricots.png",
+    image: `${MENU_IMAGES_BASE_URL}/dishes/dish-wok-ryggbiff-haricots.png`,
   },
   {
     name: "OXGRYTA I RÖDVIN",
@@ -80,7 +82,7 @@ export const ASIATISK_MENU_ITEMS: AsiatiskMenuItem[] = [
     description:
       "Långkokt oxgryta i rödvinssås, serveras med ris eller potatis.",
     allergens: "gluten, alkohol (rödvin)",
-    image: "/dishes/dish-oxgryta-rodvin.png",
+    image: `${MENU_IMAGES_BASE_URL}/dishes/dish-oxgryta-rodvin.png`,
   },
   {
     name: "TERIYAKI LAX",
@@ -88,7 +90,7 @@ export const ASIATISK_MENU_ITEMS: AsiatiskMenuItem[] = [
     description:
       "Stekt lax med teriyakisås, serveras med grönsaker och ris.",
     allergens: "fisk, soja",
-    image: "/dishes/dish-teriyaki-lax.png",
+    image: `${MENU_IMAGES_BASE_URL}/dishes/dish-teriyaki-lax.png`,
   },
   {
     name: "BARNMENY – STEKT RIS",

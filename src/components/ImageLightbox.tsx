@@ -59,6 +59,8 @@ export default function ImageLightbox({
           height={height}
           className="h-48 w-full object-cover transition hover:opacity-95"
           sizes="(max-width: 640px) 100vw, 320px"
+          loading="lazy"
+          unoptimized={src.startsWith("http")}
         />
       </button>
 
@@ -89,7 +91,8 @@ export default function ImageLightbox({
                 height={900}
                 className="max-h-[90vh] w-auto max-w-full rounded-lg object-contain"
                 sizes="100vw"
-                priority
+                loading="lazy"
+                unoptimized={src.startsWith("http")}
               />
               {caption && (
                 <p className="mt-2 text-center text-sm text-white/90">{caption}</p>

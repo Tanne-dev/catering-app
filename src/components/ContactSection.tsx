@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import LazyBackground from "@/components/LazyBackground";
+import { useCart } from "@/contexts/CartContext";
 import { CONTACT, FORMSPREE_FORM_ID } from "@/data/contact";
 
 const SERVICE_OPTIONS = [
@@ -10,6 +12,7 @@ const SERVICE_OPTIONS = [
 ];
 
 export default function ContactSection() {
+  const { items: cartItems, totalQuantity } = useCart();
   const [submitted, setSubmitted] = useState(false);
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -19,10 +22,39 @@ export default function ContactSection() {
     setError(null);
     const form = e.currentTarget;
 
+    const name = (form.querySelector('[name="name"]') as HTMLInputElement)?.value ?? "";
+    const email = (form.querySelector('[name="email"]') as HTMLInputElement)?.value ?? "";
+    const phone = (form.querySelector('[name="phone"]') as HTMLInputElement)?.value ?? "";
+    const date = (form.querySelector('[name="date"]') as HTMLInputElement)?.value ?? "";
+    const guests = (form.querySelector('[name="guests"]') as HTMLInputElement)?.value ?? "";
+    const service = (form.querySelector('[name="service"]') as HTMLSelectElement)?.selectedOptions?.[0]?.text ?? "";
+    const message = (form.querySelector('[name="message"]') as HTMLTextAreaElement)?.value ?? "";
+
+    const cartText = cartItems.length > 0
+      ? `Beställning:\n${cartItems.map((i) => `• ${i.itemName}: ${i.quantity} ${i.unit ?? "portion"} (${i.price})`).join("\n")}\n\nTotalt: ${totalQuantity} st`
+      : null;
+
+    // Lưu vào Supabase (không chặn flow nếu lỗi)
+    fetch("/api/orders", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name,
+        email,
+        phone,
+        event_date: date,
+        guests,
+        service,
+        message,
+        cart_summary: cartText,
+      }),
+    }).catch(() => {});
+
     if (FORMSPREE_FORM_ID) {
       setSending(true);
       try {
         const formData = new FormData(form);
+        if (cartText) formData.append("cart_summary", cartText);
         const res = await fetch(`https://formspree.io/f/${FORMSPREE_FORM_ID}`, {
           method: "POST",
           body: formData,
@@ -36,17 +68,10 @@ export default function ContactSection() {
         setSending(false);
       }
     } else {
-      // Fallback: mở mailto với nội dung form → khách gửi email tới bạn (không cần Formspree)
-      const name = (form.querySelector('[name="name"]') as HTMLInputElement)?.value ?? "";
-      const email = (form.querySelector('[name="email"]') as HTMLInputElement)?.value ?? "";
-      const phone = (form.querySelector('[name="phone"]') as HTMLInputElement)?.value ?? "";
-      const date = (form.querySelector('[name="date"]') as HTMLInputElement)?.value ?? "";
-      const guests = (form.querySelector('[name="guests"]') as HTMLInputElement)?.value ?? "";
-      const service = (form.querySelector('[name="service"]') as HTMLSelectElement)?.selectedOptions?.[0]?.text ?? "";
-      const message = (form.querySelector('[name="message"]') as HTMLTextAreaElement)?.value ?? "";
       const subject = encodeURIComponent(`Begär offert – ${name}`);
+      const cartPart = cartText ? `\n${cartText}\n\n` : "";
       const body = encodeURIComponent(
-        `Namn: ${name}\nE-post: ${email}\nTelefon: ${phone}\nDatum: ${date}\nAntal gäster: ${guests}\nTyp av catering: ${service}\n\nMeddelande:\n${message}`
+        `Namn: ${name}\nE-post: ${email}\nTelefon: ${phone}\nDatum: ${date}\nAntal gäster: ${guests}\nTyp av catering: ${service}${cartPart}Meddelande:\n${message}`
       );
       window.location.href = `mailto:${CONTACT.email}?subject=${subject}&body=${body}`;
       setSubmitted(true);
@@ -60,9 +85,9 @@ export default function ContactSection() {
       aria-labelledby="contact-heading"
     >
       {/* Background image */}
-      <div
+      <LazyBackground
+        src="/contact-bg.png"
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: "url(/contact-bg.png)" }}
         aria-hidden
       />
       {/* Dark overlay for readability */}
@@ -127,6 +152,22 @@ export default function ContactSection() {
             <p className="mt-2 text-sm text-[#E5E7E3]/80">
               Fyll i formuläret så återkommer vi med ett förslag.
             </p>
+
+            {cartItems.length > 0 && !submitted && (
+              <div className="mt-4 rounded-lg border border-[#C49B38]/40 bg-[#1a1916]/80 p-4">
+                <p className="text-sm font-semibold text-[#EAC84E]">Din beställning</p>
+                <ul className="mt-2 space-y-1 text-sm text-[#E5E7E3]/95">
+                  {cartItems.map((i) => (
+                    <li key={`${i.menuSlug}-${i.itemName}`}>
+                      {i.itemName}: {i.quantity} {i.unit ?? "portion"} ({i.price})
+                    </li>
+                  ))}
+                </ul>
+                <p className="mt-2 text-sm font-medium text-[#C49B38]">
+                  Totalt: {totalQuantity} st
+                </p>
+              </div>
+            )}
 
             {submitted ? (
               <div
