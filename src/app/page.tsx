@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import ContactSection from "@/components/ContactSection";
 import DishSlider from "@/components/DishSlider";
 import Hero from "@/components/Hero";
@@ -10,7 +11,9 @@ import { CONTACT } from "@/data/contact";
 export default function Home() {
   return (
     <main id="main-content">
-      <ScrollToMenuOnQuery />
+      <Suspense fallback={null}>
+        <ScrollToMenuOnQuery />
+      </Suspense>
       <Hero />
       <ServicesSection />
       <MenusSection />
