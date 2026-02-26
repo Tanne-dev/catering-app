@@ -27,7 +27,7 @@ export default function BackgroundMusic() {
       if (unmutedRef.current || !audioRef.current) return;
       unmutedRef.current = true;
       audioRef.current.muted = false;
-      audioRef.current.volume = 0.4;
+      audioRef.current.volume = 0.5;
       setPlaying(true);
       setShowUnmuteHint(false);
       document.removeEventListener("click", unmute);
@@ -58,7 +58,7 @@ export default function BackgroundMusic() {
     if (!unmutedRef.current) {
       unmutedRef.current = true;
       audio.muted = false;
-      audio.volume = 0.4;
+      audio.volume = 0.5;
       setShowUnmuteHint(false);
     }
     if (playing) {
