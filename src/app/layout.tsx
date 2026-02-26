@@ -4,7 +4,6 @@ import Header from "@/components/Header";
 import JsonLd from "@/components/JsonLd";
 import ChatWidget from "@/components/ChatWidget";
 import ScrollToTop from "@/components/ScrollToTop";
-import BackgroundMusic from "@/components/BackgroundMusic";
 import ScrollToQuoteOnHash from "@/components/ScrollToQuoteOnHash";
 import ServiceDetailPanel from "@/components/ServiceDetailPanel";
 import SessionProvider from "@/components/SessionProvider";
@@ -88,7 +87,6 @@ export default function RootLayout({
             <ServiceDetailPanel />
             {children}
             <ScrollToTop />
-            <BackgroundMusic />
             <ChatWidget />
           </SelectedServiceProvider>
           </CartProvider>
