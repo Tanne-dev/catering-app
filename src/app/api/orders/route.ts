@@ -2,6 +2,16 @@ import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { createSupabaseAdminClient } from "@/lib/supabase";
 
+const path = require("path");
+const fs = require("fs");
+const DEBUG_LOG = path.join(process.cwd(), "..", ".cursor", "debug.log");
+function agentLog(p: Record<string, unknown>) {
+  try {
+    fs.mkdirSync(path.dirname(DEBUG_LOG), { recursive: true });
+    fs.appendFileSync(DEBUG_LOG, JSON.stringify(p) + "\n");
+  } catch (_) {}
+}
+
 export async function GET() {
   const session = await auth();
   const role = (session?.user as { role?: string })?.role;
@@ -50,10 +60,19 @@ export async function POST(request: Request) {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      console.error("POST /api/orders Supabase error:", error);
+      agentLog({ location: "orders:POST", message: "supabase_error", data: { msg: error.message }, timestamp: Date.now(), hypothesisId: "H4" });
+      return NextResponse.json(
+        { error: error.message || "Kunde inte spara beställningen." },
+        { status: 500 }
+      );
+    }
+    agentLog({ location: "orders:POST", message: "success", data: { id: (data as { id?: string })?.id }, timestamp: Date.now(), hypothesisId: "H4" });
     return NextResponse.json(data);
   } catch (err) {
+    const message = err instanceof Error ? err.message : "Kunde inte spara beställningen.";
     console.error("POST /api/orders:", err);
-    return NextResponse.json({ error: "Kunde inte spara beställningen." }, { status: 500 });
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

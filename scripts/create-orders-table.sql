@@ -33,3 +33,8 @@ CREATE POLICY "Allow update orders"
 ON orders FOR UPDATE
 USING (true)
 WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Allow delete orders" ON orders;
+CREATE POLICY "Allow delete orders"
+ON orders FOR DELETE
+USING (true);

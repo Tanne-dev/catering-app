@@ -15,12 +15,15 @@ export function resolveMenuImageUrl(src: string | null | undefined): string | un
   if (s.startsWith("http://") || s.startsWith("https://")) return s;
   return s.startsWith("/") ? MENU_IMAGES_BASE_URL + s : MENU_IMAGES_BASE_URL + "/" + s;
 }
-const supabaseAnonKey = process.env.SUPABASE_ANON_KEY!;
+
+const supabaseAnonKey = process.env.SUPABASE_ANON_KEY ?? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 
 /** Server-side Supabase client for admin auth (signInWithPassword) */
 export function createSupabaseAdminClient() {
   if (!supabaseUrl || !supabaseAnonKey) {
-    throw new Error("Missing Supabase env: NEXT_PUBLIC_SUPABASE_URL or SUPABASE_ANON_KEY");
+    throw new Error(
+      "Saknar Supabase-inställningar. Lägg till NEXT_PUBLIC_SUPABASE_URL och SUPABASE_ANON_KEY (eller NEXT_PUBLIC_SUPABASE_ANON_KEY) i .env.local."
+    );
   }
   return createClient(supabaseUrl, supabaseAnonKey);
 }

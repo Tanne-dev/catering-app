@@ -1,11 +1,34 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { signIn, useSession } from "next-auth/react";
 import LazyBackground from "@/components/LazyBackground";
 import { useCart } from "@/contexts/CartContext";
 
+const SCROLL_TO_QUOTE_KEY = "scrollToQuote";
+
 export default function VarukorgPage() {
+  const router = useRouter();
+  const { data: session, status } = useSession();
   const { items, removeItem, totalQuantity } = useCart();
+  const isGuest = status === "authenticated" && (session?.user as { role?: string })?.role === "guest";
+  const isAdmin = status === "authenticated" && (session?.user as { role?: string })?.role === "admin";
+  const canRequestQuote = status === "authenticated" && (isGuest || isAdmin);
+
+  function handleBegarOffert() {
+    if (!canRequestQuote) {
+      if (typeof window !== "undefined") {
+        window.sessionStorage.setItem(SCROLL_TO_QUOTE_KEY, "1");
+      }
+      signIn("google", { callbackUrl: "/#quote" });
+      return;
+    }
+    if (typeof window !== "undefined") {
+      window.sessionStorage.setItem(SCROLL_TO_QUOTE_KEY, "1");
+    }
+    router.push("/#quote", { scroll: false });
+  }
 
   return (
     <main id="main-content" className="relative min-h-[60vh] pb-16">
@@ -44,7 +67,7 @@ export default function VarukorgPage() {
                   <div>
                     <p className="font-medium text-[#E5E7E3]">{item.itemName}</p>
                     <p className="text-sm text-[#E5E7E3]/80">
-                      {item.quantity} {item.unit ?? "portion"} · {item.price}
+                      {item.quantity} {item.unit ?? "portion"}
                     </p>
                   </div>
                   <button
@@ -62,12 +85,13 @@ export default function VarukorgPage() {
               Totalt: {totalQuantity} st
             </p>
             <div className="flex flex-col gap-3 pt-2 sm:flex-row">
-              <Link
-                href="/#quote"
+              <button
+                type="button"
+                onClick={handleBegarOffert}
                 className="flex-1 rounded-lg bg-[#C49B38] px-5 py-3 text-center text-sm font-semibold text-[#12110D] transition-colors hover:bg-[#D4A83E]"
               >
                 Begär offert
-              </Link>
+              </button>
               <Link
                 href="/#menus"
                 className="flex-1 rounded-lg border border-[#707164]/50 px-5 py-3 text-center text-sm font-medium text-[#E5E7E3] transition-colors hover:bg-[#E5E7E3]/10"

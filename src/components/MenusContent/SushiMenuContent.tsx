@@ -59,7 +59,7 @@ export default function SushiMenuContent() {
         >
           <p className="font-semibold text-[#E5E7E3]">
             <span className="text-[#EAC84E]" aria-hidden>⭐ </span>
-            {tier.name} – {tier.price}
+            {tier.name}
           </p>
           <p className={`mt-1.5 ${styles.body}`}>{tier.description}</p>
           {tier.image && (

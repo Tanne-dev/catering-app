@@ -17,9 +17,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         password: { label: "Lösenord", type: "password" },
       },
       async authorize(credentials) {
-        const email = credentials?.email as string | undefined;
+        const emailFromClient = credentials?.email as string | undefined;
         const password = credentials?.password as string | undefined;
         if (!password) return null;
+
+        const email = emailFromClient || process.env.ADMIN_EMAIL || "admin@cateringtanne.se";
 
         const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
         const supabaseKey = process.env.SUPABASE_ANON_KEY;
@@ -28,7 +30,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           try {
             const supabase = createSupabaseAdminClient();
             const { data, error } = await supabase.auth.signInWithPassword({
-              email: email || "",
+              email,
               password,
             });
             if (error || !data.user) {
@@ -52,7 +54,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           return {
             id: "admin",
             name: "Admin",
-            email: email ?? "admin@cateringtanne.se",
+            email: process.env.ADMIN_EMAIL ?? "admin@cateringtanne.se",
             role: "admin",
           };
         }

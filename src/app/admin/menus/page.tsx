@@ -413,7 +413,6 @@ function AdminMenusContent() {
                 </label>
                 <div className="min-w-0 flex-1">
                   <span className="font-medium text-[#E5E7E3]">{item.name}</span>
-                  <span className="ml-2 text-sm text-[#C49B38]">{item.price}</span>
                 </div>
                 <div className="flex shrink-0 gap-2">
                   <button
@@ -458,17 +457,6 @@ function AdminMenusContent() {
                   value={form.name}
                   onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
                   required
-                  className="mt-1 w-full rounded-lg border border-[#707164]/50 bg-[#12110D] px-3 py-2 text-sm text-[#E5E7E3] focus:border-[#C49B38] focus:outline-none"
-                />
-              </div>
-              <div>
-                <label className="block text-xs text-[#E5E7E3]/80">Pris *</label>
-                <input
-                  type="text"
-                  value={form.price}
-                  onChange={(e) => setForm((f) => ({ ...f, price: e.target.value }))}
-                  required
-                  placeholder="t.ex. 135,00 kr"
                   className="mt-1 w-full rounded-lg border border-[#707164]/50 bg-[#12110D] px-3 py-2 text-sm text-[#E5E7E3] focus:border-[#C49B38] focus:outline-none"
                 />
               </div>

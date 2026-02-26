@@ -58,7 +58,7 @@ export default function AdminLoginPage() {
 
     try {
       const res = await signIn("credentials", {
-        email,
+        email: email.trim() || undefined,
         password,
         redirect: false,
       });
@@ -66,7 +66,7 @@ export default function AdminLoginPage() {
       // NextAuth v5 may return ok: true even on failure – check res.error first
       if (res?.error) {
         setSuccess(false);
-        setError("E-post eller lösenord stämmer inte med admin-kontot. Kontrollera och försök igen.");
+        setError("Lösenord stämmer inte med admin-kontot. Kontrollera och försök igen.");
       } else if (res?.ok) {
         setSuccess(true);
         setTimeout(() => {
@@ -74,7 +74,7 @@ export default function AdminLoginPage() {
         }, 1200);
       } else {
         setSuccess(false);
-        setError("E-post eller lösenord stämmer inte med admin-kontot. Kontrollera och försök igen.");
+        setError("Lösenord stämmer inte med admin-kontot. Kontrollera och försök igen.");
       }
     } catch {
       setError("Något gick fel. Försök igen.");
@@ -148,21 +148,20 @@ export default function AdminLoginPage() {
           <div>
             <h2 className="text-sm font-medium text-[#E5E7E3]/90">Admin</h2>
             <p className="mt-1 text-xs text-[#E5E7E3]/60">
-              Logga in med admin-konto (Supabase Auth eller lösenord i .env).
+              Endast för plattformens administratörer.
             </p>
             <form onSubmit={handleAdminSubmit} className="mt-3 space-y-3">
               <div>
                 <label htmlFor="admin-email" className="block text-xs text-[#E5E7E3]/80">
-                  E-post *
+                  E-post
                 </label>
                 <input
                   id="admin-email"
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  required
                   className="mt-1 w-full rounded-lg border border-[#707164]/50 bg-[#12110D] px-4 py-2.5 text-sm text-[#E5E7E3] placeholder-[#707164] focus:border-[#C49B38] focus:outline-none focus:ring-1 focus:ring-[#C49B38]"
-                  placeholder="admin@cateringtanne.se"
+                  placeholder=""
                   autoComplete="email"
                 />
               </div>

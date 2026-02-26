@@ -54,7 +54,7 @@ export default function AsiatiskMenuContent() {
                 <ImageLightbox
                   src={item.image}
                   alt={item.name}
-                  caption={`${item.name} – ${item.price}`}
+                  caption={item.name}
                   width={320}
                   height={240}
                 />
@@ -67,7 +67,6 @@ export default function AsiatiskMenuContent() {
                 Allergener: {item.allergens}
               </p>
             )}
-            <p className="mt-1 text-sm font-medium text-[#EAC84E]">{item.price}</p>
             <OrderQuantityInput menuSlug="asiatisk" itemName={item.name} price={item.price} />
           </li>
         ))}

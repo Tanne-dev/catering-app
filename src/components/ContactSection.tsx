@@ -1,9 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
+import { signIn, useSession } from "next-auth/react";
 import LazyBackground from "@/components/LazyBackground";
 import { useCart } from "@/contexts/CartContext";
 import { CONTACT, FORMSPREE_FORM_ID } from "@/data/contact";
+
+const SCROLL_TO_QUOTE_KEY = "scrollToQuote";
 
 const SERVICE_OPTIONS = [
   { value: "", label: "Välj typ av catering" },
@@ -12,14 +15,36 @@ const SERVICE_OPTIONS = [
 ];
 
 export default function ContactSection() {
+  const quoteRef = useRef<HTMLDivElement>(null);
+  const { data: session, status } = useSession();
   const { items: cartItems, totalQuantity } = useCart();
   const [submitted, setSubmitted] = useState(false);
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const isGuest = status === "authenticated" && (session?.user as { role?: string })?.role === "guest";
+  const isAdmin = status === "authenticated" && (session?.user as { role?: string })?.role === "admin";
+  const canSubmitQuote = status === "authenticated" && (isGuest || isAdmin);
+
+  useEffect(() => {
+    if (typeof window === "undefined" || !quoteRef.current) return;
+    if (sessionStorage.getItem(SCROLL_TO_QUOTE_KEY) !== "1") return;
+    sessionStorage.removeItem(SCROLL_TO_QUOTE_KEY);
+    quoteRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    if (window.history.replaceState) {
+      window.history.replaceState(null, "", "/#quote");
+    }
+  }, []);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setError(null);
+
+    if (!canSubmitQuote) {
+      setError("Logga in med Google först för att skicka en offertförfrågan.");
+      await signIn("google", { callbackUrl: "/#quote" });
+      return;
+    }
+
     const form = e.currentTarget;
 
     const name = (form.querySelector('[name="name"]') as HTMLInputElement)?.value ?? "";
@@ -31,27 +56,56 @@ export default function ContactSection() {
     const message = (form.querySelector('[name="message"]') as HTMLTextAreaElement)?.value ?? "";
 
     const cartText = cartItems.length > 0
-      ? `Beställning:\n${cartItems.map((i) => `• ${i.itemName}: ${i.quantity} ${i.unit ?? "portion"} (${i.price})`).join("\n")}\n\nTotalt: ${totalQuantity} st`
+      ? `Beställning:\n${cartItems.map((i) => `• ${i.itemName}: ${i.quantity} ${i.unit ?? "portion"}`).join("\n")}\n\nTotalt: ${totalQuantity} st`
       : null;
 
-    // Lưu vào Supabase (không chặn flow nếu lỗi)
-    fetch("/api/orders", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        name,
-        email,
-        phone,
-        event_date: date,
-        guests,
-        service,
-        message,
-        cart_summary: cartText,
-      }),
-    }).catch(() => {});
+    setSending(true);
+    // #region agent log
+    fetch('http://127.0.0.1:7242/ingest/0cdeab99-f7cb-4cee-9943-94270784127d',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'ContactSection.tsx:handleSubmit',message:'order submit start',data:{canSubmitQuote,name:name?.slice(0,3),email:email?.slice(0,5)},timestamp:Date.now(),hypothesisId:'H4'})}).catch(()=>{});
+    // #endregion
+    try {
+      const orderRes = await fetch("/api/orders", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name,
+          email,
+          phone,
+          event_date: date,
+          guests,
+          service,
+          message,
+          cart_summary: cartText,
+        }),
+      });
+      if (!orderRes.ok) {
+        let errMessage = "Kunde inte spara beställningen. Försök igen.";
+        try {
+          const errData = await orderRes.json();
+          if (typeof (errData as { error?: string }).error === "string") {
+            errMessage = (errData as { error: string }).error;
+          }
+        } catch {
+          const text = await orderRes.text();
+          if (text.length > 0 && text.length < 500) errMessage = text;
+        }
+        // #region agent log
+        fetch('http://127.0.0.1:7242/ingest/0cdeab99-f7cb-4cee-9943-94270784127d',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'ContactSection.tsx:handleSubmit',message:'order submit fail',data:{ok:false,status:orderRes.status,errMessage:errMessage.slice(0,80)},timestamp:Date.now(),hypothesisId:'H4'})}).catch(()=>{});
+        // #endregion
+        setError(errMessage);
+        setSending(false);
+        return;
+      }
+      // #region agent log
+      fetch('http://127.0.0.1:7242/ingest/0cdeab99-f7cb-4cee-9943-94270784127d',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'ContactSection.tsx:handleSubmit',message:'order submit ok',data:{ok:true,status:orderRes.status},timestamp:Date.now(),hypothesisId:'H4'})}).catch(()=>{});
+      // #endregion
+    } catch {
+      setError("Kunde inte spara beställningen. Försök igen.");
+      setSending(false);
+      return;
+    }
 
     if (FORMSPREE_FORM_ID) {
-      setSending(true);
       try {
         const formData = new FormData(form);
         if (cartText) formData.append("cart_summary", cartText);
@@ -75,6 +129,7 @@ export default function ContactSection() {
       );
       window.location.href = `mailto:${CONTACT.email}?subject=${subject}&body=${body}`;
       setSubmitted(true);
+      setSending(false);
     }
   }
 
@@ -145,13 +200,22 @@ export default function ContactSection() {
           </div>
 
           {/* Form Begär offert */}
-          <div id="quote" className="scroll-mt-24 mx-auto w-full max-w-xl md:max-w-none">
+          <div
+            id="quote"
+            ref={quoteRef}
+            className="scroll-mt-24 mx-auto w-full max-w-xl md:max-w-none"
+          >
             <h3 className="font-serif text-xl font-semibold text-[#EAC84E] sm:text-2xl" style={{ fontFamily: "Georgia, Cambria, 'Times New Roman', serif" }}>
               Begär offert
             </h3>
             <p className="mt-2 text-sm text-[#E5E7E3]/80">
               Fyll i formuläret så återkommer vi med ett förslag.
             </p>
+            {status !== "loading" && !canSubmitQuote ? (
+              <p className="mt-2 rounded-lg border border-[#C49B38]/50 bg-[#1a1916]/80 px-4 py-2 text-sm text-[#EAC84E]/95">
+                Logga in med Google för att skicka en offertförfrågan.
+              </p>
+            ) : null}
 
             {cartItems.length > 0 && !submitted && (
               <div className="mt-4 rounded-lg border border-[#C49B38]/40 bg-[#1a1916]/80 p-4">
@@ -159,7 +223,7 @@ export default function ContactSection() {
                 <ul className="mt-2 space-y-1 text-sm text-[#E5E7E3]/95">
                   {cartItems.map((i) => (
                     <li key={`${i.menuSlug}-${i.itemName}`}>
-                      {i.itemName}: {i.quantity} {i.unit ?? "portion"} ({i.price})
+                      {i.itemName}: {i.quantity} {i.unit ?? "portion"}
                     </li>
                   ))}
                 </ul>
@@ -221,6 +285,7 @@ export default function ContactSection() {
                     name="name"
                     required
                     aria-required="true"
+                    defaultValue={session?.user?.name ?? ""}
                     className="mt-1 w-full rounded-lg border border-[#707164]/50 bg-[#1a1916] px-4 py-2.5 text-[#E5E7E3] placeholder-[#707164] focus:border-[#C49B38] focus:outline-none focus:ring-1 focus:ring-[#C49B38]"
                     placeholder="Ditt namn"
                   />
@@ -236,6 +301,7 @@ export default function ContactSection() {
                       name="email"
                       required
                       aria-required="true"
+                      defaultValue={session?.user?.email ?? ""}
                       className="mt-1 w-full rounded-lg border border-[#707164]/50 bg-[#1a1916] px-4 py-2.5 text-[#E5E7E3] placeholder-[#707164] focus:border-[#C49B38] focus:outline-none focus:ring-1 focus:ring-[#C49B38]"
                       placeholder="din@epost.se"
                     />

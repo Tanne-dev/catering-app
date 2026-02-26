@@ -2,6 +2,7 @@ import ContactSection from "@/components/ContactSection";
 import DishSlider from "@/components/DishSlider";
 import Hero from "@/components/Hero";
 import MenusSection from "@/components/MenusSection";
+import ScrollToMenuOnQuery from "@/components/ScrollToMenuOnQuery";
 import ServicesSection from "@/components/ServicesSection";
 import TestimonialsSection from "@/components/TestimonialsSection";
 import { CONTACT } from "@/data/contact";
@@ -9,6 +10,7 @@ import { CONTACT } from "@/data/contact";
 export default function Home() {
   return (
     <main id="main-content">
+      <ScrollToMenuOnQuery />
       <Hero />
       <ServicesSection />
       <MenusSection />

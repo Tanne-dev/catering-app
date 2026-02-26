@@ -25,9 +25,9 @@ export async function POST(request: Request) {
       allergens,
     } = body;
 
-    if (!menu_id || !name || !price) {
+    if (!menu_id || !name) {
       return NextResponse.json(
-        { error: "menu_id, name, price required" },
+        { error: "menu_id och name krävs" },
         { status: 400 }
       );
     }
@@ -51,7 +51,7 @@ export async function POST(request: Request) {
       .insert({
         menu_id,
         name: String(name),
-        price: String(price),
+        price: price != null ? String(price) : "",
         description: description ?? null,
         image: image ?? null,
         sort_order: Number(sort_order) || 0,

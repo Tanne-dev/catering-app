@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { useState, useRef, useEffect } from "react";
 import { useSelectedMenu, type MenuId } from "@/contexts/SelectedMenuContext";
@@ -74,7 +75,38 @@ function ChevronDownIcon() {
   );
 }
 
+function BellIcon() {
+  return (
+    <svg
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="shrink-0"
+      aria-hidden
+    >
+      <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+      <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+    </svg>
+  );
+}
+
+type OrderNotification = {
+  id: string;
+  name: string;
+  email: string;
+  status: string;
+  created_at: string;
+  event_date?: string | null;
+};
+
 export default function Header() {
+  const router = useRouter();
+  const pathname = usePathname();
   const { data: session, status } = useSession();
   const { setSelectedMenu } = useSelectedMenu();
   const { totalQuantity } = useCart();
@@ -92,13 +124,58 @@ export default function Header() {
   const [loginDropdownOpen, setLoginDropdownOpen] = useState(false);
   const loginDropdownRef = useRef<HTMLDivElement>(null);
 
+  const [notificationOpen, setNotificationOpen] = useState(false);
+  const notificationDropdownRef = useRef<HTMLDivElement>(null);
+
+  const [notificationOrders, setNotificationOrders] = useState<OrderNotification[]>([]);
+  const [notificationLoading, setNotificationLoading] = useState(false);
+
+  const NOTIFICATION_READ_KEY = "catering_notification_read_ids";
+  const [readOrderIds, setReadOrderIds] = useState<Set<string>>(() => new Set());
+  const wasNotificationOpen = useRef(false);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    try {
+      const raw = window.localStorage.getItem(NOTIFICATION_READ_KEY);
+      if (raw) {
+        const arr = JSON.parse(raw) as string[];
+        setReadOrderIds(new Set(Array.isArray(arr) ? arr : []));
+      }
+    } catch (_) {}
+  }, []);
+
+  useEffect(() => {
+    if (wasNotificationOpen.current && !notificationOpen && notificationOrders.length > 0) {
+      const ids = notificationOrders.map((o) => o.id);
+      setReadOrderIds((prev) => {
+        const next = new Set(prev);
+        ids.forEach((id) => next.add(id));
+        try {
+          window.localStorage.setItem(NOTIFICATION_READ_KEY, JSON.stringify([...next]));
+        } catch (_) {}
+        return next;
+      });
+    }
+    wasNotificationOpen.current = notificationOpen;
+  }, [notificationOpen, notificationOrders]);
+
+  const isAdmin = status === "authenticated" && (session?.user as { role?: string })?.role === "admin";
+  const isGuest = status === "authenticated" && (session?.user as { role?: string })?.role === "guest";
+
+  const unreadOrders = notificationOrders.filter((o) => !readOrderIds.has(o.id));
+  const pendingOrderCount = notificationOrders.filter((o) => o.status === "pending" && !readOrderIds.has(o.id)).length;
+  const recentOrders = unreadOrders.slice(0, 5);
+  const guestConfirmedCount = notificationOrders.filter(
+    (o) => (o.status === "confirmed" || o.status === "completed") && !readOrderIds.has(o.id)
+  ).length;
+  const notificationBadgeCount = isAdmin ? pendingOrderCount : isGuest ? guestConfirmedCount : 0;
+
   const [mounted, setMounted] = useState(false);
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  const isAdmin = status === "authenticated" && (session?.user as { role?: string })?.role === "admin";
-  const isGuest = status === "authenticated" && (session?.user as { role?: string })?.role === "guest";
   const fullName = session?.user?.name ?? session?.user?.email?.split("@")[0] ?? "Gäst";
   const guestDisplayName = fullName.includes(" ") ? fullName.split(" ")[0] : fullName;
   const showSessionUI = mounted && status !== "loading";
@@ -112,11 +189,15 @@ export default function Header() {
       if (loginDropdownRef.current && !loginDropdownRef.current.contains(target)) {
         setLoginDropdownOpen(false);
       }
+      if (notificationDropdownRef.current && !notificationDropdownRef.current.contains(target)) {
+        setNotificationOpen(false);
+      }
     }
     function handleEscape(e: KeyboardEvent) {
       if (e.key === "Escape") {
         setMenusDropdownOpen(false);
         setLoginDropdownOpen(false);
+        setNotificationOpen(false);
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
@@ -130,7 +211,66 @@ export default function Header() {
   function handleMenuClick(menuId: MenuId) {
     setSelectedMenu(menuId);
     setMenusDropdownOpen(false);
-    document.getElementById("menus")?.scrollIntoView({ behavior: "smooth" });
+    if (pathname === "/") {
+      document.getElementById("menus")?.scrollIntoView({ behavior: "smooth" });
+    } else {
+      router.push("/?menu=" + encodeURIComponent(menuId ?? "") + "#menus");
+    }
+  }
+
+  async function fetchNotificationOrders() {
+    if (!isAdmin && !isGuest) return;
+    setNotificationLoading(true);
+    // #region agent log
+    const url = isAdmin ? "/api/orders" : "/api/orders/mine";
+    fetch('http://127.0.0.1:7242/ingest/0cdeab99-f7cb-4cee-9943-94270784127d',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'Header.tsx:fetchNotificationOrders',message:'fetch start',data:{isAdmin,isGuest,url},timestamp:Date.now(),hypothesisId:'H1_H2_H5'})}).catch(()=>{});
+    // #endregion
+    try {
+      const res = await fetch(url);
+      const data = await res.json().catch(() => []);
+      const list = Array.isArray(data) ? data : [];
+      if (res.ok) setNotificationOrders(list);
+      else setNotificationOrders([]);
+      // #region agent log
+      fetch('http://127.0.0.1:7242/ingest/0cdeab99-f7cb-4cee-9943-94270784127d',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'Header.tsx:fetchNotificationOrders',message:'fetch done',data:{ok:res.ok,status:res.status,count:list.length,hasError:(data&&typeof data==='object'&&'error' in data)},timestamp:Date.now(),hypothesisId:'H1_H2_H5'})}).catch(()=>{});
+      // #endregion
+    } catch (e) {
+      setNotificationOrders([]);
+      // #region agent log
+      fetch('http://127.0.0.1:7242/ingest/0cdeab99-f7cb-4cee-9943-94270784127d',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'Header.tsx:fetchNotificationOrders',message:'fetch throw',data:{err:String(e)},timestamp:Date.now(),hypothesisId:'H2_H5'})}).catch(()=>{});
+      // #endregion
+    } finally {
+      setNotificationLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    if (!isAdmin && !isGuest) return;
+    fetchNotificationOrders();
+    const interval = setInterval(fetchNotificationOrders, 60 * 1000);
+    return () => clearInterval(interval);
+  }, [isAdmin, isGuest]);
+
+  useEffect(() => {
+    if ((isAdmin || isGuest) && notificationOpen) {
+      fetchNotificationOrders();
+    }
+  }, [isAdmin, isGuest, notificationOpen]);
+
+  function formatOrderDate(iso: string) {
+    try {
+      const d = new Date(iso);
+      const now = new Date();
+      const diffMs = now.getTime() - d.getTime();
+      const diffMins = Math.floor(diffMs / 60000);
+      if (diffMins < 1) return "Nu";
+      if (diffMins < 60) return `${diffMins} min sedan`;
+      const diffHours = Math.floor(diffMins / 60);
+      if (diffHours < 24) return `${diffHours} h sedan`;
+      return d.toLocaleDateString("sv-SE", { day: "numeric", month: "short" });
+    } catch {
+      return iso;
+    }
   }
 
   return (
@@ -183,6 +323,154 @@ export default function Header() {
                 </span>
               )}
             </Link>
+            <div className="relative" ref={notificationDropdownRef}>
+              <button
+                type="button"
+                onClick={() => setNotificationOpen((o) => !o)}
+                className="relative flex items-center justify-center rounded-lg p-2 text-[#D5D7D3] transition-colors hover:bg-white/10 hover:text-[#EAC84E] focus:outline-none focus:ring-2 focus:ring-[#EAC84E] focus:ring-offset-2 focus:ring-offset-[#12110D]"
+                aria-label={notificationBadgeCount > 0 ? `Notiser – ${notificationBadgeCount} nya` : "Notiser"}
+                aria-haspopup="true"
+                aria-expanded={notificationOpen}
+              >
+                <BellIcon />
+                {notificationBadgeCount > 0 && (
+                  <span
+                    className="absolute -right-1 -top-0.5 flex min-w-[18px] items-center justify-center rounded-full bg-[#EAC84E] px-1 py-0.5 text-[10px] font-bold text-[#12110D]"
+                    aria-hidden
+                  >
+                    {notificationBadgeCount > 99 ? "99+" : notificationBadgeCount}
+                  </span>
+                )}
+              </button>
+              {notificationOpen && (
+                <div className="absolute right-0 top-full z-50 mt-1.5 w-72 max-w-[calc(100vw-2rem)]">
+                  <div
+                    className="rounded-[14px] border py-2 shadow-xl"
+                    style={{
+                      backgroundColor: "#12110D",
+                      borderColor: "#707164",
+                    }}
+                  >
+                    <p className="px-4 py-2 text-xs font-semibold uppercase tracking-wider text-[#C49B38]">
+                      Notiser
+                    </p>
+                    {!isAdmin && !isGuest ? (
+                      <div className="px-4 py-4 text-center text-sm text-[#E5E7E3]/70">
+                        Inga nya notiser
+                      </div>
+                    ) : notificationLoading ? (
+                      <div className="px-4 py-4 text-center text-sm text-[#E5E7E3]/70">
+                        Laddar…
+                      </div>
+                    ) : isAdmin ? (
+                      recentOrders.length === 0 ? (
+                        <div className="px-4 py-4 text-center text-sm text-[#E5E7E3]/70">
+                          Inga beställningar ännu
+                        </div>
+                      ) : (
+                        <ul className="max-h-64 overflow-y-auto">
+                          {recentOrders.map((order) => (
+                            <li key={order.id}>
+                              <a
+                                href="/admin/orders"
+                                onClick={() => setNotificationOpen(false)}
+                                className="block border-t px-4 py-2.5 text-left text-sm transition-colors"
+                                style={{ borderColor: "#707164", color: "#D5D7D3" }}
+                                onMouseEnter={(e) => {
+                                  e.currentTarget.style.backgroundColor = "#ffffff08";
+                                }}
+                                onMouseLeave={(e) => {
+                                  e.currentTarget.style.backgroundColor = "transparent";
+                                }}
+                              >
+                                <span className="font-medium text-[#E5E7E3]">{order.name}</span>
+                                <span className="ml-1.5 text-[#707164]">
+                                  {formatOrderDate(order.created_at)}
+                                </span>
+                                {order.status === "pending" && (
+                                  <span className="ml-1.5 rounded bg-[#C49B38]/30 px-1.5 py-0.5 text-xs text-[#EAC84E]">
+                                    Väntar
+                                  </span>
+                                )}
+                              </a>
+                            </li>
+                          ))}
+                        </ul>
+                      )
+                    ) : recentOrders.length === 0 ? (
+                      <div className="px-4 py-4 text-center text-sm text-[#E5E7E3]/70">
+                        Inga beställningar ännu
+                      </div>
+                    ) : (
+                      <ul className="max-h-64 overflow-y-auto">
+                        {recentOrders.map((order) => {
+                          const statusLabel =
+                            order.status === "confirmed"
+                              ? "Din beställning är bekräftad"
+                              : order.status === "completed"
+                                ? "Din beställning är slutförd"
+                                : "Väntar";
+                          return (
+                            <li key={order.id}>
+                              <a
+                                href="/mina-bestallningar"
+                                onClick={() => setNotificationOpen(false)}
+                                className="block border-t px-4 py-2.5 text-left text-sm transition-colors"
+                                style={{ borderColor: "#707164", color: "#D5D7D3" }}
+                                onMouseEnter={(e) => {
+                                  e.currentTarget.style.backgroundColor = "#ffffff08";
+                                }}
+                                onMouseLeave={(e) => {
+                                  e.currentTarget.style.backgroundColor = "transparent";
+                                }}
+                              >
+                                <span className="block font-medium text-[#E5E7E3]">{statusLabel}</span>
+                                <span className="text-xs text-[#707164]">
+                                  {formatOrderDate(order.created_at)}
+                                  {order.event_date && ` · ${order.event_date}`}
+                                </span>
+                              </a>
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    )}
+                    {isAdmin && (
+                      <a
+                        href="/admin/orders"
+                        onClick={() => setNotificationOpen(false)}
+                        className="block border-t px-4 py-2.5 text-sm transition-colors"
+                        style={{ borderColor: "#707164", color: "#D5D7D3" }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.backgroundColor = "#ffffff08";
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = "transparent";
+                        }}
+                      >
+                        Hantera beställningar →
+                      </a>
+                    )}
+                    {isGuest && (
+                      <a
+                        href="/mina-bestallningar"
+                        onClick={() => setNotificationOpen(false)}
+                        className="block border-t px-4 py-2.5 text-sm transition-colors"
+                        style={{ borderColor: "#707164", color: "#D5D7D3" }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.backgroundColor = "#ffffff08";
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = "transparent";
+                        }}
+                      >
+                        Mina beställningar →
+                      </a>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
             <div className="relative" ref={menusDropdownRef}>
               <button
                 type="button"
@@ -332,7 +620,23 @@ export default function Header() {
                         </button>
                       </>
                     ) : isGuest ? (
-                      <button
+                      <>
+                        <a
+                          href="/mina-bestallningar"
+                          role="menuitem"
+                          onClick={() => setLoginDropdownOpen(false)}
+                          className="block w-full px-4 py-2.5 text-left text-sm transition-colors"
+                          style={{ color: "#D5D7D3" }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.backgroundColor = "#ffffff08";
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.backgroundColor = "transparent";
+                          }}
+                        >
+                          Hantera beställningar
+                        </a>
+                        <button
                         type="button"
                         role="menuitem"
                         onClick={() => {
@@ -347,9 +651,10 @@ export default function Header() {
                         onMouseLeave={(e) => {
                           e.currentTarget.style.backgroundColor = "transparent";
                         }}
-                      >
-                        Logga ut
-                      </button>
+                        >
+                          Logga ut
+                        </button>
+                      </>
                     ) : (
                       <>
                         <button

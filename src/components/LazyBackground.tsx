@@ -40,6 +40,7 @@ export default function LazyBackground({
         ...style,
         backgroundImage: loaded ? `url(${src})` : undefined,
       }}
+      suppressHydrationWarning
       {...props}
     >
       {children}

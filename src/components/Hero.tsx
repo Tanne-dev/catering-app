@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 
 function CheckIcon() {
@@ -22,7 +23,7 @@ function CheckIcon() {
 }
 
 const BULLETS = [
-  "15+ års erfarenhet från restaurangbranschen",
+  "10+ års erfarenhet från restaurangbranschen",
   "Professionellt organiserat och noggrant genomfört vid varje evenemang",
 ];
 
@@ -51,36 +52,44 @@ export default function Hero() {
         }}
         aria-hidden
       />
-      <div className="relative z-10 flex min-h-[85vh] items-center lg:min-h-[90vh]">
+      <div className="relative z-10 flex min-h-[85vh] items-center justify-center lg:min-h-[90vh]">
         <div className="w-full max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-2xl px-4 text-center sm:px-0 sm:pl-8 sm:text-left md:pl-12 lg:pl-16">
+          <div className="mx-auto max-w-2xl px-4 text-center sm:max-w-3xl">
             <h1
               id="hero-heading"
-              className="font-serif text-2xl font-medium tracking-tight text-[#EAC84E] sm:text-3xl md:text-4xl lg:text-4xl xl:text-5xl"
+              className="font-serif text-3xl font-medium tracking-tight text-[#EAC84E] sm:text-4xl md:text-5xl lg:text-5xl xl:text-6xl"
               style={{
                 fontFamily: "Georgia, Cambria, 'Times New Roman', serif",
               }}
             >
-              Vietnamesisk & svensk catering
+              <Image
+                src="/logo-catering-tanne.png"
+                alt="Catering Tanne – Vietnamesisk & svensk catering"
+                width={485}
+                height={67}
+                sizes="(max-width: 640px) 320px, (max-width: 768px) 400px, 520px"
+                className="mx-auto h-auto w-full max-w-[320px] object-contain object-center sm:max-w-[400px] md:max-w-[480px] lg:max-w-[520px]"
+                priority
+              />
             </h1>
-            <p className="mt-3 text-base leading-relaxed text-[#D5D7D3] sm:mt-4 sm:text-lg md:text-xl">
+            <p className="mt-4 text-lg leading-relaxed text-[#D5D7D3] sm:mt-5 sm:text-xl md:text-2xl">
               Autentisk vietnamesisk och svensk mat för dina evenemang
             </p>
-            <ul className="mt-5 space-y-2.5 sm:mt-6 sm:space-y-3" role="list">
+            <ul className="mx-auto mt-6 max-w-xl space-y-3 text-left sm:mt-8 sm:max-w-2xl sm:space-y-4" role="list">
               {BULLETS.map((item) => (
-                <li key={item} className="flex items-start gap-2.5 text-[#D5D7D3] sm:gap-3">
+                <li key={item} className="flex items-start gap-3 text-[#D5D7D3] sm:gap-4">
                   <span className="mt-0.5 shrink-0 text-[#C49B38]" aria-hidden>
                     <CheckIcon />
                   </span>
-                  <span className="text-sm leading-relaxed sm:text-base md:text-lg">{item}</span>
+                  <span className="text-base leading-relaxed sm:text-lg md:text-xl">{item}</span>
                 </li>
               ))}
             </ul>
-            <div className="mx-auto mt-6 flex max-w-sm flex-col gap-3 sm:mt-8 sm:max-w-none sm:flex-row sm:gap-4">
-              <Link href="#quote" className="btn-outline w-full sm:w-auto sm:min-w-[160px]">
+            <div className="mx-auto mt-8 flex max-w-sm flex-col items-center gap-4 sm:mt-10 sm:max-w-none sm:flex-row sm:justify-center sm:gap-5">
+              <Link href="#quote" className="btn-outline w-full py-3 text-base sm:w-auto sm:min-w-[180px] sm:py-3.5">
                 Begär offert
               </Link>
-              <Link href="/admin/tables" className="btn-outline w-full sm:w-auto sm:min-w-[160px]">
+              <Link href="/admin/tables" className="btn-outline w-full py-3 text-base sm:w-auto sm:min-w-[180px] sm:py-3.5">
                 Hantera bord
               </Link>
             </div>

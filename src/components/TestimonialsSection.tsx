@@ -105,6 +105,7 @@ export default function TestimonialsSection() {
       id="testimonials"
       className="relative border-t border-[#707164]/25 py-16 md:py-20 overflow-hidden"
       aria-labelledby="testimonials-heading"
+      suppressHydrationWarning
     >
       <LazyBackground
         src="/omdomen-bg.png"

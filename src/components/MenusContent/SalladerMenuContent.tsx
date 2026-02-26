@@ -53,7 +53,7 @@ export default function SalladerMenuContent() {
                 <ImageLightbox
                   src={item.image}
                   alt={item.name}
-                  caption={`${item.name} – ${item.price}`}
+                  caption={item.name}
                   width={320}
                   height={240}
                 />
@@ -61,7 +61,6 @@ export default function SalladerMenuContent() {
             )}
             <div className="text-lg font-semibold text-[#E5E7E3]">{item.name}</div>
             <p className="mt-1.5 text-base text-[#E5E7E3]/95">{item.description}</p>
-            <p className="mt-1 text-sm font-medium text-[#EAC84E]">{item.price}</p>
             <OrderQuantityInput menuSlug="sallader" itemName={item.name} price={item.price} />
           </li>
         ))}

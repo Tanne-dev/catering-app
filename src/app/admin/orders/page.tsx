@@ -34,6 +34,7 @@ export default function AdminOrdersPage() {
   const [loading, setLoading] = useState(true);
   const [feedback, setFeedback] = useState<{ type: "success" | "error"; msg: string } | null>(null);
   const [updatingId, setUpdatingId] = useState<string | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const loadOrders = useCallback(async () => {
     try {
@@ -74,6 +75,34 @@ export default function AdminOrdersPage() {
       setFeedback({ type: "error", msg: "Kunde inte uppdatera." });
     } finally {
       setUpdatingId(null);
+    }
+  }
+
+  async function deleteOrder(orderId: string) {
+    if (!confirm("Vill du verkligen ta bort denna beställning? Detta kan inte ångras.")) return;
+    const orderToRemove = orders.find((o) => o.id === orderId);
+    if (!orderToRemove) return;
+    setDeletingId(orderId);
+    setFeedback(null);
+    setOrders((prev) => prev.filter((o) => o.id !== orderId));
+    try {
+      const res = await fetch(`/api/orders/${orderId}`, { method: "DELETE" });
+      const errData = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        const msg = typeof (errData as { error?: string }).error === "string"
+          ? (errData as { error: string }).error
+          : "Kunde inte ta bort beställningen.";
+        setFeedback({ type: "error", msg });
+        setOrders((prev) => [...prev, orderToRemove].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()));
+        return;
+      }
+      setFeedback({ type: "success", msg: "Beställningen borttagen." });
+      await loadOrders();
+    } catch {
+      setFeedback({ type: "error", msg: "Kunde inte ta bort beställningen." });
+      setOrders((prev) => [...prev, orderToRemove].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()));
+    } finally {
+      setDeletingId(null);
     }
   }
 
@@ -181,6 +210,15 @@ export default function AdminOrdersPage() {
                           </option>
                         ))}
                       </select>
+                      <button
+                        type="button"
+                        onClick={() => deleteOrder(order.id)}
+                        disabled={deletingId === order.id}
+                        className="rounded border border-red-500/60 bg-red-900/30 px-3 py-1.5 text-sm text-red-200 transition-colors hover:bg-red-900/50 disabled:opacity-60"
+                        title="Ta bort beställning"
+                      >
+                        {deletingId === order.id ? "Tar bort…" : "Ta bort"}
+                      </button>
                     </div>
                   </div>
                 </li>
