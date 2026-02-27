@@ -10,16 +10,25 @@ import { CONTACT } from "@/data/contact";
 
 export default function Home() {
   return (
-    <main id="main-content">
+    <main
+      id="main-content"
+      className="md:h-screen md:overflow-y-scroll md:snap-y md:snap-mandatory"
+    >
       <Suspense fallback={null}>
         <ScrollToMenuOnQuery />
       </Suspense>
       <Hero />
       <ServicesSection />
       <MenusSection />
+      {/* Begär offert (ContactSection) trực tiếp dưới Meny */}
+      <ContactSection />
       <DishSlider />
       <TestimonialsSection />
-      <section id="goals" className="border-t border-[#707164]/25 bg-[#12110D] py-12 sm:py-16 md:py-20" aria-labelledby="goals-heading">
+      <section
+        id="goals"
+        className="border-t border-[#707164]/25 bg-gradient-to-b from-[#231a0e] via-[#2c2211] to-[#12110D] py-12 sm:py-16 md:min-h-screen md:snap-start md:py-20 md:flex md:items-center"
+        aria-labelledby="goals-heading"
+      >
         <div className="mx-auto max-w-3xl px-4 text-center sm:px-6 sm:text-left lg:px-8">
           <h2 id="goals-heading" className="font-serif text-2xl font-semibold tracking-tight text-[#EAC84E] sm:text-3xl" style={{ fontFamily: "Georgia, Cambria, 'Times New Roman', serif" }}>
             Mål & Vårt uppdrag
@@ -54,8 +63,11 @@ export default function Home() {
           </p>
         </div>
       </section>
-      <ContactSection />
-      <footer id="footer" className="bg-[#12110D] border-t border-[#707164]/40 py-8 sm:py-10" role="contentinfo">
+      <footer
+        id="footer"
+        className="bg-[#12110D] border-t border-[#707164]/40 py-8 sm:py-10 md:snap-start"
+        role="contentinfo"
+      >
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col items-center gap-6 text-center sm:flex-row sm:items-center sm:justify-between sm:gap-8 sm:text-left">
             <nav className="flex flex-wrap items-center justify-center gap-4 sm:justify-start sm:gap-6" aria-label="Sidfotnavigation">
@@ -63,7 +75,7 @@ export default function Home() {
                 Våra tjänster
               </a>
               <a href="#menus" className="text-sm text-[#E5E7E3]/90 underline-offset-4 hover:text-[#EAC84E] hover:underline">
-                Våra menyer
+                Meny
               </a>
               <a href="#quote" className="text-sm text-[#E5E7E3]/90 underline-offset-4 hover:text-[#EAC84E] hover:underline">
                 Begär offert

@@ -35,7 +35,7 @@ export default function DishSlider() {
 
   return (
     <section
-      className="border-t border-[#707164]/25 bg-[#12110D] py-12 md:py-14"
+      className="border-t border-[#707164]/25 bg-[#12110D] py-12 md:min-h-screen md:snap-start md:py-14"
       aria-labelledby="dish-slider-heading"
     >
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">

@@ -35,7 +35,7 @@ export default function MenusSection() {
   return (
     <section
       id="menus"
-      className="relative min-h-[50vh] overflow-hidden py-16"
+      className="relative min-h-[50vh] overflow-hidden py-16 md:min-h-screen md:snap-start"
       aria-label="Sample menus and dishes"
     >
       <img
@@ -52,7 +52,7 @@ export default function MenusSection() {
       />
       <div className="relative z-10 mx-auto max-w-6xl px-4 text-center sm:px-6 lg:px-8">
         <h2 className="text-2xl font-semibold text-[#EAC84E] sm:text-3xl lg:text-[2.15rem]">
-          Våra cateringmenyer
+          Meny
         </h2>
         <p className="mx-auto mt-3 max-w-xl text-lg text-[#E5E7E3]">
           Bläddra i vårt utbud nedan och välj en meny för att se hela innehållet. Varje alternativ kan anpassas efter ert evenemang.

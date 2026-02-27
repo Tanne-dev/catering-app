@@ -5,6 +5,7 @@ import { signIn, useSession } from "next-auth/react";
 import LazyBackground from "@/components/LazyBackground";
 import { useCart } from "@/contexts/CartContext";
 import { CONTACT, FORMSPREE_FORM_ID } from "@/data/contact";
+import { useSelectedService } from "@/contexts/SelectedServiceContext";
 
 const SCROLL_TO_QUOTE_KEY = "scrollToQuote";
 
@@ -18,6 +19,7 @@ export default function ContactSection() {
   const quoteRef = useRef<HTMLDivElement>(null);
   const { data: session, status } = useSession();
   const { items: cartItems, totalQuantity } = useCart();
+  const { setSelectedServiceId } = useSelectedService();
   const [submitted, setSubmitted] = useState(false);
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -29,7 +31,11 @@ export default function ContactSection() {
     if (typeof window === "undefined" || !quoteRef.current) return;
     if (sessionStorage.getItem(SCROLL_TO_QUOTE_KEY) !== "1") return;
     sessionStorage.removeItem(SCROLL_TO_QUOTE_KEY);
-    quoteRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    // Đóng mọi panel meny đang mở trước khi cuộn
+    setSelectedServiceId(null);
+    const el = quoteRef.current;
+    // Dùng scrollIntoView + scroll-mt-24 để tương thích iOS
+    el.scrollIntoView({ behavior: "smooth", block: "start" });
     if (window.history.replaceState) {
       window.history.replaceState(null, "", "/#quote");
     }
@@ -136,7 +142,7 @@ export default function ContactSection() {
   return (
     <section
       id="contact"
-      className="relative border-t border-[#707164]/25 py-16 md:py-20"
+      className="relative border-t border-[#707164]/25 py-16 md:min-h-screen md:snap-start md:py-20"
       aria-labelledby="contact-heading"
     >
       {/* Background image */}

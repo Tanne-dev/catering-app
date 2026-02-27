@@ -274,19 +274,22 @@ export default function Header() {
   }
 
   return (
-    <header className="sticky top-0 z-50 bg-[#12110D] backdrop-blur-sm shadow-lg">
+    <header
+      className="sticky top-0 z-50 border-b border-[#2a2924] bg-[#12110D]/95 backdrop-blur-md shadow-[0_4px_24px_-4px_rgba(0,0,0,0.4)]"
+      suppressHydrationWarning
+    >
       <div
-        className="absolute left-0 right-0 top-0 h-px"
+        className="absolute left-0 right-0 top-0 h-[2px]"
         style={{
           background:
-            "linear-gradient(90deg, transparent, #C49B38 8%, #C49B38 92%, transparent)",
+            "linear-gradient(90deg, transparent 0%, #C49B38 15%, #EAC84E 50%, #C49B38 85%, transparent 100%)",
         }}
       />
-      <div className="relative mx-auto flex min-h-[56px] max-w-6xl items-center px-4 py-2 sm:px-5 md:px-6">
-        <div className="relative z-10 flex w-full items-center">
+      <div className="relative mx-auto flex min-h-[60px] max-w-6xl items-center px-4 py-3 sm:px-5 md:px-6">
+        <div className="relative z-10 flex w-full items-center gap-4">
           <a
             href="/"
-            className="relative flex h-12 shrink-0 items-center sm:h-14 md:h-16"
+            className="group relative flex h-11 shrink-0 items-center transition-transform duration-200 hover:scale-[1.02] active:scale-[0.98] sm:h-12 md:h-14"
             aria-label="Catering Tanne - startsida"
           >
             <Image
@@ -294,22 +297,22 @@ export default function Header() {
               alt="Catering Tanne – startsida"
               width={485}
               height={67}
-              sizes="(max-width: 640px) 280px, (max-width: 768px) 360px, 485px"
-              className="h-12 w-auto max-w-[280px] object-contain object-left sm:h-14 sm:max-w-[360px] md:h-[67px] md:max-w-[485px]"
+              sizes="(max-width: 640px) 260px, (max-width: 768px) 340px, 485px"
+              className="h-11 w-auto max-w-[260px] object-contain object-left opacity-95 transition-opacity group-hover:opacity-100 sm:h-12 sm:max-w-[340px] md:h-14 md:max-w-[485px]"
               priority
             />
           </a>
 
-          <div className="ml-auto flex items-center gap-1.5 sm:gap-2 md:gap-3">
+          <div className="ml-auto flex items-center gap-1 sm:gap-2 md:gap-2.5">
             <Link
               href="/varukorg"
-              className="relative flex items-center justify-center rounded-lg p-2 text-[#EAC84E] transition-colors hover:bg-[#EAC84E]/15 hover:text-[#EAC84E] focus:outline-none focus:ring-2 focus:ring-[#EAC84E] focus:ring-offset-2 focus:ring-offset-[#12110D]"
+              className="relative flex h-10 w-10 items-center justify-center rounded-xl text-[#EAC84E] transition-all duration-200 hover:bg-[#EAC84E]/12 hover:text-[#f0d96a] focus:outline-none focus:ring-2 focus:ring-[#EAC84E]/60 focus:ring-offset-2 focus:ring-offset-[#12110D] sm:h-11 sm:w-11"
               aria-label={totalQuantity > 0 ? `Varukorg – ${totalQuantity} st totalt` : "Varukorg"}
             >
               <CartIcon />
               {totalQuantity > 0 && (
                 <span
-                  className="absolute -right-1 -top-0.5 flex min-w-[18px] items-center justify-center rounded-full bg-[#EAC84E] px-1 py-0.5 text-[10px] font-bold text-[#12110D]"
+                  className="absolute -right-0.5 -top-0.5 flex min-w-[18px] items-center justify-center rounded-full bg-[#EAC84E] px-1.5 py-0.5 text-[10px] font-bold leading-none text-[#12110D] shadow-sm"
                   aria-hidden
                 >
                   {totalQuantity > 99 ? "99+" : totalQuantity}
@@ -320,7 +323,7 @@ export default function Header() {
               <button
                 type="button"
                 onClick={() => setNotificationOpen((o) => !o)}
-                className="relative flex items-center justify-center rounded-lg p-2 text-[#D5D7D3] transition-colors hover:bg-white/10 hover:text-[#EAC84E] focus:outline-none focus:ring-2 focus:ring-[#EAC84E] focus:ring-offset-2 focus:ring-offset-[#12110D]"
+                className="relative flex h-10 w-10 items-center justify-center rounded-xl text-[#D5D7D3] transition-all duration-200 hover:bg-white/8 hover:text-[#EAC84E] focus:outline-none focus:ring-2 focus:ring-[#EAC84E]/50 focus:ring-offset-2 focus:ring-offset-[#12110D] sm:h-11 sm:w-11"
                 aria-label={notificationBadgeCount > 0 ? `Notiser – ${notificationBadgeCount} nya` : "Notiser"}
                 aria-haspopup="true"
                 aria-expanded={notificationOpen}
@@ -328,7 +331,7 @@ export default function Header() {
                 <BellIcon />
                 {notificationBadgeCount > 0 && (
                   <span
-                    className="absolute -right-1 -top-0.5 flex min-w-[18px] items-center justify-center rounded-full bg-[#EAC84E] px-1 py-0.5 text-[10px] font-bold text-[#12110D]"
+                    className="absolute -right-0.5 -top-0.5 flex min-w-[18px] items-center justify-center rounded-full bg-[#EAC84E] px-1.5 py-0.5 text-[10px] font-bold leading-none text-[#12110D] shadow-sm"
                     aria-hidden
                   >
                     {notificationBadgeCount > 99 ? "99+" : notificationBadgeCount}
@@ -336,12 +339,12 @@ export default function Header() {
                 )}
               </button>
               {notificationOpen && (
-                <div className="absolute right-0 top-full z-50 mt-1.5 w-72 max-w-[calc(100vw-2rem)]">
+                <div className="absolute left-1/2 top-full z-50 mt-2 w-72 max-w-[calc(100vw-2rem)] -translate-x-1/2">
                   <div
-                    className="rounded-[14px] border py-2 shadow-xl"
+                    className="overflow-hidden rounded-xl border py-2 shadow-xl"
                     style={{
-                      backgroundColor: "#12110D",
-                      borderColor: "#707164",
+                      backgroundColor: "#161510",
+                      borderColor: "#2a2924",
                     }}
                   >
                     <p className="px-4 py-2 text-xs font-semibold uppercase tracking-wider text-[#C49B38]">
@@ -468,36 +471,36 @@ export default function Header() {
               <button
                 type="button"
                 onClick={() => setMenusDropdownOpen((o) => !o)}
-                className="flex h-9 items-center gap-1 rounded-[13px] px-3 text-xs font-semibold text-white transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md sm:h-10 sm:gap-1.5 sm:px-4 sm:text-sm"
+                className="flex h-10 items-center gap-1.5 rounded-xl px-3.5 text-xs font-semibold text-[#12110D] transition-all duration-200 hover:bg-[#D4A83E] hover:shadow-lg hover:shadow-[#C49B38]/25 focus:outline-none focus:ring-2 focus:ring-[#EAC84E]/60 focus:ring-offset-2 focus:ring-offset-[#12110D] sm:h-11 sm:px-4 sm:text-sm"
                 style={{
                   backgroundColor: "#C49B38",
                   boxShadow:
-                    "0 0 0 1px rgba(168, 128, 45, 0.3), 0 2px 8px rgba(168, 128, 45, 0.15)",
+                    "0 1px 0 0 rgba(255,255,255,0.08), 0 2px 8px rgba(196, 155, 56, 0.2)",
                 }}
                 aria-haspopup="menu"
                 aria-expanded={menusDropdownOpen}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.backgroundColor = "#D4A83E";
                   e.currentTarget.style.boxShadow =
-                    "0 0 0 1px rgba(168, 128, 45, 0.4), 0 4px 12px rgba(168, 128, 45, 0.25)";
+                    "0 2px 0 0 rgba(255,255,255,0.1), 0 4px 16px rgba(196, 155, 56, 0.3)";
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.backgroundColor = "#C49B38";
                   e.currentTarget.style.boxShadow =
-                    "0 0 0 1px rgba(168, 128, 45, 0.3), 0 2px 8px rgba(168, 128, 45, 0.15)";
+                    "0 1px 0 0 rgba(255,255,255,0.08), 0 2px 8px rgba(196, 155, 56, 0.2)";
                 }}
               >
-                Våra menyer
+                Meny
                 <ChevronDownIcon />
               </button>
               {menusDropdownOpen && (
-                <div className="absolute left-0 right-0 top-full z-50 mt-1.5 flex justify-center">
+                <div className="absolute left-0 right-0 top-full z-50 mt-2 flex justify-center">
                   <div
                     role="menu"
-                    className="min-w-[200px] rounded-[14px] border py-1 shadow-xl"
+                    className="min-w-[200px] overflow-hidden rounded-xl border py-1 shadow-xl"
                     style={{
-                      backgroundColor: "#12110D",
-                      borderColor: "#707164",
+                      backgroundColor: "#161510",
+                      borderColor: "#2a2924",
                     }}
                   >
                     {menuList.map(({ label, id }) => (
@@ -527,10 +530,10 @@ export default function Header() {
               <button
                 type="button"
                 onClick={() => setLoginDropdownOpen((o) => !o)}
-                className="flex h-9 items-center gap-1 rounded-[13px] border px-2.5 text-xs font-semibold text-white transition-colors sm:h-10 sm:gap-1.5 sm:px-3 sm:text-sm md:px-4"
+                className="flex h-10 items-center gap-1.5 rounded-xl border px-3 text-xs font-semibold text-white transition-all duration-200 hover:border-[#8a8d7a] focus:outline-none focus:ring-2 focus:ring-[#EAC84E]/50 focus:ring-offset-2 focus:ring-offset-[#12110D] sm:h-11 sm:px-3.5 sm:text-sm md:px-4"
                 style={{
-                  backgroundColor: showSessionUI && isAdmin ? "#2d4a2d" : showSessionUI && isGuest ? "#3d4a5a" : "#3C4454",
-                  borderColor: "#707164",
+                  backgroundColor: showSessionUI && isAdmin ? "#2d4a2d" : showSessionUI && isGuest ? "#3d4a5a" : "#2a2924",
+                  borderColor: "#3d3c36",
                 }}
                 aria-haspopup="menu"
                 aria-expanded={loginDropdownOpen}
@@ -538,14 +541,14 @@ export default function Header() {
                   showSessionUI && isAdmin ? "Inloggad som admin" : showSessionUI && isGuest ? `Inloggad som ${guestDisplayName}` : "Logga in som gäst eller admin"
                 }
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.borderColor = "#8a8d7a";
+                  e.currentTarget.style.borderColor = "#5a5a52";
                   e.currentTarget.style.backgroundColor =
-                    showSessionUI && isAdmin ? "#3d5a3d" : showSessionUI && isGuest ? "#4d5a6a" : "#4a5264";
+                    showSessionUI && isAdmin ? "#3d5a3d" : showSessionUI && isGuest ? "#4d5a6a" : "#353430";
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.borderColor = "#707164";
+                  e.currentTarget.style.borderColor = "#3d3c36";
                   e.currentTarget.style.backgroundColor =
-                    showSessionUI && isAdmin ? "#2d4a2d" : showSessionUI && isGuest ? "#3d4a5a" : "#3C4454";
+                    showSessionUI && isAdmin ? "#2d4a2d" : showSessionUI && isGuest ? "#3d4a5a" : "#2a2924";
                 }}
               >
                 {showSessionUI && isAdmin ? (
@@ -567,13 +570,13 @@ export default function Header() {
                 )}
               </button>
               {loginDropdownOpen && (
-                <div className="absolute right-0 top-full z-50 mt-1.5 flex justify-end">
+                <div className="absolute right-0 top-full z-50 mt-2 flex justify-end">
                   <div
                     role="menu"
-                    className="min-w-[160px] rounded-[14px] border py-1 shadow-xl"
+                    className="min-w-[160px] overflow-hidden rounded-xl border py-1 shadow-xl"
                     style={{
-                      backgroundColor: "#12110D",
-                      borderColor: "#707164",
+                      backgroundColor: "#161510",
+                      borderColor: "#2a2924",
                     }}
                   >
                     {isAdmin ? (
@@ -691,13 +694,6 @@ export default function Header() {
           </div>
         </div>
       </div>
-      <div
-        className="absolute bottom-0 left-0 right-0 h-px"
-        style={{
-          background:
-            "linear-gradient(90deg, transparent, #C49B38 8%, #C49B38 92%, transparent)",
-        }}
-      />
     </header>
   );
 }

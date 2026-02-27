@@ -27,7 +27,7 @@ export default function ServicesSection() {
   return (
     <section
       id="services"
-      className="relative border-t border-[#707164]/25 overflow-hidden py-16 md:py-20 lg:py-24"
+      className="relative border-t border-[#707164]/25 overflow-hidden py-16 md:min-h-screen md:snap-start md:py-20 lg:py-24"
       aria-labelledby="services-heading"
     >
       <LazyBackground

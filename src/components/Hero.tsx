@@ -30,7 +30,7 @@ const BULLETS = [
 export default function Hero() {
   return (
     <section
-      className="relative min-h-[85vh] w-full overflow-hidden py-16 md:py-20 lg:min-h-[90vh] lg:py-24"
+      className="relative min-h-[85vh] w-full overflow-hidden py-16 md:min-h-screen md:snap-start md:py-20 lg:min-h-[90vh] lg:py-24"
       aria-labelledby="hero-heading"
     >
       <video

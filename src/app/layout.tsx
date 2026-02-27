@@ -85,7 +85,9 @@ export default function RootLayout({
             <Header />
             <ScrollToQuoteOnHash />
             <ServiceDetailPanel />
+            <main suppressHydrationWarning>
             {children}
+            </main>
             <ScrollToTop />
             <ChatWidget />
           </SelectedServiceProvider>

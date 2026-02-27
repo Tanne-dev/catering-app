@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { usePathname } from "next/navigation";
+import { useSelectedService } from "@/contexts/SelectedServiceContext";
 
 const SCROLL_TO_QUOTE_KEY = "scrollToQuote";
 
@@ -11,6 +12,7 @@ const SCROLL_TO_QUOTE_KEY = "scrollToQuote";
  */
 export default function ScrollToQuoteOnHash() {
   const pathname = usePathname();
+  const { setSelectedServiceId } = useSelectedService();
 
   useEffect(() => {
     if (pathname !== "/" || typeof window === "undefined") return;
@@ -22,15 +24,20 @@ export default function ScrollToQuoteOnHash() {
 
     const scrollToQuote = () => {
       const el = document.getElementById("quote");
-      if (el) {
-        sessionStorage.removeItem(SCROLL_TO_QUOTE_KEY);
-        el.scrollIntoView({ behavior: "smooth", block: "start" });
-        if (window.history.replaceState) {
-          window.history.replaceState(null, "", "/#quote");
-        }
-        return true;
+      if (!el) return false;
+
+      sessionStorage.removeItem(SCROLL_TO_QUOTE_KEY);
+
+      // Đóng mọi meny / panel dịch vụ đang mở (ví dụ Family meny Tarik)
+      setSelectedServiceId(null);
+
+      // Dùng scrollIntoView + scroll-mt-24 (CSS) để tương thích tốt với iPhone
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
+
+      if (window.history.replaceState) {
+        window.history.replaceState(null, "", "/#quote");
       }
-      return false;
+      return true;
     };
 
     const ids: ReturnType<typeof setTimeout>[] = [];

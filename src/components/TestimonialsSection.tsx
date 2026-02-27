@@ -103,7 +103,7 @@ export default function TestimonialsSection() {
   return (
     <section
       id="testimonials"
-      className="relative border-t border-[#707164]/25 py-16 md:py-20 overflow-hidden"
+      className="relative border-t border-[#707164]/25 py-16 md:min-h-screen md:snap-start md:py-20 overflow-hidden"
       aria-labelledby="testimonials-heading"
       suppressHydrationWarning
     >

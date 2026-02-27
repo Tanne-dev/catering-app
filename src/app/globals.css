@@ -26,6 +26,26 @@ body {
   font-family: var(--font-lato), 'Lato', system-ui, sans-serif;
 }
 
+/* Global button hover effect */
+button {
+  transition:
+    background-color 0.15s ease-out,
+    color 0.15s ease-out,
+    border-color 0.15s ease-out,
+    transform 0.15s ease-out,
+    box-shadow 0.15s ease-out;
+}
+
+button:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+}
+
+button:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
 /* Outline button – subtle fill, orange border, white text, uppercase */
 .btn-outline {
   display: inline-flex;
