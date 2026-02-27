@@ -131,6 +131,29 @@ button:active:not(:disabled) {
   }
 }
 
+/* Help icon pulse – gợi ý người dùng mới click trước */
+@keyframes helpIconPulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(234, 200, 78, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(234, 200, 78, 0);
+  }
+}
+
+@keyframes helpIconGentle {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.08);
+  }
+}
+
+.help-icon-first-time {
+  animation: helpIconPulse 2s ease-in-out infinite, helpIconGentle 2s ease-in-out infinite;
+}
+
 .chat-typing-dot {
   animation: chatTypingBounce 1.2s ease-in-out infinite;
   display: inline-block;

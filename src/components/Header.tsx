@@ -5,16 +5,12 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { useState, useRef, useEffect } from "react";
+import { useLocale, useTranslations } from "next-intl";
 import { useSelectedMenu, type MenuId } from "@/contexts/SelectedMenuContext";
 import { useCart } from "@/contexts/CartContext";
 import { useMenus } from "@/hooks/useMenus";
 import { CONTACT } from "@/data/contact";
-
-const FALLBACK_MENUS: { label: string; id: MenuId }[] = [
-  { label: "Sushimeny", id: "sushi" },
-  { label: "Asiatisk meny", id: "asiatisk" },
-  { label: "Sallader Bufféer", id: "sallader" },
-];
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 
 function PhoneIcon() {
   return (
@@ -75,6 +71,27 @@ function ChevronDownIcon() {
   );
 }
 
+function HelpIcon() {
+  return (
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="shrink-0"
+      aria-hidden
+    >
+      <circle cx="12" cy="12" r="10" />
+      <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+      <path d="M12 17h.01" />
+    </svg>
+  );
+}
+
 function BellIcon() {
   return (
     <svg
@@ -104,7 +121,11 @@ type OrderNotification = {
   event_date?: string | null;
 };
 
+const FALLBACK_MENUS_IDS: MenuId[] = ["sushi", "asiatisk", "sallader"];
+
 export default function Header() {
+  const t = useTranslations("header");
+  const tMenus = useTranslations("menusFallback");
   const router = useRouter();
   const pathname = usePathname();
   const { data: session, status } = useSession();
@@ -117,7 +138,7 @@ export default function Header() {
           label: m.title,
           id: m.slug as MenuId,
         }))
-      : FALLBACK_MENUS;
+      : FALLBACK_MENUS_IDS.map((id) => ({ label: tMenus(id as "sushi" | "asiatisk" | "sallader"), id }));
   const [menusDropdownOpen, setMenusDropdownOpen] = useState(false);
   const menusDropdownRef = useRef<HTMLDivElement>(null);
 
@@ -126,6 +147,18 @@ export default function Header() {
 
   const [notificationOpen, setNotificationOpen] = useState(false);
   const notificationDropdownRef = useRef<HTMLDivElement>(null);
+
+  const [helpOpen, setHelpOpen] = useState(false);
+  const helpDropdownRef = useRef<HTMLDivElement>(null);
+
+  const HELP_CLICKED_KEY = "catering_help_clicked";
+  const [showHelpHint, setShowHelpHint] = useState(false);
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    try {
+      setShowHelpHint(!window.sessionStorage.getItem(HELP_CLICKED_KEY));
+    } catch (_) {}
+  }, []);
 
   const [notificationOrders, setNotificationOrders] = useState<OrderNotification[]>([]);
   const [notificationLoading, setNotificationLoading] = useState(false);
@@ -192,12 +225,16 @@ export default function Header() {
       if (notificationDropdownRef.current && !notificationDropdownRef.current.contains(target)) {
         setNotificationOpen(false);
       }
+      if (helpDropdownRef.current && !helpDropdownRef.current.contains(target)) {
+        setHelpOpen(false);
+      }
     }
     function handleEscape(e: KeyboardEvent) {
       if (e.key === "Escape") {
         setMenusDropdownOpen(false);
         setLoginDropdownOpen(false);
         setNotificationOpen(false);
+        setHelpOpen(false);
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
@@ -257,17 +294,20 @@ export default function Header() {
     }
   }, [isAdmin, isGuest, notificationOpen]);
 
+  const locale = useLocale();
+  const dateLocale = locale === "sv" ? "sv-SE" : "en-GB";
+
   function formatOrderDate(iso: string) {
     try {
       const d = new Date(iso);
       const now = new Date();
       const diffMs = now.getTime() - d.getTime();
       const diffMins = Math.floor(diffMs / 60000);
-      if (diffMins < 1) return "Nu";
-      if (diffMins < 60) return `${diffMins} min sedan`;
+      if (diffMins < 1) return t("now");
+      if (diffMins < 60) return t("minAgo", { count: diffMins });
       const diffHours = Math.floor(diffMins / 60);
-      if (diffHours < 24) return `${diffHours} h sedan`;
-      return d.toLocaleDateString("sv-SE", { day: "numeric", month: "short" });
+      if (diffHours < 24) return t("hoursAgo", { count: diffHours });
+      return d.toLocaleDateString(dateLocale, { day: "numeric", month: "short" });
     } catch {
       return iso;
     }
@@ -304,10 +344,11 @@ export default function Header() {
           </a>
 
           <div className="ml-auto flex items-center gap-1 sm:gap-2 md:gap-2.5">
+            <LanguageSwitcher />
             <Link
               href="/varukorg"
               className="relative flex h-10 w-10 items-center justify-center rounded-xl text-[#EAC84E] transition-all duration-200 hover:bg-[#EAC84E]/12 hover:text-[#f0d96a] focus:outline-none focus:ring-2 focus:ring-[#EAC84E]/60 focus:ring-offset-2 focus:ring-offset-[#12110D] sm:h-11 sm:w-11"
-              aria-label={totalQuantity > 0 ? `Varukorg – ${totalQuantity} st totalt` : "Varukorg"}
+              aria-label={totalQuantity > 0 ? t("cartWithItems", { count: totalQuantity }) : t("cart")}
             >
               <CartIcon />
               {totalQuantity > 0 && (
@@ -319,12 +360,56 @@ export default function Header() {
                 </span>
               )}
             </Link>
+            <div className="relative" ref={helpDropdownRef}>
+              <button
+                type="button"
+                onClick={() => {
+                  setHelpOpen((o) => !o);
+                  if (typeof window !== "undefined") {
+                    try {
+                      window.sessionStorage.setItem(HELP_CLICKED_KEY, "1");
+                    } catch (_) {}
+                    setShowHelpHint(false);
+                  }
+                }}
+                className={`flex h-10 w-10 items-center justify-center rounded-xl text-[#D5D7D3] transition-all duration-200 hover:bg-white/8 hover:text-[#EAC84E] focus:outline-none focus:ring-2 focus:ring-[#EAC84E]/50 focus:ring-offset-2 focus:ring-offset-[#12110D] sm:h-11 sm:w-11 ${
+                  showHelpHint ? "help-icon-first-time" : ""
+                }`}
+                aria-label={t("howToOrder")}
+                aria-haspopup="true"
+                aria-expanded={helpOpen}
+              >
+                <HelpIcon />
+              </button>
+              {helpOpen && (
+                <div className="absolute right-0 top-full z-50 mt-2 w-80 max-w-[calc(100vw-2rem)]">
+                  <div
+                    className="overflow-hidden rounded-xl border py-3 shadow-xl"
+                    style={{
+                      backgroundColor: "#161510",
+                      borderColor: "#2a2924",
+                    }}
+                  >
+                    <p className="px-4 py-2 text-xs font-semibold uppercase tracking-wider text-[#C49B38]">
+                      {t("helpFlow")}
+                    </p>
+                    <ol className="list-decimal space-y-3 px-4 pb-2 pl-7 text-sm leading-relaxed text-[#E5E7E3]/95">
+                      <li>{t.rich("helpStep1", { menuLink: (chunks) => <a href="#menus" onClick={() => setHelpOpen(false)} className="text-[#EAC84E] underline-offset-2 hover:underline">{chunks}</a> })}</li>
+                      <li>{t("helpStep2")}</li>
+                      <li>{t.rich("helpStep3", { cartLink: (chunks) => <Link href="/varukorg" onClick={() => setHelpOpen(false)} className="text-[#EAC84E] underline-offset-2 hover:underline">{chunks}</Link> })}</li>
+                      <li>{t("helpStep4")}</li>
+                      <li>{t("helpStep5")}</li>
+                    </ol>
+                  </div>
+                </div>
+              )}
+            </div>
             <div className="relative" ref={notificationDropdownRef}>
               <button
                 type="button"
                 onClick={() => setNotificationOpen((o) => !o)}
                 className="relative flex h-10 w-10 items-center justify-center rounded-xl text-[#D5D7D3] transition-all duration-200 hover:bg-white/8 hover:text-[#EAC84E] focus:outline-none focus:ring-2 focus:ring-[#EAC84E]/50 focus:ring-offset-2 focus:ring-offset-[#12110D] sm:h-11 sm:w-11"
-                aria-label={notificationBadgeCount > 0 ? `Notiser – ${notificationBadgeCount} nya` : "Notiser"}
+                aria-label={notificationBadgeCount > 0 ? t("notificationsNew", { count: notificationBadgeCount }) : t("notifications")}
                 aria-haspopup="true"
                 aria-expanded={notificationOpen}
               >
@@ -348,20 +433,20 @@ export default function Header() {
                     }}
                   >
                     <p className="px-4 py-2 text-xs font-semibold uppercase tracking-wider text-[#C49B38]">
-                      Notiser
+                      {t("notifications")}
                     </p>
                     {!isAdmin && !isGuest ? (
                       <div className="px-4 py-4 text-center text-sm text-[#E5E7E3]/70">
-                        Inga nya notiser
+                        {t("noNotifications")}
                       </div>
                     ) : notificationLoading ? (
                       <div className="px-4 py-4 text-center text-sm text-[#E5E7E3]/70">
-                        Laddar…
+                        {t("loading")}
                       </div>
                     ) : isAdmin ? (
                       recentOrders.length === 0 ? (
                         <div className="px-4 py-4 text-center text-sm text-[#E5E7E3]/70">
-                          Inga beställningar ännu
+                          {t("noOrders")}
                         </div>
                       ) : (
                         <ul className="max-h-64 overflow-y-auto">
@@ -385,7 +470,7 @@ export default function Header() {
                                 </span>
                                 {order.status === "pending" && (
                                   <span className="ml-1.5 rounded bg-[#C49B38]/30 px-1.5 py-0.5 text-xs text-[#EAC84E]">
-                                    Väntar
+                                    {t("pending")}
                                   </span>
                                 )}
                               </a>
@@ -402,10 +487,10 @@ export default function Header() {
                         {recentOrders.map((order) => {
                           const statusLabel =
                             order.status === "confirmed"
-                              ? "Din beställning är bekräftad"
+                              ? t("orderConfirmed")
                               : order.status === "completed"
-                                ? "Din beställning är slutförd"
-                                : "Väntar";
+                                ? t("orderCompleted")
+                                : t("pending");
                           return (
                             <li key={order.id}>
                               <a
@@ -444,7 +529,7 @@ export default function Header() {
                           e.currentTarget.style.backgroundColor = "transparent";
                         }}
                       >
-                        Hantera beställningar →
+                        {t("manageOrders")}
                       </a>
                     )}
                     {isGuest && (
@@ -460,7 +545,7 @@ export default function Header() {
                           e.currentTarget.style.backgroundColor = "transparent";
                         }}
                       >
-                        Mina beställningar →
+                        {t("myOrders")}
                       </a>
                     )}
                   </div>
@@ -471,26 +556,11 @@ export default function Header() {
               <button
                 type="button"
                 onClick={() => setMenusDropdownOpen((o) => !o)}
-                className="flex h-10 items-center gap-1.5 rounded-xl px-3.5 text-xs font-semibold text-[#12110D] transition-all duration-200 hover:bg-[#D4A83E] hover:shadow-lg hover:shadow-[#C49B38]/25 focus:outline-none focus:ring-2 focus:ring-[#EAC84E]/60 focus:ring-offset-2 focus:ring-offset-[#12110D] sm:h-11 sm:px-4 sm:text-sm"
-                style={{
-                  backgroundColor: "#C49B38",
-                  boxShadow:
-                    "0 1px 0 0 rgba(255,255,255,0.08), 0 2px 8px rgba(196, 155, 56, 0.2)",
-                }}
+                className="flex h-10 items-center justify-center gap-2 rounded-lg border border-[#B8923A]/40 bg-[#C49B38] px-4 text-xs font-semibold tracking-wide text-[#12110D] shadow-[0_1px_2px_rgba(0,0,0,0.2)] transition-all duration-200 hover:border-[#D4A83E]/60 hover:bg-[#D4A83E] hover:shadow-[0_2px_8px_rgba(196,155,56,0.35)] focus:outline-none focus:ring-2 focus:ring-[#EAC84E]/60 focus:ring-offset-2 focus:ring-offset-[#12110D] active:scale-[0.98] sm:h-11 sm:px-5 sm:text-sm"
                 aria-haspopup="menu"
                 aria-expanded={menusDropdownOpen}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = "#D4A83E";
-                  e.currentTarget.style.boxShadow =
-                    "0 2px 0 0 rgba(255,255,255,0.1), 0 4px 16px rgba(196, 155, 56, 0.3)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = "#C49B38";
-                  e.currentTarget.style.boxShadow =
-                    "0 1px 0 0 rgba(255,255,255,0.08), 0 2px 8px rgba(196, 155, 56, 0.2)";
-                }}
               >
-                Meny
+                {t("menu")}
                 <ChevronDownIcon />
               </button>
               {menusDropdownOpen && (
@@ -530,26 +600,19 @@ export default function Header() {
               <button
                 type="button"
                 onClick={() => setLoginDropdownOpen((o) => !o)}
-                className="flex h-10 items-center gap-1.5 rounded-xl border px-3 text-xs font-semibold text-white transition-all duration-200 hover:border-[#8a8d7a] focus:outline-none focus:ring-2 focus:ring-[#EAC84E]/50 focus:ring-offset-2 focus:ring-offset-[#12110D] sm:h-11 sm:px-3.5 sm:text-sm md:px-4"
-                style={{
-                  backgroundColor: showSessionUI && isAdmin ? "#2d4a2d" : showSessionUI && isGuest ? "#3d4a5a" : "#2a2924",
-                  borderColor: "#3d3c36",
-                }}
+                className={
+                  "flex h-10 items-center justify-center gap-2 rounded-lg border px-4 text-xs font-semibold tracking-wide text-white transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#EAC84E]/50 focus:ring-offset-2 focus:ring-offset-[#12110D] active:scale-[0.98] sm:h-11 sm:px-4 sm:text-sm md:px-5 " +
+                  (showSessionUI && isAdmin
+                    ? "border-[#3d6a3d]/60 bg-[#2d4a2d] hover:border-[#4d7a4d]/70 hover:bg-[#355a35]"
+                    : showSessionUI && isGuest
+                      ? "border-[#4d5a6a]/60 bg-[#3d4a5a] hover:border-[#5d6a7a]/70 hover:bg-[#455a6a]"
+                      : "border-[#4a4a44]/60 bg-[#2e2d28] hover:border-[#5a5a54]/70 hover:bg-[#3a3832]")
+                }
                 aria-haspopup="menu"
                 aria-expanded={loginDropdownOpen}
                 aria-label={
-                  showSessionUI && isAdmin ? "Inloggad som admin" : showSessionUI && isGuest ? `Inloggad som ${guestDisplayName}` : "Logga in som gäst eller admin"
+                  showSessionUI && isAdmin ? t("loggedInAdmin") : showSessionUI && isGuest ? t("loggedInGuest", { name: guestDisplayName }) : t("login")
                 }
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.borderColor = "#5a5a52";
-                  e.currentTarget.style.backgroundColor =
-                    showSessionUI && isAdmin ? "#3d5a3d" : showSessionUI && isGuest ? "#4d5a6a" : "#353430";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.borderColor = "#3d3c36";
-                  e.currentTarget.style.backgroundColor =
-                    showSessionUI && isAdmin ? "#2d4a2d" : showSessionUI && isGuest ? "#3d4a5a" : "#2a2924";
-                }}
               >
                 {showSessionUI && isAdmin ? (
                   <>
@@ -563,8 +626,8 @@ export default function Header() {
                   </>
                 ) : (
                   <>
-                    <span className="hidden sm:inline">Logga in</span>
-                    <span className="sm:hidden">Inloggning</span>
+                    <span className="hidden sm:inline">{t("login")}</span>
+                    <span className="sm:hidden">{t("loginShort")}</span>
                     <ChevronDownIcon />
                   </>
                 )}
@@ -594,7 +657,7 @@ export default function Header() {
                             e.currentTarget.style.backgroundColor = "transparent";
                           }}
                         >
-                          Dashboard
+                          {t("dashboard")}
                         </a>
                         <button
                           type="button"
@@ -612,7 +675,7 @@ export default function Header() {
                             e.currentTarget.style.backgroundColor = "transparent";
                           }}
                         >
-                          Logga ut
+                          {t("signOut")}
                         </button>
                       </>
                     ) : isGuest ? (
@@ -630,7 +693,7 @@ export default function Header() {
                             e.currentTarget.style.backgroundColor = "transparent";
                           }}
                         >
-                          Hantera beställningar
+                          {t("manageOrdersShort")}
                         </a>
                         <button
                         type="button"
@@ -648,7 +711,7 @@ export default function Header() {
                           e.currentTarget.style.backgroundColor = "transparent";
                         }}
                         >
-                          Logga ut
+                          {t("signOut")}
                         </button>
                       </>
                     ) : (
@@ -669,7 +732,7 @@ export default function Header() {
                             e.currentTarget.style.backgroundColor = "transparent";
                           }}
                         >
-                          Gäst (Google)
+                          {t("guestGoogle")}
                         </button>
                         <a
                           href="/admin/login"
@@ -683,7 +746,7 @@ export default function Header() {
                             e.currentTarget.style.backgroundColor = "transparent";
                           }}
                         >
-                          Admin
+                          {t("admin")}
                         </a>
                       </>
                     )}

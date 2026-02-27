@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { Lato, Geist_Mono } from "next/font/google";
+import { NextIntlClientProvider } from "next-intl";
+import { getLocale, getMessages, getTranslations } from "next-intl/server";
 import Header from "@/components/Header";
 import JsonLd from "@/components/JsonLd";
 import ChatWidget from "@/components/ChatWidget";
@@ -59,17 +61,22 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const locale = await getLocale();
+  const messages = await getMessages();
+  const t = await getTranslations("common");
+
   return (
-    <html lang="sv" suppressHydrationWarning>
+    <html lang={locale} suppressHydrationWarning>
       <body
         className={`${lato.variable} ${geistMono.variable} antialiased`}
         suppressHydrationWarning
       >
+        <NextIntlClientProvider messages={messages}>
         <div suppressHydrationWarning>
         <JsonLd />
         <SessionProvider>
@@ -80,7 +87,7 @@ export default function RootLayout({
               href="#services"
               className="fixed left-2 top-2 z-[100] rounded-lg bg-[#EAC84E] px-3 py-2 text-xs font-semibold text-[#12110D] opacity-0 shadow-lg transition-opacity focus:opacity-100 focus:outline-none focus:ring-2 focus:ring-white sm:left-4 sm:top-4 sm:px-4 sm:text-sm"
             >
-              Hoppa till innehåll
+              {t("skipToContent")}
             </a>
             <Header />
             <ScrollToQuoteOnHash />
@@ -95,6 +102,7 @@ export default function RootLayout({
         </SelectedMenuProvider>
         </SessionProvider>
         </div>
+        </NextIntlClientProvider>
       </body>
     </html>
   );

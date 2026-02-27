@@ -1,11 +1,13 @@
 "use client";
 
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import { useState, useEffect } from "react";
 import { DISH_SLIDER_IMAGES } from "@/data/dish-slider-images";
 
 /** Auto-scrolling slider med bilder på rätter. Klick på bild öppnar lightbox; klick igen stänger. */
 export default function DishSlider() {
+  const t = useTranslations("dishSlider");
   const [lightboxSrc, setLightboxSrc] = useState<string | null>(null);
 
   useEffect(() => {
@@ -44,18 +46,18 @@ export default function DishSlider() {
             className="text-xs font-medium uppercase tracking-[0.2em] text-[#C49B38] sm:text-sm"
             aria-hidden
           >
-            Portfolio
+            {t("portfolio")}
           </p>
           <h2
             id="dish-slider-heading"
             className="mt-2 font-serif text-2xl font-medium tracking-tight text-[#EAC84E] sm:text-3xl lg:text-[2rem]"
             style={{ fontFamily: "Georgia, Cambria, 'Times New Roman', serif" }}
           >
-            Rätter vi serverat
+            {t("heading")}
           </h2>
           <div className="mx-auto mt-4 h-px w-12 bg-[#C49B38]/60" aria-hidden />
           <p className="mx-auto mt-5 max-w-md text-center text-[15px] leading-relaxed text-[#E5E7E3]/90 sm:text-base">
-            Några av de rätter vi lagat och serverat på catering
+            {t("intro")}
           </p>
         </header>
       </div>
@@ -67,11 +69,11 @@ export default function DishSlider() {
               type="button"
               onClick={() => setLightboxSrc(src)}
               className="dish-slider-item shrink-0 overflow-hidden rounded-lg border border-[#707164]/30 bg-[#1a1916] shadow-md transition-transform hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-[#EAC84E] focus:ring-offset-2 focus:ring-offset-[#12110D]"
-              aria-label="Visa bild i större format"
+              aria-label={t("viewImage")}
             >
               <Image
                 src={src}
-                alt="Rätter vi serverat på catering"
+                alt={t("imageAlt")}
                 width={368}
                 height={276}
                 sizes="(max-width: 640px) 280px, (max-width: 768px) 322px, 368px"
@@ -90,11 +92,11 @@ export default function DishSlider() {
           type="button"
           onClick={() => setLightboxSrc(null)}
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4 focus:outline-none"
-          aria-label="Stäng"
+          aria-label={t("close")}
         >
           <img
             src={lightboxSrc}
-            alt="Rätter vi serverat – större vy"
+            alt={t("lightboxAlt")}
             className="max-h-[90vh] max-w-full cursor-pointer object-contain"
             loading="lazy"
             decoding="async"

@@ -1,15 +1,16 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useTranslations } from "next-intl";
 import LazyBackground from "@/components/LazyBackground";
 import { FORMSPREE_FORM_ID } from "@/data/contact";
 import { TESTIMONIALS, type Testimonial } from "@/data/testimonials";
 
 const AUTO_SLIDE_INTERVAL_MS = 3500;
 
-function StarRating({ rating, max = 5 }: { rating: number; max?: number }) {
+function StarRating({ rating, max = 5, ariaLabel }: { rating: number; max?: number; ariaLabel: string }) {
   return (
-    <div className="flex gap-0.5" role="img" aria-label={`${rating} av ${max} stjärnor`}>
+    <div className="flex gap-0.5" role="img" aria-label={ariaLabel}>
       {Array.from({ length: max }, (_, i) => (
         <span
           key={i}
@@ -23,10 +24,10 @@ function StarRating({ rating, max = 5 }: { rating: number; max?: number }) {
   );
 }
 
-function TestimonialCard({ item }: { item: Testimonial }) {
+function TestimonialCard({ item, starAriaLabel }: { item: Testimonial; starAriaLabel: string }) {
   return (
     <article className="flex min-h-[200px] sm:min-h-[220px] flex-col rounded-xl border border-[#707164]/30 bg-[#1a1916]/80 p-5 backdrop-blur-sm sm:p-6">
-      <StarRating rating={item.rating} />
+      <StarRating rating={item.rating} ariaLabel={starAriaLabel} />
       <blockquote className="mt-3 min-h-[5.5rem] flex-1 text-[#E5E7E3]/90 leading-relaxed sm:min-h-[6rem]">
         &ldquo;{item.text}&rdquo;
       </blockquote>
@@ -41,6 +42,7 @@ function TestimonialCard({ item }: { item: Testimonial }) {
 }
 
 export default function TestimonialsSection() {
+  const t = useTranslations("testimonials");
   const [rating, setRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
   const [submitted, setSubmitted] = useState(false);
@@ -65,7 +67,7 @@ export default function TestimonialsSection() {
     const form = e.currentTarget;
     const ratingValue = rating || 0;
     if (ratingValue < 1) {
-      setError("Välj antal stjärnor.");
+      setError(t("selectStars"));
       return;
     }
 
@@ -83,7 +85,7 @@ export default function TestimonialsSection() {
         if (!res.ok) throw new Error("Något gick fel.");
         setSubmitted(true);
       } catch {
-        setError("Kunde inte skicka. Försök igen senare.");
+        setError(t("errorSend"));
       } finally {
         setSending(false);
       }
@@ -122,11 +124,11 @@ export default function TestimonialsSection() {
             className="font-serif text-2xl font-semibold tracking-tight text-[#EAC84E] sm:text-3xl"
             style={{ fontFamily: "Georgia, Cambria, 'Times New Roman', serif" }}
           >
-            Omdömen
+            {t("heading")}
           </h2>
           <div className="mx-auto mt-4 h-px w-16 bg-[#C49B38]/70" aria-hidden />
           <p className="mt-4 text-[#E5E7E3]/80">
-            Det betyder mycket för oss vad våra kunder tycker. Här är några omdömen från dem som beställt catering hos oss.
+            {t("intro")}
           </p>
         </div>
 
@@ -134,20 +136,20 @@ export default function TestimonialsSection() {
         <div className="mt-10">
           {currentFeedback ? (
             <div key={currentIndex} className="mx-auto max-w-2xl animate-testimonial-fade" role="list">
-              <TestimonialCard item={currentFeedback} />
+              <TestimonialCard item={currentFeedback} starAriaLabel={t("ofStars", { count: currentFeedback.rating })} />
             </div>
           ) : null}
 
           {TESTIMONIALS.length > 1 && (
             <div className="mt-6 flex flex-wrap items-center justify-center gap-2 sm:mt-8 sm:gap-3">
-              <div className="flex flex-wrap justify-center gap-1.5 sm:gap-2" role="tablist" aria-label="Välj omdöme">
+              <div className="flex flex-wrap justify-center gap-1.5 sm:gap-2" role="tablist" aria-label={t("selectTestimonial")}>
                 {TESTIMONIALS.map((_, idx) => (
                   <button
                     key={idx}
                     type="button"
                     role="tab"
                     aria-selected={currentIndex === idx}
-                    aria-label={`Omdöme ${idx + 1}: ${TESTIMONIALS[idx].name}`}
+                    aria-label={`${t("selectTestimonial")} ${idx + 1}: ${TESTIMONIALS[idx].name}`}
                     onClick={() => setCurrentIndex(idx)}
                     className={`h-2.5 w-2.5 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-[#EAC84E] focus:ring-offset-2 focus:ring-offset-[#12110D] sm:h-3 sm:w-3 ${
                       currentIndex === idx
@@ -167,17 +169,17 @@ export default function TestimonialsSection() {
         {/* Formulär: Skicka ditt omdöme */}
         <div id="skicka-omdome" className="mt-12 scroll-mt-24 rounded-2xl border border-[#707164]/30 bg-[#1a1916]/60 p-5 backdrop-blur-sm sm:mt-16 sm:p-6 md:p-8">
           <h3 className="font-serif text-xl font-semibold text-[#EAC84E] sm:text-2xl" style={{ fontFamily: "Georgia, Cambria, 'Times New Roman', serif" }}>
-            Skicka ditt omdöme
+            {t("submitTitle")}
           </h3>
           <p className="mt-2 text-sm text-[#E5E7E3]/80">
-            Har du använt vår catering? Vi uppskattar din feedback. Ditt omdöme kan publiceras på sidan (vi kontaktar dig först).
+            {t("submitIntro")}
           </p>
 
           {submitted ? (
             <div className="mt-6 rounded-xl border border-[#C49B38]/40 bg-[#1a1916] p-5 text-center">
-              <p className="font-medium text-[#E5E7E3]">Tack för ditt omdöme!</p>
+              <p className="font-medium text-[#E5E7E3]">{t("thanksTitle")}</p>
               <p className="mt-1 text-sm text-[#E5E7E3]/80">
-                Vi tar emot din feedback och återkommer om vi vill publicera den.
+                {t("thanksMessage")}
               </p>
             </div>
           ) : (
@@ -194,7 +196,7 @@ export default function TestimonialsSection() {
               )}
 
               <div>
-                <span className="block text-sm font-medium text-[#E5E7E3]">Betyg (1–5 stjärnor) *</span>
+                <span className="block text-sm font-medium text-[#E5E7E3]">{t("ratingLabel")}</span>
                 <div className="mt-2 flex gap-2 sm:gap-1">
                   {[1, 2, 3, 4, 5].map((value) => (
                     <button
@@ -204,7 +206,7 @@ export default function TestimonialsSection() {
                       onMouseEnter={() => setHoverRating(value)}
                       onMouseLeave={() => setHoverRating(0)}
                       className="flex h-11 w-11 items-center justify-center text-2xl transition-transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-[#EAC84E] focus:ring-offset-2 focus:ring-offset-[#12110D] sm:h-auto sm:w-auto"
-                      aria-label={`${value} stjärnor`}
+                      aria-label={`${value} ${t("stars")}`}
                       aria-pressed={rating === value}
                     >
                       <span className={value <= displayRating ? "text-[#EAC84E]" : "text-[#707164]/50"}>
@@ -214,14 +216,14 @@ export default function TestimonialsSection() {
                   ))}
                 </div>
                 <p className="mt-1 text-xs text-[#707164]">
-                  {displayRating ? `${displayRating} av 5 stjärnor` : "Klicka för att välja"}
+                  {displayRating ? t("ofStars", { count: displayRating }) : t("clickToSelect")}
                 </p>
               </div>
 
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
                   <label htmlFor="review-name" className="block text-sm font-medium text-[#E5E7E3]">
-                    Namn *
+                    {t("nameLabel")} *
                   </label>
                   <input
                     id="review-name"
@@ -230,12 +232,12 @@ export default function TestimonialsSection() {
                     required
                     aria-required="true"
                     className="mt-1 w-full rounded-lg border border-[#707164]/50 bg-[#1a1916] px-4 py-2.5 text-[#E5E7E3] placeholder-[#707164] focus:border-[#C49B38] focus:outline-none focus:ring-1 focus:ring-[#C49B38]"
-                    placeholder="Ditt namn"
+                    placeholder={t("reviewNamePlaceholder")}
                   />
                 </div>
                 <div>
                   <label htmlFor="review-email" className="block text-sm font-medium text-[#E5E7E3]">
-                    E-post *
+                    {t("emailLabel")} *
                   </label>
                   <input
                     id="review-email"
@@ -244,14 +246,14 @@ export default function TestimonialsSection() {
                     required
                     aria-required="true"
                     className="mt-1 w-full rounded-lg border border-[#707164]/50 bg-[#1a1916] px-4 py-2.5 text-[#E5E7E3] placeholder-[#707164] focus:border-[#C49B38] focus:outline-none focus:ring-1 focus:ring-[#C49B38]"
-                    placeholder="din@epost.se"
+                    placeholder={t("reviewEmailPlaceholder")}
                   />
                 </div>
               </div>
 
               <div>
                 <label htmlFor="review-message" className="block text-sm font-medium text-[#E5E7E3]">
-                  Ditt omdöme / feedback *
+                  {t("yourReview")}
                 </label>
                 <textarea
                   id="review-message"
@@ -260,7 +262,7 @@ export default function TestimonialsSection() {
                   aria-required="true"
                   rows={4}
                   className="mt-1 w-full resize-y rounded-lg border border-[#707164]/50 bg-[#1a1916] px-4 py-2.5 text-[#E5E7E3] placeholder-[#707164] focus:border-[#C49B38] focus:outline-none focus:ring-1 focus:ring-[#C49B38]"
-                  placeholder="Berätta gärna om din upplevelse med vår catering."
+                  placeholder={t("reviewPlaceholder")}
                 />
               </div>
 
@@ -269,7 +271,7 @@ export default function TestimonialsSection() {
                 disabled={sending}
                 className="btn-outline w-full sm:w-auto px-6 py-2.5 text-base"
               >
-                {sending ? "Skickar…" : "Skicka omdöme"}
+                {sending ? t("sending") : t("sendReview")}
               </button>
             </form>
           )}

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { signIn, useSession } from "next-auth/react";
+import { useTranslations } from "next-intl";
 import LazyBackground from "@/components/LazyBackground";
 import { useCart } from "@/contexts/CartContext";
 import { CONTACT, FORMSPREE_FORM_ID } from "@/data/contact";
@@ -9,13 +10,13 @@ import { useSelectedService } from "@/contexts/SelectedServiceContext";
 
 const SCROLL_TO_QUOTE_KEY = "scrollToQuote";
 
-const SERVICE_OPTIONS = [
-  { value: "", label: "Välj typ av catering" },
-  { value: "cateringleverans", label: "Cateringleverans" },
-  { value: "ovrigt", label: "Övrigt / Osäker" },
-];
-
 export default function ContactSection() {
+  const t = useTranslations("contact");
+  const SERVICE_OPTIONS = [
+    { value: "", label: t("selectCatering") },
+    { value: "cateringleverans", label: t("cateringDelivery") },
+    { value: "ovrigt", label: t("other") },
+  ];
   const quoteRef = useRef<HTMLDivElement>(null);
   const { data: session, status } = useSession();
   const { items: cartItems, totalQuantity } = useCart();
@@ -46,7 +47,7 @@ export default function ContactSection() {
     setError(null);
 
     if (!canSubmitQuote) {
-      setError("Logga in med Google först för att skicka en offertförfrågan.");
+      setError(t("errorLogin"));
       await signIn("google", { callbackUrl: "/#quote" });
       return;
     }
@@ -85,7 +86,7 @@ export default function ContactSection() {
         }),
       });
       if (!orderRes.ok) {
-        let errMessage = "Kunde inte spara beställningen. Försök igen.";
+        let errMessage = t("errorSave");
         try {
           const errData = await orderRes.json();
           if (typeof (errData as { error?: string }).error === "string") {
@@ -106,7 +107,7 @@ export default function ContactSection() {
       fetch('http://127.0.0.1:7242/ingest/0cdeab99-f7cb-4cee-9943-94270784127d',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'ContactSection.tsx:handleSubmit',message:'order submit ok',data:{ok:true,status:orderRes.status},timestamp:Date.now(),hypothesisId:'H4'})}).catch(()=>{});
       // #endregion
     } catch {
-      setError("Kunde inte spara beställningen. Försök igen.");
+        setError(t("errorSave"));
       setSending(false);
       return;
     }
@@ -123,7 +124,7 @@ export default function ContactSection() {
         if (!res.ok) throw new Error("Något gick fel.");
         setSubmitted(true);
       } catch {
-        setError("Kunde inte skicka. Försök igen eller ring oss.");
+        setError(t("errorSend"));
       } finally {
         setSending(false);
       }
@@ -162,15 +163,15 @@ export default function ContactSection() {
               className="font-serif text-2xl font-semibold tracking-tight text-[#EAC84E] sm:text-3xl"
               style={{ fontFamily: "Georgia, Cambria, 'Times New Roman', serif" }}
             >
-              Kontakt
+              {t("heading")}
             </h2>
             <p className="mt-4 text-base leading-relaxed text-[#E5E7E3]/90">
-              Vi hjälper er gärna med catering till fest, möte eller evenemang. Skicka en förfrågan nedan.
+              {t("intro")}
             </p>
             <dl className="mt-8 space-y-4">
               <div>
                 <dt className="text-sm font-medium uppercase tracking-wider text-[#C49B38]">
-                  E-post
+                  {t("email")}
                 </dt>
                 <dd>
                   <a
@@ -184,7 +185,7 @@ export default function ContactSection() {
               {CONTACT.hoursNote && (
                 <div>
                   <dt className="text-sm font-medium uppercase tracking-wider text-[#C49B38]">
-                    Svarstid
+                    {t("responseTime")}
                   </dt>
                   <dd className="mt-1 text-[#E5E7E3]/80">{CONTACT.hoursNote}</dd>
                 </div>
@@ -199,20 +200,20 @@ export default function ContactSection() {
             className="scroll-mt-24 mx-auto w-full max-w-xl md:max-w-none"
           >
             <h3 className="font-serif text-xl font-semibold text-[#EAC84E] sm:text-2xl" style={{ fontFamily: "Georgia, Cambria, 'Times New Roman', serif" }}>
-              Begär offert
+              {t("requestQuote")}
             </h3>
             <p className="mt-2 text-sm text-[#E5E7E3]/80">
-              Fyll i formuläret så återkommer vi med ett förslag.
+              {t("formIntro")}
             </p>
             {status !== "loading" && !canSubmitQuote ? (
               <p className="mt-2 rounded-lg border border-[#C49B38]/50 bg-[#1a1916]/80 px-4 py-2 text-sm text-[#EAC84E]/95">
-                Logga in med Google för att skicka en offertförfrågan.
+                {t("loginToSubmit")}
               </p>
             ) : null}
 
             {cartItems.length > 0 && !submitted && (
               <div className="mt-4 rounded-lg border border-[#C49B38]/40 bg-[#1a1916]/80 p-4">
-                <p className="text-sm font-semibold text-[#EAC84E]">Din beställning</p>
+                <p className="text-sm font-semibold text-[#EAC84E]">{t("yourOrder")}</p>
                 <ul className="mt-2 space-y-1 text-sm text-[#E5E7E3]/95">
                   {cartItems.map((i) => (
                     <li key={`${i.menuSlug}-${i.itemName}`}>
@@ -221,7 +222,7 @@ export default function ContactSection() {
                   ))}
                 </ul>
                 <p className="mt-2 text-sm font-medium text-[#C49B38]">
-                  Totalt: {totalQuantity} st
+                  {t("total")}: {totalQuantity} st
                 </p>
               </div>
             )}
@@ -247,13 +248,13 @@ export default function ContactSection() {
                 </div>
                 <div className="form-success-line mt-6 inline-block h-px w-16 bg-[#EAC84E]/60" />
                 <h4 className="mt-5 font-serif text-xl font-semibold text-[#E5E7E3] sm:text-2xl" style={{ fontFamily: "Georgia, Cambria, 'Times New Roman', serif" }}>
-                  Tack för din förfrågan!
+                  {t("successTitle")}
                 </h4>
                 <p className="mt-3 text-[#E5E7E3]/90">
-                  Vi har tagit emot din förfrågan och återkommer så snart vi kan.
+                  {t("successMessage")}
                 </p>
                 <p className="mt-4 text-sm text-[#C49B38]">
-                  Kontrollera gärna din e-post – vi svarar ofta inom 24 timmar.
+                  {t("checkEmail")}
                 </p>
               </div>
             ) : (
@@ -270,7 +271,7 @@ export default function ContactSection() {
                 )}
                 <div>
                   <label htmlFor="quote-name" className="block text-sm font-medium text-[#E5E7E3]">
-                    Namn *
+                    {t("name")} *
                   </label>
                   <input
                     id="quote-name"
@@ -280,13 +281,13 @@ export default function ContactSection() {
                     aria-required="true"
                     defaultValue={session?.user?.name ?? ""}
                     className="mt-1 w-full rounded-lg border border-[#707164]/50 bg-[#1a1916] px-4 py-2.5 text-[#E5E7E3] placeholder-[#707164] focus:border-[#C49B38] focus:outline-none focus:ring-1 focus:ring-[#C49B38]"
-                    placeholder="Ditt namn"
+                    placeholder={t("namePlaceholder")}
                   />
                 </div>
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div>
                     <label htmlFor="quote-email" className="block text-sm font-medium text-[#E5E7E3]">
-                      E-post *
+                      {t("emailLabel")} *
                     </label>
                     <input
                       id="quote-email"
@@ -296,26 +297,26 @@ export default function ContactSection() {
                       aria-required="true"
                       defaultValue={session?.user?.email ?? ""}
                       className="mt-1 w-full rounded-lg border border-[#707164]/50 bg-[#1a1916] px-4 py-2.5 text-[#E5E7E3] placeholder-[#707164] focus:border-[#C49B38] focus:outline-none focus:ring-1 focus:ring-[#C49B38]"
-                      placeholder="din@epost.se"
+                      placeholder={t("emailPlaceholder")}
                     />
                   </div>
                   <div>
                     <label htmlFor="quote-phone" className="block text-sm font-medium text-[#E5E7E3]">
-                      Telefon
+                      {t("phone")}
                     </label>
                     <input
                       id="quote-phone"
                       type="tel"
                       name="phone"
                       className="mt-1 w-full rounded-lg border border-[#707164]/50 bg-[#1a1916] px-4 py-2.5 text-[#E5E7E3] placeholder-[#707164] focus:border-[#C49B38] focus:outline-none focus:ring-1 focus:ring-[#C49B38]"
-                      placeholder="07X-XXX XX XX"
+                      placeholder={t("phonePlaceholder")}
                     />
                   </div>
                 </div>
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div>
                     <label htmlFor="quote-date" className="block text-sm font-medium text-[#E5E7E3]">
-                      Datum för evenemang *
+                      {t("eventDate")} *
                     </label>
                     <input
                       id="quote-date"
@@ -328,7 +329,7 @@ export default function ContactSection() {
                   </div>
                   <div>
                     <label htmlFor="quote-guests" className="block text-sm font-medium text-[#E5E7E3]">
-                      Antal gäster *
+                      {t("guestCount")} *
                     </label>
                     <input
                       id="quote-guests"
@@ -338,13 +339,13 @@ export default function ContactSection() {
                       aria-required="true"
                       min={1}
                       className="mt-1 w-full rounded-lg border border-[#707164]/50 bg-[#1a1916] px-4 py-2.5 text-[#E5E7E3] placeholder-[#707164] focus:border-[#C49B38] focus:outline-none focus:ring-1 focus:ring-[#C49B38]"
-                      placeholder="t.ex. 25"
+                      placeholder={t("guestsPlaceholder")}
                     />
                   </div>
                 </div>
                 <div>
                   <label htmlFor="quote-service" className="block text-sm font-medium text-[#E5E7E3]">
-                    Typ av catering
+                    {t("cateringType")}
                   </label>
                   <select
                     id="quote-service"
@@ -360,14 +361,14 @@ export default function ContactSection() {
                 </div>
                 <div>
                   <label htmlFor="quote-message" className="block text-sm font-medium text-[#E5E7E3]">
-                    Meddelande
+                    {t("message")}
                   </label>
                   <textarea
                     id="quote-message"
                     name="message"
                     rows={4}
                     className="mt-1 w-full resize-y rounded-lg border border-[#707164]/50 bg-[#1a1916] px-4 py-2.5 text-[#E5E7E3] placeholder-[#707164] focus:border-[#C49B38] focus:outline-none focus:ring-1 focus:ring-[#C49B38]"
-                    placeholder="Berätta gärna om evenemanget, önskemål om meny, allergier m.m."
+                    placeholder={t("messagePlaceholder")}
                   />
                 </div>
                 <button
@@ -375,7 +376,7 @@ export default function ContactSection() {
                   disabled={sending}
                   className="btn-outline w-full py-3 text-base"
                 >
-                  {sending ? "Skickar…" : "Skicka förfrågan"}
+                  {sending ? t("sending") : t("sendRequest")}
                 </button>
               </form>
             )}

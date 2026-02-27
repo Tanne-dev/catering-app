@@ -1,16 +1,11 @@
 "use client";
 
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import LazyBackground from "@/components/LazyBackground";
 import { useSelectedService } from "@/contexts/SelectedServiceContext";
 import { SERVICES } from "@/data/services";
 import type { ServiceId } from "@/data/services";
-import {
-  VARATJANSTER_HERO,
-  LEVERANS_OMRADE,
-  LEVERANS_TILLVAL,
-  VILLKOR,
-} from "@/data/vara-tjanster-content";
 
 const SECTION_STYLES = {
   heading: "text-lg font-semibold tracking-tight text-[#EAC84E] sm:text-xl",
@@ -20,9 +15,14 @@ const SECTION_STYLES = {
   bullet: "text-[#C49B38] shrink-0 mt-0.5",
 } as const;
 
-/** Section "Våra tjänster". Innehåll från @/data/services och @/data/vara-tjanster-content. */
+/** Section "Våra tjänster". Innehåll från @/data/services och translations. */
 export default function ServicesSection() {
+  const t = useTranslations("services");
+  const tVara = useTranslations("varaTjanster");
   const { setSelectedServiceId } = useSelectedService();
+
+  const LEVERANS_TILLVAL = [tVara("leveransTillval1"), tVara("leveransTillval2")];
+  const VILLKOR = [tVara("villkor1"), tVara("villkor2"), tVara("villkor3"), tVara("villkor4"), tVara("villkor5")];
 
   return (
     <section
@@ -51,10 +51,10 @@ export default function ServicesSection() {
             id="services-heading"
             className="text-2xl font-semibold tracking-tight text-[#EAC84E] sm:text-3xl"
           >
-            Våra tjänster
+            {t("heading")}
           </h2>
           <p className="mx-auto mt-4 max-w-xl text-lg leading-relaxed text-[#E5E7E3]/95">
-            Vi erbjuder catering anpassad efter era behov. Välj nedan för mer information och bilder.
+            {t("subheading")}
           </p>
         </header>
 
@@ -63,15 +63,15 @@ export default function ServicesSection() {
             {/* Beställ Catering */}
             <div>
               <h3 className={SECTION_STYLES.heading}>
-                {VARATJANSTER_HERO.headline}
+                {t("heroHeadline")}
               </h3>
               <p className={`mt-3 ${SECTION_STYLES.body}`}>
-                {VARATJANSTER_HERO.intro}
+                {t("heroIntro")}
               </p>
               <p className={`mt-6 ${SECTION_STYLES.subheading}`}>
-                Gratis leverans inom
+                {t("freeDelivery")}
               </p>
-              <p className={SECTION_STYLES.body}>{LEVERANS_OMRADE}</p>
+              <p className={SECTION_STYLES.body}>{t("deliveryArea")}</p>
             </div>
 
             {/* Tjänst(er) */}
@@ -87,16 +87,16 @@ export default function ServicesSection() {
                   type="button"
                   onClick={() => setSelectedServiceId(service.id as ServiceId)}
                   className="btn-outline mt-4"
-                  aria-label={`Läs mer om ${service.title}`}
+                  aria-label={`${t("readMore")} ${service.title}`}
                 >
-                  Läs mer
+                  {t("readMore")}
                 </button>
               </div>
             ))}
 
             {/* Leverans & Tillval */}
             <div className="mt-10 pt-8 border-t border-[#707164]/20">
-              <h3 className={SECTION_STYLES.subheading}>Leverans & Tillval</h3>
+              <h3 className={SECTION_STYLES.subheading}>{t("deliveryOptions")}</h3>
               <ul className="mt-3 space-y-2">
                 {LEVERANS_TILLVAL.map((item, i) => (
                   <li key={i} className={SECTION_STYLES.listItem}>
@@ -109,7 +109,7 @@ export default function ServicesSection() {
 
             {/* Villkor */}
             <div className="mt-10 pt-8 border-t border-[#707164]/20">
-              <h3 className={SECTION_STYLES.subheading}>Villkor</h3>
+              <h3 className={SECTION_STYLES.subheading}>{t("terms")}</h3>
               <ul className="mt-3 space-y-2">
                 {VILLKOR.map((item, i) => (
                   <li key={i} className={SECTION_STYLES.listItem}>
@@ -129,7 +129,7 @@ export default function ServicesSection() {
             <div className="overflow-hidden rounded-lg border border-[#707164]/25 bg-[#1a1916]/50 shadow-lg">
               <Image
                 src="/vara-tjanster-sushi.png"
-                alt="Catering och leverans"
+                alt={t("imageAlt")}
                 width={380}
                 height={507}
                 sizes="(max-width: 1024px) 100vw, 380px"

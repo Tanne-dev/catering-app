@@ -35,6 +35,7 @@ export default function AdminOrdersPage() {
   const [feedback, setFeedback] = useState<{ type: "success" | "error"; msg: string } | null>(null);
   const [updatingId, setUpdatingId] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [confirmDeleteOrder, setConfirmDeleteOrder] = useState<Order | null>(null);
 
   const loadOrders = useCallback(async () => {
     try {
@@ -48,6 +49,15 @@ export default function AdminOrdersPage() {
       setLoading(false);
     }
   }, []);
+
+  useEffect(() => {
+    if (!confirmDeleteOrder) return;
+    function handleEscape(e: KeyboardEvent) {
+      if (e.key === "Escape") closeDeleteConfirm();
+    }
+    document.addEventListener("keydown", handleEscape);
+    return () => document.removeEventListener("keydown", handleEscape);
+  }, [confirmDeleteOrder]);
 
   useEffect(() => {
     if (status === "loading") return;
@@ -78,9 +88,19 @@ export default function AdminOrdersPage() {
     }
   }
 
-  async function deleteOrder(orderId: string) {
-    if (!confirm("Vill du verkligen ta bort denna beställning? Detta kan inte ångras.")) return;
-    const orderToRemove = orders.find((o) => o.id === orderId);
+  function openDeleteConfirm(order: Order) {
+    setConfirmDeleteOrder(order);
+  }
+
+  function closeDeleteConfirm() {
+    setConfirmDeleteOrder(null);
+  }
+
+  async function confirmDeleteOrderAction() {
+    if (!confirmDeleteOrder) return;
+    const orderId = confirmDeleteOrder.id;
+    const orderToRemove = confirmDeleteOrder;
+    closeDeleteConfirm();
     if (!orderToRemove) return;
     setDeletingId(orderId);
     setFeedback(null);
@@ -97,7 +117,6 @@ export default function AdminOrdersPage() {
         return;
       }
       setFeedback({ type: "success", msg: "Beställningen borttagen." });
-      await loadOrders();
     } catch {
       setFeedback({ type: "error", msg: "Kunde inte ta bort beställningen." });
       setOrders((prev) => [...prev, orderToRemove].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()));
@@ -127,6 +146,50 @@ export default function AdminOrdersPage() {
 
   return (
     <div className="relative min-h-[70vh] px-4 py-16">
+      {/* Modal xác nhận xoá */}
+      {confirmDeleteOrder && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="delete-confirm-title"
+          aria-describedby="delete-confirm-desc"
+        >
+          <div
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            aria-hidden
+            onClick={closeDeleteConfirm}
+          />
+          <div
+            className="relative w-full max-w-md rounded-2xl border border-[#707164]/40 bg-[#1a1916] p-6 shadow-2xl sm:p-8"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h2 id="delete-confirm-title" className="font-serif text-xl font-semibold text-[#EAC84E]" style={{ fontFamily: "Georgia, Cambria, 'Times New Roman', serif" }}>
+              Bekräfta borttagning
+            </h2>
+            <p id="delete-confirm-desc" className="mt-3 text-[#E5E7E3]/90">
+              Vill du verkligen ta bort beställningen från {confirmDeleteOrder.name}? Detta kan inte ångras.
+            </p>
+            <div className="mt-6 flex justify-end gap-3">
+              <button
+                type="button"
+                onClick={closeDeleteConfirm}
+                className="rounded-lg border border-[#707164]/50 bg-transparent px-4 py-2.5 text-sm font-medium text-[#E5E7E3] transition-colors hover:bg-white/5 focus:outline-none focus:ring-2 focus:ring-[#EAC84E]/50 focus:ring-offset-2 focus:ring-offset-[#12110D]"
+              >
+                Avbryt
+              </button>
+              <button
+                type="button"
+                onClick={confirmDeleteOrderAction}
+                disabled={deletingId === confirmDeleteOrder.id}
+                className="rounded-lg border border-red-500/60 bg-red-900/40 px-4 py-2.5 text-sm font-medium text-red-200 transition-colors hover:bg-red-900/60 disabled:opacity-60 focus:outline-none focus:ring-2 focus:ring-red-500/50 focus:ring-offset-2 focus:ring-offset-[#12110D]"
+              >
+                {deletingId === confirmDeleteOrder.id ? "Tar bort…" : "Ta bort"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       <LazyBackground
         src="/admin-bg.png"
         className="fixed inset-y-0 left-5 right-5 -z-10 bg-cover bg-center bg-no-repeat"
@@ -212,7 +275,7 @@ export default function AdminOrdersPage() {
                       </select>
                       <button
                         type="button"
-                        onClick={() => deleteOrder(order.id)}
+                        onClick={() => openDeleteConfirm(order)}
                         disabled={deletingId === order.id}
                         className="rounded border border-red-500/60 bg-red-900/30 px-3 py-1.5 text-sm text-red-200 transition-colors hover:bg-red-900/50 disabled:opacity-60"
                         title="Ta bort beställning"

@@ -1,4 +1,6 @@
 import { Suspense } from "react";
+import Image from "next/image";
+import { getTranslations } from "next-intl/server";
 import ContactSection from "@/components/ContactSection";
 import DishSlider from "@/components/DishSlider";
 import Hero from "@/components/Hero";
@@ -8,7 +10,10 @@ import ServicesSection from "@/components/ServicesSection";
 import TestimonialsSection from "@/components/TestimonialsSection";
 import { CONTACT } from "@/data/contact";
 
-export default function Home() {
+export default async function Home() {
+  const tGoals = await getTranslations("goals");
+  const tFooter = await getTranslations("footer");
+
   return (
     <main
       id="main-content"
@@ -26,41 +31,54 @@ export default function Home() {
       <TestimonialsSection />
       <section
         id="goals"
-        className="border-t border-[#707164]/25 bg-gradient-to-b from-[#231a0e] via-[#2c2211] to-[#12110D] py-12 sm:py-16 md:min-h-screen md:snap-start md:py-20 md:flex md:items-center"
+        className="border-t border-[#707164]/25 bg-gradient-to-b from-[#231a0e] via-[#2c2211] to-[#12110D] py-12 sm:py-16 md:min-h-screen md:snap-start md:py-20"
         aria-labelledby="goals-heading"
       >
-        <div className="mx-auto max-w-3xl px-4 text-center sm:px-6 sm:text-left lg:px-8">
+        <div className="mx-auto flex max-w-6xl flex-col items-center gap-8 px-4 md:flex-row md:items-center md:gap-12 md:px-6 lg:gap-16 lg:px-8">
+          <div className="max-w-3xl flex-1 text-center sm:px-6 sm:text-left lg:px-0">
           <h2 id="goals-heading" className="font-serif text-2xl font-semibold tracking-tight text-[#EAC84E] sm:text-3xl" style={{ fontFamily: "Georgia, Cambria, 'Times New Roman', serif" }}>
-            Mål & Vårt uppdrag
+            {tGoals("heading")}
           </h2>
           <div className="mx-auto mt-4 h-px w-16 bg-[#C49B38]/70 sm:mx-0" aria-hidden />
           <p className="mt-6 text-[#E5E7E3]/90 leading-relaxed">
-            Vårt mål är att skapa pålitlig och personlig catering med fokus på kvalitet, smak och service.
+            {tGoals("p1")}
           </p>
           <p className="mt-4 text-[#E5E7E3]/90 leading-relaxed">
-            Bakom Catering Tanne finns en genuin passion för matlagning och många års erfarenhet från arbete i olika restauranger, där vi har haft förmånen att servera tusentals nöjda gäster.
+            {tGoals("p2")}
           </p>
           <p className="mt-4 text-[#E5E7E3]/90 leading-relaxed">
-            Vår resa började med kärleken till mat och mötet med människor. Genom åren har vi lärt oss hur viktigt det är att varje måltid inte bara smakar bra, utan också känns rätt för tillfället – oavsett om det handlar om en privat fest, ett företagsevent eller en mindre sammankomst.
+            {tGoals("p3")}
           </p>
-          <p className="mt-6 font-medium text-[#E5E7E3]">Vi strävar efter att:</p>
+          <p className="mt-6 font-medium text-[#E5E7E3]">{tGoals("strive")}</p>
           <ul className="mt-3 space-y-2 text-[#E5E7E3]/90 leading-relaxed" role="list">
             <li className="flex gap-3">
               <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[#EAC84E]" aria-hidden />
-              <span>leverera mat av hög kvalitet, tillagad med omsorg</span>
+              <span>{tGoals("goal1")}</span>
             </li>
             <li className="flex gap-3">
               <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[#EAC84E]" aria-hidden />
-              <span>erbjuda flexibel catering anpassad efter kundens önskemål</span>
+              <span>{tGoals("goal2")}</span>
             </li>
             <li className="flex gap-3">
               <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[#EAC84E]" aria-hidden />
-              <span>skapa en trygg och smidig upplevelse från första kontakt till leverans</span>
+              <span>{tGoals("goal3")}</span>
             </li>
           </ul>
           <p className="mt-6 text-[#E5E7E3]/90 leading-relaxed">
-            För oss handlar catering inte bara om mat, utan om förtroende, engagemang och stolthet i hantverket. Vårt mål är att varje kund ska känna sig väl omhändertagen och trygg med att maten är i professionella händer.
+            {tGoals("p4")}
           </p>
+          </div>
+          <div className="relative shrink-0 w-full max-w-md overflow-hidden rounded-xl border border-[#707164]/30 shadow-xl md:max-w-sm lg:max-w-md">
+            <Image
+              src="/goals-kitchen.png"
+              alt={tGoals("imageAlt")}
+              width={480}
+              height={360}
+              sizes="(max-width: 768px) 100vw, 380px"
+              className="h-auto w-full object-cover"
+              priority={false}
+            />
+          </div>
         </div>
       </section>
       <footer
@@ -70,21 +88,21 @@ export default function Home() {
       >
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col items-center gap-6 text-center sm:flex-row sm:items-center sm:justify-between sm:gap-8 sm:text-left">
-            <nav className="flex flex-wrap items-center justify-center gap-4 sm:justify-start sm:gap-6" aria-label="Sidfotnavigation">
+            <nav className="flex flex-wrap items-center justify-center gap-4 sm:justify-start sm:gap-6" aria-label="Footer navigation">
               <a href="#services" className="text-sm text-[#E5E7E3]/90 underline-offset-4 hover:text-[#EAC84E] hover:underline">
-                Våra tjänster
+                {tFooter("ourServices")}
               </a>
               <a href="#menus" className="text-sm text-[#E5E7E3]/90 underline-offset-4 hover:text-[#EAC84E] hover:underline">
-                Meny
+                {tFooter("menu")}
               </a>
               <a href="#quote" className="text-sm text-[#E5E7E3]/90 underline-offset-4 hover:text-[#EAC84E] hover:underline">
-                Begär offert
+                {tFooter("requestQuote")}
               </a>
               <a href="#contact" className="text-sm text-[#E5E7E3]/90 underline-offset-4 hover:text-[#EAC84E] hover:underline">
-                Kontakt
+                {tFooter("contact")}
               </a>
               <a href="/admin/tables" className="text-sm text-[#E5E7E3]/70 underline-offset-4 hover:text-[#EAC84E] hover:underline">
-                Hantera bord
+                {tFooter("manageTables")}
               </a>
             </nav>
             <div className="flex flex-col items-center gap-1 text-sm text-[#D5D7D3]/80 sm:items-end">
@@ -94,10 +112,10 @@ export default function Home() {
             </div>
           </div>
           <p className="mt-8 border-t border-[#707164]/30 pt-6 text-center text-sm text-[#D5D7D3]/70" suppressHydrationWarning>
-            © {new Date().getFullYear()} Catering Tanne. Alla rättigheter förbehållna.
+            © {new Date().getFullYear()} Catering Tanne. {tFooter("copyright")}
           </p>
           <p className="mt-2 text-center text-xs text-[#D5D7D3]/50">
-            Webbplatsen är utvecklad av Tanne Dev.
+            {tFooter("developedBy")}
           </p>
         </div>
       </footer>

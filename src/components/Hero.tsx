@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 
 function CheckIcon() {
   return (
@@ -22,12 +23,8 @@ function CheckIcon() {
   );
 }
 
-const BULLETS = [
-  "10+ års erfarenhet från restaurangbranschen",
-  "Professionellt organiserat och noggrant genomfört vid varje evenemang",
-];
-
 export default function Hero() {
+  const t = useTranslations("hero");
   return (
     <section
       className="relative min-h-[85vh] w-full overflow-hidden py-16 md:min-h-screen md:snap-start md:py-20 lg:min-h-[90vh] lg:py-24"
@@ -64,7 +61,7 @@ export default function Hero() {
             >
               <Image
                 src="/logo-catering-tanne.png"
-                alt="Catering Tanne – Vietnamesisk & svensk catering"
+                alt={t("alt")}
                 width={485}
                 height={67}
                 sizes="(max-width: 640px) 320px, (max-width: 768px) 400px, 520px"
@@ -73,24 +70,24 @@ export default function Hero() {
               />
             </h1>
             <p className="mt-4 text-lg leading-relaxed text-[#D5D7D3] sm:mt-5 sm:text-xl md:text-2xl">
-              Autentisk vietnamesisk och svensk mat för dina evenemang
+              {t("intro")}
             </p>
             <ul className="mx-auto mt-6 max-w-xl space-y-3 text-left sm:mt-8 sm:max-w-2xl sm:space-y-4" role="list">
-              {BULLETS.map((item) => (
-                <li key={item} className="flex items-start gap-3 text-[#D5D7D3] sm:gap-4">
+              {(["bullet1", "bullet2"] as const).map((key) => (
+                <li key={key} className="flex items-start gap-3 text-[#D5D7D3] sm:gap-4">
                   <span className="mt-0.5 shrink-0 text-[#C49B38]" aria-hidden>
                     <CheckIcon />
                   </span>
-                  <span className="text-base leading-relaxed sm:text-lg md:text-xl">{item}</span>
+                  <span className="text-base leading-relaxed sm:text-lg md:text-xl">{t(key)}</span>
                 </li>
               ))}
             </ul>
             <div className="mx-auto mt-8 flex max-w-sm flex-col items-center gap-4 sm:mt-10 sm:max-w-none sm:flex-row sm:justify-center sm:gap-5">
               <Link href="#quote" className="btn-outline w-full py-3 text-base sm:w-auto sm:min-w-[180px] sm:py-3.5">
-                Begär offert
+                {t("requestQuote")}
               </Link>
               <Link href="/admin/tables" className="btn-outline w-full py-3 text-base sm:w-auto sm:min-w-[180px] sm:py-3.5">
-                Hantera bord
+                {t("manageTables")}
               </Link>
             </div>
           </div>

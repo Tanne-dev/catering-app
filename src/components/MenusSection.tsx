@@ -1,16 +1,18 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import { useTranslations } from "next-intl";
 import { useSelectedMenu, type MenuId } from "@/contexts/SelectedMenuContext";
 
 function MenuLoadingPlaceholder() {
+  const t = useTranslations("menus");
   return (
     <div className="mx-auto mt-10 flex max-w-2xl flex-col items-center gap-4 py-12">
       <div
         className="h-10 w-10 animate-spin rounded-full border-2 border-[#707164]/40 border-t-[#EAC84E]"
         aria-hidden
       />
-      <p className="animate-menu-loading text-base text-[#E5E7E3]">Laddar meny…</p>
+      <p className="animate-menu-loading text-base text-[#E5E7E3]">{t("loading")}</p>
     </div>
   );
 }
@@ -31,6 +33,7 @@ const SalladerMenuContent = dynamic(
 );
 
 export default function MenusSection() {
+  const t = useTranslations("menus");
   const { selectedMenu } = useSelectedMenu();
   return (
     <section
@@ -52,10 +55,10 @@ export default function MenusSection() {
       />
       <div className="relative z-10 mx-auto max-w-6xl px-4 text-center sm:px-6 lg:px-8">
         <h2 className="text-2xl font-semibold text-[#EAC84E] sm:text-3xl lg:text-[2.15rem]">
-          Meny
+          {t("heading")}
         </h2>
         <p className="mx-auto mt-3 max-w-xl text-lg text-[#E5E7E3]">
-          Bläddra i vårt utbud nedan och välj en meny för att se hela innehållet. Varje alternativ kan anpassas efter ert evenemang.
+          {t("intro")}
         </p>
         {selectedMenu === "sushi" ? (
           <div className="animate-menu-enter">
@@ -71,7 +74,7 @@ export default function MenusSection() {
           </div>
         ) : (
           <p className="mt-8 text-base text-[#E5E7E3]/90">
-            Välj en meny i headern för att se dess innehåll här.
+            {t("selectMenu")}
           </p>
         )}
       </div>
