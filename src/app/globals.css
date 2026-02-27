@@ -18,6 +18,8 @@
 
 html {
   scroll-behavior: smooth;
+  overscroll-behavior-x: none;
+  touch-action: pan-y;
 }
 
 body {
