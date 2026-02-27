@@ -76,9 +76,6 @@ export default function Home() {
               </a>
             </nav>
             <div className="flex flex-col items-center gap-1 text-sm text-[#D5D7D3]/80 sm:items-end">
-              <a href={`tel:${CONTACT.phone.replace(/\s/g, "")}`} className="hover:text-[#EAC84E]">
-                {CONTACT.phone}
-              </a>
               <a href={`mailto:${CONTACT.email}`} className="hover:text-[#EAC84E]">
                 {CONTACT.email}
               </a>

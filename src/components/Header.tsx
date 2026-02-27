@@ -301,13 +301,6 @@ export default function Header() {
           </a>
 
           <div className="ml-auto flex items-center gap-1.5 sm:gap-2 md:gap-3">
-            <a
-              href={`tel:${CONTACT.phone.replace(/\s/g, "")}`}
-              className="flex items-center text-[#D5D7D3] opacity-90"
-              aria-label={`Ring oss ${CONTACT.phone}`}
-            >
-              <PhoneIcon />
-            </a>
             <Link
               href="/varukorg"
               className="relative flex items-center justify-center rounded-lg p-2 text-[#EAC84E] transition-colors hover:bg-[#EAC84E]/15 hover:text-[#EAC84E] focus:outline-none focus:ring-2 focus:ring-[#EAC84E] focus:ring-offset-2 focus:ring-offset-[#12110D]"

@@ -159,22 +159,9 @@ export default function ContactSection() {
               Kontakt
             </h2>
             <p className="mt-4 text-base leading-relaxed text-[#E5E7E3]/90">
-              Vi hjälper er gärna med catering till fest, möte eller evenemang. Ring eller skicka en förfrågan nedan.
+              Vi hjälper er gärna med catering till fest, möte eller evenemang. Skicka en förfrågan nedan.
             </p>
             <dl className="mt-8 space-y-4">
-              <div>
-                <dt className="text-sm font-medium uppercase tracking-wider text-[#C49B38]">
-                  Telefon
-                </dt>
-                <dd>
-                  <a
-                    href={`tel:${CONTACT.phone.replace(/\s/g, "")}`}
-                    className="mt-1 text-lg font-medium text-[#E5E7E3] hover:text-[#EAC84E]"
-                  >
-                    {CONTACT.phone}
-                  </a>
-                </dd>
-              </div>
               <div>
                 <dt className="text-sm font-medium uppercase tracking-wider text-[#C49B38]">
                   E-post
