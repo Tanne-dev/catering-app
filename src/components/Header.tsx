@@ -424,7 +424,7 @@ export default function Header() {
                 )}
               </button>
               {notificationOpen && (
-                <div className="absolute left-1/2 top-full z-50 mt-2 w-72 max-w-[calc(100vw-2rem)] -translate-x-1/2">
+                <div className="fixed left-1/2 top-20 z-50 mt-2 w-72 max-w-[calc(100vw-2rem)] -translate-x-1/2">
                   <div
                     className="overflow-hidden rounded-xl border py-2 shadow-xl"
                     style={{
