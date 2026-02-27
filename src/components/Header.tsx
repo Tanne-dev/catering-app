@@ -382,7 +382,7 @@ export default function Header() {
                 <HelpIcon />
               </button>
               {helpOpen && (
-                <div className="absolute right-0 top-full z-50 mt-2 w-80 max-w-[calc(100vw-2rem)]">
+                <div className="fixed left-1/2 top-20 z-50 mt-2 w-80 max-w-[calc(100vw-2rem)] -translate-x-1/2 sm:absolute sm:left-auto sm:right-0 sm:top-full sm:translate-x-0">
                   <div
                     className="overflow-hidden rounded-xl border py-3 shadow-xl"
                     style={{
