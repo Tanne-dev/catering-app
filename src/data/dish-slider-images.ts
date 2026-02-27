@@ -23,7 +23,6 @@ const DISH_PATHS = [
   "dishes/dish-salmon-rolls.png",
   "dishes/dish-maki-variety.png",
   "dishes/dish-shrimp-avocado-rolls.png",
-  "dishes/dish-extra.png",
   "dishes/dish-leaf-platter.png",
   "dishes/dish-sushi-platter-mixed.png",
   "dishes/dish-avocado-rolls.png",

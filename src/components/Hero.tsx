@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useSession } from "next-auth/react";
 import { useTranslations } from "next-intl";
 
 function CheckIcon() {
@@ -25,6 +26,8 @@ function CheckIcon() {
 
 export default function Hero() {
   const t = useTranslations("hero");
+  const { data: session, status } = useSession();
+  const isAdmin = status === "authenticated" && (session?.user as { role?: string })?.role === "admin";
   return (
     <section
       className="relative min-h-[85vh] w-full overflow-hidden py-16 md:min-h-screen md:snap-start md:py-20 lg:min-h-[90vh] lg:py-24"
@@ -86,9 +89,11 @@ export default function Hero() {
               <Link href="#quote" className="btn-outline w-full py-3 text-base sm:w-auto sm:min-w-[180px] sm:py-3.5">
                 {t("requestQuote")}
               </Link>
-              <Link href="/admin/tables" className="btn-outline w-full py-3 text-base sm:w-auto sm:min-w-[180px] sm:py-3.5">
-                {t("manageTables")}
-              </Link>
+              {isAdmin && (
+                <Link href="/admin/tables" className="btn-outline w-full py-3 text-base sm:w-auto sm:min-w-[180px] sm:py-3.5">
+                  {t("manageTables")}
+                </Link>
+              )}
             </div>
           </div>
         </div>

@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import Image from "next/image";
 import { getTranslations } from "next-intl/server";
+import { auth } from "@/auth";
 import ContactSection from "@/components/ContactSection";
 import DishSlider from "@/components/DishSlider";
 import Hero from "@/components/Hero";
@@ -13,6 +14,8 @@ import { CONTACT } from "@/data/contact";
 export default async function Home() {
   const tGoals = await getTranslations("goals");
   const tFooter = await getTranslations("footer");
+  const session = await auth();
+  const isAdmin = !!session?.user && (session.user as { role?: string }).role === "admin";
 
   return (
     <main
@@ -101,9 +104,11 @@ export default async function Home() {
               <a href="#contact" className="text-sm text-[#E5E7E3]/90 underline-offset-4 hover:text-[#EAC84E] hover:underline">
                 {tFooter("contact")}
               </a>
-              <a href="/admin/tables" className="text-sm text-[#E5E7E3]/70 underline-offset-4 hover:text-[#EAC84E] hover:underline">
-                {tFooter("manageTables")}
-              </a>
+              {isAdmin && (
+                <a href="/admin/tables" className="text-sm text-[#E5E7E3]/70 underline-offset-4 hover:text-[#EAC84E] hover:underline">
+                  {tFooter("manageTables")}
+                </a>
+              )}
             </nav>
             <div className="flex flex-col items-center gap-1 text-sm text-[#D5D7D3]/80 sm:items-end">
               <a href={`mailto:${CONTACT.email}`} className="hover:text-[#EAC84E]">
