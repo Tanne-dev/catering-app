@@ -404,7 +404,7 @@ export default function Header() {
                 </div>
               )}
             </div>
-            <div className="relative" ref={notificationDropdownRef}>
+            <div className="relative hidden sm:block" ref={notificationDropdownRef}>
               <button
                 type="button"
                 onClick={() => setNotificationOpen((o) => !o)}

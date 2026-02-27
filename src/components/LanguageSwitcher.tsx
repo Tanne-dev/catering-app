@@ -14,7 +14,7 @@ export default function LanguageSwitcher() {
   }
 
   return (
-    <div className="flex items-center gap-1 rounded-lg border border-[#707164]/40 bg-[#1a1916]/80 px-1.5 py-1">
+    <div className="hidden items-center gap-1 rounded-lg border border-[#707164]/40 bg-[#1a1916]/80 px-1.5 py-1 sm:flex">
       <button
         type="button"
         onClick={() => setLocale("sv")}
