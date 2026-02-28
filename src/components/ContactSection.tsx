@@ -1,11 +1,11 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { signIn, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import { useTranslations } from "next-intl";
 import LazyBackground from "@/components/LazyBackground";
 import { useCart } from "@/contexts/CartContext";
-import { CONTACT, FORMSPREE_FORM_ID } from "@/data/contact";
+import { CONTACT } from "@/data/contact";
 import { useSelectedService } from "@/contexts/SelectedServiceContext";
 
 const SCROLL_TO_QUOTE_KEY = "scrollToQuote";
@@ -18,15 +18,13 @@ export default function ContactSection() {
     { value: "ovrigt", label: t("other") },
   ];
   const quoteRef = useRef<HTMLDivElement>(null);
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
   const { items: cartItems, totalQuantity } = useCart();
   const { setSelectedServiceId } = useSelectedService();
   const [submitted, setSubmitted] = useState(false);
+  const [orderId, setOrderId] = useState<string | null>(null);
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const isGuest = status === "authenticated" && (session?.user as { role?: string })?.role === "guest";
-  const isAdmin = status === "authenticated" && (session?.user as { role?: string })?.role === "admin";
-  const canSubmitQuote = status === "authenticated" && (isGuest || isAdmin);
 
   useEffect(() => {
     if (typeof window === "undefined" || !quoteRef.current) return;
@@ -46,17 +44,13 @@ export default function ContactSection() {
     e.preventDefault();
     setError(null);
 
-    if (!canSubmitQuote) {
-      setError(t("errorLogin"));
-      await signIn("google", { callbackUrl: "/#quote" });
-      return;
-    }
-
     const form = e.currentTarget;
+    let savedOrderId: string | null = null;
 
     const name = (form.querySelector('[name="name"]') as HTMLInputElement)?.value ?? "";
     const email = (form.querySelector('[name="email"]') as HTMLInputElement)?.value ?? "";
     const phone = (form.querySelector('[name="phone"]') as HTMLInputElement)?.value ?? "";
+    const address = (form.querySelector('[name="address"]') as HTMLInputElement)?.value ?? "";
     const date = (form.querySelector('[name="date"]') as HTMLInputElement)?.value ?? "";
     const guests = (form.querySelector('[name="guests"]') as HTMLInputElement)?.value ?? "";
     const service = (form.querySelector('[name="service"]') as HTMLSelectElement)?.selectedOptions?.[0]?.text ?? "";
@@ -67,9 +61,9 @@ export default function ContactSection() {
       : null;
 
     setSending(true);
-    // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/0cdeab99-f7cb-4cee-9943-94270784127d',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'ContactSection.tsx:handleSubmit',message:'order submit start',data:{canSubmitQuote,name:name?.slice(0,3),email:email?.slice(0,5)},timestamp:Date.now(),hypothesisId:'H4'})}).catch(()=>{});
-    // #endregion
+      // #region agent log
+      fetch('http://127.0.0.1:7242/ingest/0cdeab99-f7cb-4cee-9943-94270784127d',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'ContactSection.tsx:handleSubmit',message:'order submit start',data:{name:name?.slice(0,3),email:email?.slice(0,5)},timestamp:Date.now(),hypothesisId:'H4'})}).catch(()=>{});
+      // #endregion
     try {
       const orderRes = await fetch("/api/orders", {
         method: "POST",
@@ -78,6 +72,7 @@ export default function ContactSection() {
           name,
           email,
           phone,
+          address,
           event_date: date,
           guests,
           service,
@@ -106,36 +101,41 @@ export default function ContactSection() {
       // #region agent log
       fetch('http://127.0.0.1:7242/ingest/0cdeab99-f7cb-4cee-9943-94270784127d',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'ContactSection.tsx:handleSubmit',message:'order submit ok',data:{ok:true,status:orderRes.status},timestamp:Date.now(),hypothesisId:'H4'})}).catch(()=>{});
       // #endregion
+      const orderData = (await orderRes.json()) as { id?: string };
+      savedOrderId = orderData?.id ?? null;
+      setOrderId(savedOrderId);
     } catch {
         setError(t("errorSave"));
       setSending(false);
       return;
     }
 
-    if (FORMSPREE_FORM_ID) {
-      try {
-        const formData = new FormData(form);
-        if (cartText) formData.append("cart_summary", cartText);
-        const res = await fetch(`https://formspree.io/f/${FORMSPREE_FORM_ID}`, {
-          method: "POST",
-          body: formData,
-          headers: { Accept: "application/json" },
-        });
-        if (!res.ok) throw new Error("Något gick fel.");
-        setSubmitted(true);
-      } catch {
-        setError(t("errorSend"));
-      } finally {
-        setSending(false);
+    try {
+      const res = await fetch("/api/send-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          type: "quote",
+          name,
+          email,
+          phone,
+          address,
+          event_date: date,
+          guests,
+          service,
+          message,
+          cart_summary: cartText,
+          order_id: savedOrderId,
+        }),
+      });
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error((errData as { error?: string }).error ?? "Något gick fel.");
       }
-    } else {
-      const subject = encodeURIComponent(`Begär offert – ${name}`);
-      const cartPart = cartText ? `\n${cartText}\n\n` : "";
-      const body = encodeURIComponent(
-        `Namn: ${name}\nE-post: ${email}\nTelefon: ${phone}\nDatum: ${date}\nAntal gäster: ${guests}\nTyp av catering: ${service}${cartPart}Meddelande:\n${message}`
-      );
-      window.location.href = `mailto:${CONTACT.email}?subject=${subject}&body=${body}`;
       setSubmitted(true);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : t("errorSend"));
+    } finally {
       setSending(false);
     }
   }
@@ -193,7 +193,7 @@ export default function ContactSection() {
             </dl>
           </div>
 
-          {/* Form Begär offert */}
+          {/* Form Skicka förfrågan */}
           <div
             id="quote"
             ref={quoteRef}
@@ -205,12 +205,6 @@ export default function ContactSection() {
             <p className="mt-2 text-sm text-[#E5E7E3]/80">
               {t("formIntro")}
             </p>
-            {status !== "loading" && !canSubmitQuote ? (
-              <p className="mt-2 rounded-lg border border-[#C49B38]/50 bg-[#1a1916]/80 px-4 py-2 text-sm text-[#EAC84E]/95">
-                {t("loginToSubmit")}
-              </p>
-            ) : null}
-
             {cartItems.length > 0 && !submitted && (
               <div className="mt-4 rounded-lg border border-[#C49B38]/40 bg-[#1a1916]/80 p-4">
                 <p className="text-sm font-semibold text-[#EAC84E]">{t("yourOrder")}</p>
@@ -253,6 +247,11 @@ export default function ContactSection() {
                 <p className="mt-3 text-[#E5E7E3]/90">
                   {t("successMessage")}
                 </p>
+                {orderId && (
+                  <p className="mt-2 text-sm font-medium text-[#EAC84E]">
+                    {t("orderNumber")}: {orderId}
+                  </p>
+                )}
                 <p className="mt-4 text-sm text-[#C49B38]">
                   {t("checkEmail")}
                 </p>
@@ -312,6 +311,18 @@ export default function ContactSection() {
                       placeholder={t("phonePlaceholder")}
                     />
                   </div>
+                </div>
+                <div>
+                  <label htmlFor="quote-address" className="block text-sm font-medium text-[#E5E7E3]">
+                    {t("address")}
+                  </label>
+                  <input
+                    id="quote-address"
+                    type="text"
+                    name="address"
+                    className="mt-1 w-full rounded-lg border border-[#707164]/50 bg-[#1a1916] px-4 py-2.5 text-[#E5E7E3] placeholder-[#707164] focus:border-[#C49B38] focus:outline-none focus:ring-1 focus:ring-[#C49B38]"
+                    placeholder={t("addressPlaceholder")}
+                  />
                 </div>
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div>

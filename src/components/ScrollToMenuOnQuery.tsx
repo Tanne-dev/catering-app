@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { useSelectedMenu, type MenuId } from "@/contexts/SelectedMenuContext";
 
-const VALID_MENU_IDS: MenuId[] = ["sushi", "asiatisk", "sallader"];
+const VALID_MENU_IDS: MenuId[] = ["sushi", "asiatisk"];
 
 export default function ScrollToMenuOnQuery() {
   const searchParams = useSearchParams();

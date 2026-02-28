@@ -28,7 +28,7 @@ export default async function Home() {
       <Hero />
       <ServicesSection />
       <MenusSection />
-      {/* Begär offert (ContactSection) trực tiếp dưới Meny */}
+      {/* Skicka förfrågan (ContactSection) trực tiếp dưới Meny */}
       <ContactSection />
       <DishSlider />
       <TestimonialsSection />

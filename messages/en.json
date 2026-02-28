@@ -12,6 +12,7 @@
     "bullet1": "10+ years of experience in the restaurant industry",
     "bullet2": "Professionally organized and carefully executed at every event",
     "requestQuote": "Request quote",
+    "priceCalculator": "Price calculator",
     "manageTables": "Manage tables"
   },
   "services": {
@@ -46,8 +47,7 @@
   },
   "menusFallback": {
     "sushi": "Sushi menu",
-    "asiatisk": "Asian menu",
-    "sallader": "Salad buffets"
+    "asiatisk": "Asian menu"
   },
   "contact": {
     "heading": "Contact",
@@ -57,15 +57,18 @@
     "hoursNote": "We usually respond within 24 hours on weekdays.",
     "requestQuote": "Request quote",
     "formIntro": "Fill in the form and we'll get back to you with a proposal.",
-    "loginToSubmit": "Log in with Google to submit a quote request.",
+    "loginToSubmit": "Fill in the form and click Request quote.",
     "yourOrder": "Your order",
     "total": "Total",
     "successTitle": "Thank you for your request!",
     "successMessage": "We have received your request and will get back to you as soon as possible.",
-    "checkEmail": "Please check your email – we often respond within 24 hours.",
+    "orderNumber": "Order number",
+    "checkEmail": "Please check your email – you will receive a confirmation with your order number. We often respond within 24 hours.",
     "name": "Name",
     "emailLabel": "Email",
     "phone": "Phone",
+    "address": "Delivery address",
+    "addressPlaceholder": "e.g. Street 1, 200 00 Malmö",
     "eventDate": "Event date",
     "guestCount": "Number of guests",
     "cateringType": "Type of catering",
@@ -80,7 +83,7 @@
     "selectCatering": "Select type of catering",
     "cateringDelivery": "Catering delivery",
     "other": "Other / Unsure",
-    "errorLogin": "Log in with Google first to submit a quote request.",
+    "errorLogin": "Fill in all required fields and try again.",
     "errorSave": "Could not save your order. Please try again.",
     "errorSend": "Could not send. Please try again or call us."
   },
@@ -155,7 +158,7 @@
     "helpStep1": "Choose dishes from our <menuLink>menu</menuLink> and enter the desired quantity.",
     "helpStep2": "Click \"Add to cart\" to add the dishes to your cart.",
     "helpStep3": "Open the <cartLink>cart</cartLink> and review your selected dishes.",
-    "helpStep4": "Click \"Request quote\", log in with Google and fill in the form with date, number of guests and other details.",
+    "helpStep4": "Click \"Request quote\" and fill in the form with contact details, date, number of guests and other information. Then click \"Request quote\" to submit.",
     "helpStep5": "Catering Tanne will get back with a proposal. Approve to complete your order.",
     "notifications": "Notifications",
     "notificationsNew": "Notifications – {count} new",
@@ -172,7 +175,7 @@
     "orderConfirmed": "Your order is confirmed",
     "orderCompleted": "Your order is completed",
     "menu": "Menu",
-    "loggedInAdmin": "Logged in as admin",
+    "loggedInAdmin": "Logged in as administrator",
     "loggedInGuest": "Logged in as {name}",
     "login": "Log in",
     "loginShort": "Login",
@@ -181,6 +184,29 @@
     "signOut": "Sign out",
     "manageOrdersShort": "Manage orders",
     "guestGoogle": "Guest (Google)",
-    "admin": "Admin"
+    "admin": "Administrator"
+  },
+  "priceCalculator": {
+    "title": "Price calculator",
+    "subtitle": "Quickly calculate the cost for your party here",
+    "guestCountTitle": "Number of people",
+    "guestCountLabel": "Select number of guests:",
+    "menuTitle": "Menu alternatives",
+    "menuLabel": "Select type of menu:",
+    "menu_sushi": "Sushi",
+    "menu_asiatisk": "Asian",
+    "menu_kombinerat": "Combined",
+    "estimatedLabel": "Estimated cost:",
+    "disclaimer": "* Final price confirmed within 24 hours at most and as soon as possible.",
+    "getQuote": "Get exact price",
+    "close": "Close",
+    "priceExplanationAria": "Read explanation about price variation and approximately",
+    "priceInfoHint": "Additional information for you",
+    "priceExplanationTitle": "Why does the price vary?",
+    "priceExplanationP1": "The final price depends on which dishes you choose, current raw material prices, and any extra accessories.",
+    "priceExplanationP2": "If you wish for extra accessories or decoration, such as more soy sauce, wasabi, ginger, different sauces or other extras, the price may be adjusted according to your wishes.",
+    "priceExplanationP3": "We offer several options within each menu, which is why prices are shown as a price range to give you a clearer overview.",
+    "priceExplanationP4": "\"Ca\" (approximately) means the price is an estimate. The exact price is confirmed after we have received your order and gone through the details together with you.",
+    "priceExplanationP5": "We will get back to you with confirmation within 24 hours and contact you as soon as possible."
   }
 }

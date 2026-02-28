@@ -7,7 +7,7 @@ import { useSelectedService } from "@/contexts/SelectedServiceContext";
 const SCROLL_TO_QUOTE_KEY = "scrollToQuote";
 
 /**
- * Sau khi điều hướng từ varukorg (hoặc link /#quote), cuộn tới phần Begär offert.
+ * Sau khi điều hướng từ varukorg (hoặc link /#quote), cuộn tới phần Skicka förfrågan.
  * Dùng sessionStorage khi bấm từ varukorg vì hash có thể chưa áp dụng kịp khi trang load.
  */
 export default function ScrollToQuoteOnHash() {

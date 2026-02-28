@@ -121,7 +121,7 @@ type OrderNotification = {
   event_date?: string | null;
 };
 
-const FALLBACK_MENUS_IDS: MenuId[] = ["sushi", "asiatisk", "sallader"];
+const FALLBACK_MENUS_IDS: MenuId[] = ["sushi", "asiatisk"];
 
 export default function Header() {
   const t = useTranslations("header");
@@ -134,11 +134,13 @@ export default function Header() {
   const { menus } = useMenus();
   const menuList =
     menus.length > 0
-      ? menus.map((m) => ({
-          label: m.title,
-          id: m.slug as MenuId,
-        }))
-      : FALLBACK_MENUS_IDS.map((id) => ({ label: tMenus(id as "sushi" | "asiatisk" | "sallader"), id }));
+      ? menus
+          .filter((m) => m.slug !== "sallader")
+          .map((m) => ({
+            label: m.title,
+            id: m.slug as MenuId,
+          }))
+      : FALLBACK_MENUS_IDS.map((id) => ({ label: tMenus(id as "sushi" | "asiatisk"), id }));
   const [menusDropdownOpen, setMenusDropdownOpen] = useState(false);
   const menusDropdownRef = useRef<HTMLDivElement>(null);
 
@@ -596,43 +598,44 @@ export default function Header() {
               )}
             </div>
 
-            <div className="relative" ref={loginDropdownRef}>
-              <button
-                type="button"
-                onClick={() => setLoginDropdownOpen((o) => !o)}
-                className={
-                  "flex h-10 items-center justify-center gap-2 rounded-lg border px-4 text-xs font-semibold tracking-wide text-white transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#EAC84E]/50 focus:ring-offset-2 focus:ring-offset-[#12110D] active:scale-[0.98] sm:h-11 sm:px-4 sm:text-sm md:px-5 " +
-                  (showSessionUI && isAdmin
-                    ? "border-[#3d6a3d]/60 bg-[#2d4a2d] hover:border-[#4d7a4d]/70 hover:bg-[#355a35]"
-                    : showSessionUI && isGuest
-                      ? "border-[#4d5a6a]/60 bg-[#3d4a5a] hover:border-[#5d6a7a]/70 hover:bg-[#455a6a]"
-                      : "border-[#4a4a44]/60 bg-[#2e2d28] hover:border-[#5a5a54]/70 hover:bg-[#3a3832]")
-                }
-                aria-haspopup="menu"
-                aria-expanded={loginDropdownOpen}
-                aria-label={
-                  showSessionUI && isAdmin ? t("loggedInAdmin") : showSessionUI && isGuest ? t("loggedInGuest", { name: guestDisplayName }) : t("login")
-                }
-              >
-                {showSessionUI && isAdmin ? (
-                  <>
-                    Tanne Side
-                    <ChevronDownIcon />
-                  </>
-                ) : showSessionUI && isGuest ? (
-                  <>
-                    {guestDisplayName}
-                    <ChevronDownIcon />
-                  </>
-                ) : (
-                  <>
-                    <span className="hidden sm:inline">{t("login")}</span>
-                    <span className="sm:hidden">{t("loginShort")}</span>
-                    <ChevronDownIcon />
-                  </>
-                )}
-              </button>
-              {loginDropdownOpen && (
+            <div className="relative hidden sm:block" ref={loginDropdownRef}>
+              {!showSessionUI || (showSessionUI && !isAdmin && !isGuest) ? (
+                <Link
+                  href="/admin/login"
+                  className="flex h-10 flex-col items-center justify-center gap-0.5 rounded-lg border border-[#4a4a44]/60 bg-[#2e2d28] px-4 py-2 text-xs font-semibold tracking-wide text-white transition-all duration-200 hover:border-[#5a5a54]/70 hover:bg-[#3a3832] focus:outline-none focus:ring-2 focus:ring-[#EAC84E]/50 focus:ring-offset-2 focus:ring-offset-[#12110D] active:scale-[0.98] sm:h-11 sm:px-4 sm:text-sm md:px-5"
+                  aria-label={`${t("login")} – ${t("admin")}`}
+                >
+                  <span>{t("login")}</span>
+                  <span className="text-[10px] font-normal opacity-85 sm:text-xs">{t("admin")}</span>
+                </Link>
+              ) : (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => setLoginDropdownOpen((o) => !o)}
+                    className={
+                      "flex h-10 items-center justify-center gap-2 rounded-lg border px-4 text-xs font-semibold tracking-wide text-white transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#EAC84E]/50 focus:ring-offset-2 focus:ring-offset-[#12110D] active:scale-[0.98] sm:h-11 sm:px-4 sm:text-sm md:px-5 " +
+                      (isAdmin
+                        ? "border-[#3d6a3d]/60 bg-[#2d4a2d] hover:border-[#4d7a4d]/70 hover:bg-[#355a35]"
+                        : "border-[#4d5a6a]/60 bg-[#3d4a5a] hover:border-[#5d6a7a]/70 hover:bg-[#455a6a]")
+                    }
+                    aria-haspopup="menu"
+                    aria-expanded={loginDropdownOpen}
+                    aria-label={isAdmin ? t("loggedInAdmin") : t("loggedInGuest", { name: guestDisplayName })}
+                  >
+                    {isAdmin ? (
+                      <>
+                        Tanne Side
+                        <ChevronDownIcon />
+                      </>
+                    ) : (
+                      <>
+                        {guestDisplayName}
+                        <ChevronDownIcon />
+                      </>
+                    )}
+                  </button>
+                  {loginDropdownOpen && (
                 <div className="absolute right-0 top-full z-50 mt-2 flex justify-end">
                   <div
                     role="menu"
@@ -714,44 +717,11 @@ export default function Header() {
                           {t("signOut")}
                         </button>
                       </>
-                    ) : (
-                      <>
-                        <button
-                          type="button"
-                          role="menuitem"
-                          onClick={() => {
-                            setLoginDropdownOpen(false);
-                            signIn("google", { callbackUrl: "/" });
-                          }}
-                          className="w-full px-4 py-2.5 text-left text-sm transition-colors"
-                          style={{ color: "#D5D7D3" }}
-                          onMouseEnter={(e) => {
-                            e.currentTarget.style.backgroundColor = "#ffffff08";
-                          }}
-                          onMouseLeave={(e) => {
-                            e.currentTarget.style.backgroundColor = "transparent";
-                          }}
-                        >
-                          {t("guestGoogle")}
-                        </button>
-                        <a
-                          href="/admin/login"
-                          role="menuitem"
-                          className="block w-full px-4 py-2.5 text-left text-sm transition-colors"
-                          style={{ color: "#D5D7D3" }}
-                          onMouseEnter={(e) => {
-                            e.currentTarget.style.backgroundColor = "#ffffff08";
-                          }}
-                          onMouseLeave={(e) => {
-                            e.currentTarget.style.backgroundColor = "transparent";
-                          }}
-                        >
-                          {t("admin")}
-                        </a>
-                      </>
-                    )}
+                    ) : null}
                   </div>
                 </div>
+              )}
+                </>
               )}
             </div>
           </div>

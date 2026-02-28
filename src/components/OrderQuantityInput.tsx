@@ -8,7 +8,7 @@ type OrderQuantityInputProps = {
   menuSlug: string;
   itemName: string;
   price: string;
-  /** "bitar" för sushi, "portion" för asiatisk/sallader (default) */
+  /** "bitar" för sushi, "portion" för asiatisk (default) */
   unit?: CartItemUnit;
 };
 

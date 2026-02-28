@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import LazyBackground from "@/components/LazyBackground";
-import { FORMSPREE_FORM_ID } from "@/data/contact";
 import { TESTIMONIALS, type Testimonial } from "@/data/testimonials";
 
 const AUTO_SLIDE_INTERVAL_MS = 3500;
@@ -71,34 +70,32 @@ export default function TestimonialsSection() {
       return;
     }
 
-    if (FORMSPREE_FORM_ID) {
-      setSending(true);
-      try {
-        const formData = new FormData(form);
-        formData.set("rating", String(ratingValue));
-        formData.set("_subject", "Nytt omdöme – Catering Tanne");
-        const res = await fetch(`https://formspree.io/f/${FORMSPREE_FORM_ID}`, {
-          method: "POST",
-          body: formData,
-          headers: { Accept: "application/json" },
-        });
-        if (!res.ok) throw new Error("Något gick fel.");
-        setSubmitted(true);
-      } catch {
-        setError(t("errorSend"));
-      } finally {
-        setSending(false);
+    const name = (form.querySelector('[name="name"]') as HTMLInputElement)?.value ?? "";
+    const email = (form.querySelector('[name="email"]') as HTMLInputElement)?.value ?? "";
+    const message = (form.querySelector('[name="message"]') as HTMLTextAreaElement)?.value ?? "";
+
+    setSending(true);
+    try {
+      const res = await fetch("/api/send-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          type: "review",
+          name,
+          email,
+          rating: ratingValue,
+          message,
+        }),
+      });
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error((errData as { error?: string }).error ?? "Något gick fel.");
       }
-    } else {
-      const name = (form.querySelector('[name="name"]') as HTMLInputElement)?.value ?? "";
-      const email = (form.querySelector('[name="email"]') as HTMLInputElement)?.value ?? "";
-      const message = (form.querySelector('[name="message"]') as HTMLTextAreaElement)?.value ?? "";
-      const subject = encodeURIComponent("Nytt omdöme – Catering Tanne");
-      const body = encodeURIComponent(
-        `Namn: ${name}\nE-post: ${email}\nBetyg: ${ratingValue}/5 stjärnor\n\nMeddelande:\n${message}`
-      );
-      window.location.href = `mailto:info@cateringtanne.se?subject=${subject}&body=${body}`;
       setSubmitted(true);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : t("errorSend"));
+    } finally {
+      setSending(false);
     }
   }
 

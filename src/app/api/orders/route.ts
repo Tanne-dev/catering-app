@@ -37,7 +37,7 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { name, email, phone, event_date, guests, service, message, cart_summary } = body;
+    const { name, email, phone, address, event_date, guests, service, message, cart_summary } = body;
 
     if (!name || !email) {
       return NextResponse.json({ error: "Namn och e-post krävs." }, { status: 400 });
@@ -50,6 +50,7 @@ export async function POST(request: Request) {
         name: String(name).trim(),
         email: String(email).trim(),
         phone: phone ? String(phone).trim() : null,
+        address: address ? String(address).trim() : null,
         event_date: event_date ? String(event_date).trim() : null,
         guests: guests ? String(guests).trim() : null,
         service: service ? String(service).trim() : null,

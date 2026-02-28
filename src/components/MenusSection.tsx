@@ -27,11 +27,6 @@ const AsiatiskMenuContent = dynamic(
   { ssr: false, loading: () => <MenuLoadingPlaceholder /> }
 );
 
-const SalladerMenuContent = dynamic(
-  () => import("@/components/MenusContent/SalladerMenuContent"),
-  { ssr: false, loading: () => <MenuLoadingPlaceholder /> }
-);
-
 export default function MenusSection() {
   const t = useTranslations("menus");
   const { selectedMenu } = useSelectedMenu();
@@ -67,10 +62,6 @@ export default function MenusSection() {
         ) : selectedMenu === "asiatisk" ? (
           <div className="animate-menu-enter">
             <AsiatiskMenuContent />
-          </div>
-        ) : selectedMenu === "sallader" ? (
-          <div className="animate-menu-enter">
-            <SalladerMenuContent />
           </div>
         ) : (
           <p className="mt-8 text-base text-[#E5E7E3]/90">

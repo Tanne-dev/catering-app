@@ -11,7 +11,8 @@
     "intro": "Autentisk vietnamesisk och svensk mat för dina evenemang",
     "bullet1": "10+ års erfarenhet från restaurangbranschen",
     "bullet2": "Professionellt organiserat och noggrant genomfört vid varje evenemang",
-    "requestQuote": "Begär offert",
+    "requestQuote": "Skicka förfrågan",
+    "priceCalculator": "Priskalkylator",
     "manageTables": "Hantera bord"
   },
   "services": {
@@ -46,8 +47,7 @@
   },
   "menusFallback": {
     "sushi": "Sushimeny",
-    "asiatisk": "Asiatisk meny",
-    "sallader": "Sallader Bufféer"
+    "asiatisk": "Asiatisk meny"
   },
   "contact": {
     "heading": "Kontakt",
@@ -55,17 +55,20 @@
     "email": "E-post",
     "responseTime": "Svarstid",
     "hoursNote": "Vi svarar vanligtvis inom 24 timmar på vardagar.",
-    "requestQuote": "Begär offert",
+    "requestQuote": "Skicka förfrågan",
     "formIntro": "Fyll i formuläret så återkommer vi med ett förslag.",
-    "loginToSubmit": "Logga in med Google för att skicka en offertförfrågan.",
+    "loginToSubmit": "Fyll i formuläret och klicka Skicka förfrågan.",
     "yourOrder": "Din beställning",
     "total": "Totalt",
     "successTitle": "Tack för din förfrågan!",
     "successMessage": "Vi har tagit emot din förfrågan och återkommer så snart vi kan.",
-    "checkEmail": "Kontrollera gärna din e-post – vi svarar ofta inom 24 timmar.",
+    "orderNumber": "Ordernummer",
+    "checkEmail": "Kontrollera gärna din e-post – du får bekräftelse med ordernummer. Vi svarar ofta inom 24 timmar.",
     "name": "Namn",
     "emailLabel": "E-post",
     "phone": "Telefon",
+    "address": "Leveransadress",
+    "addressPlaceholder": "t.ex. Gatan 1, 200 00 Malmö",
     "eventDate": "Datum för evenemang",
     "guestCount": "Antal gäster",
     "cateringType": "Typ av catering",
@@ -80,14 +83,14 @@
     "selectCatering": "Välj typ av catering",
     "cateringDelivery": "Cateringleverans",
     "other": "Övrigt / Osäker",
-    "errorLogin": "Logga in med Google först för att skicka en offertförfrågan.",
+    "errorLogin": "Fyll i alla obligatoriska fält och försök igen.",
     "errorSave": "Kunde inte spara beställningen. Försök igen.",
     "errorSend": "Kunde inte skicka. Försök igen eller ring oss."
   },
   "footer": {
     "ourServices": "Våra tjänster",
     "menu": "Meny",
-    "requestQuote": "Begär offert",
+    "requestQuote": "Skicka förfrågan",
     "contact": "Kontakt",
     "manageTables": "Hantera bord",
     "copyright": "Alla rättigheter förbehållna.",
@@ -139,10 +142,10 @@
   },
   "varukorg": {
     "heading": "Varukorg",
-    "intro": "Granska din beställning nedan. När du är redo, klicka på Begär offert för att skicka en förfrågan.",
+    "intro": "Granska din beställning nedan. När du är redo, klicka på Skicka förfrågan för att skicka en förfrågan.",
     "empty": "Din varukorg är tom.",
     "seeMenus": "Se våra menyer",
-    "requestQuote": "Begär offert",
+    "requestQuote": "Skicka förfrågan",
     "items": "st totalt",
     "total": "Totalt",
     "addMore": "Lägg till mer"
@@ -155,7 +158,7 @@
     "helpStep1": "Välj rätter i vår <menuLink>meny</menuLink> och ange önskat antal.",
     "helpStep2": "Klicka på \"Lägg till\" för att lägga till rätterna i varukorgen.",
     "helpStep3": "Öppna <cartLink>varukorgen</cartLink> och granska valda rätter.",
-    "helpStep4": "Klicka på \"Begär offert\", logga in med Google och fyll i formuläret med datum, antal gäster samt övriga uppgifter.",
+    "helpStep4": "Klicka på \"Skicka förfrågan\" och fyll i formuläret med kontaktuppgifter, datum, antal gäster samt övriga uppgifter. Klicka sedan \"Skicka förfrågan\" för att slutföra.",
     "helpStep5": "Catering Tanne återkommer med ett förslag. Godkänn för att slutföra beställningen.",
     "notifications": "Notiser",
     "notificationsNew": "Notiser – {count} nya",
@@ -172,7 +175,7 @@
     "orderConfirmed": "Din beställning är bekräftad",
     "orderCompleted": "Din beställning är slutförd",
     "menu": "Meny",
-    "loggedInAdmin": "Inloggad som admin",
+    "loggedInAdmin": "Inloggad som administratör",
     "loggedInGuest": "Inloggad som {name}",
     "login": "Logga in",
     "loginShort": "Login",
@@ -181,6 +184,29 @@
     "signOut": "Logga ut",
     "manageOrdersShort": "Hantera beställningar",
     "guestGoogle": "Gäst (Google)",
-    "admin": "Admin"
+    "admin": "Administratör"
+  },
+  "priceCalculator": {
+    "title": "Priskalkylator",
+    "subtitle": "Beräkna snabbt kostnaden för din fest här",
+    "guestCountTitle": "Antal personer",
+    "guestCountLabel": "Välj antal gäster:",
+    "menuTitle": "Menyalternativ",
+    "menuLabel": "Välj typ av meny:",
+    "menu_sushi": "Sushi",
+    "menu_asiatisk": "Asiatiskt",
+    "menu_kombinerat": "Kombinerat",
+    "estimatedLabel": "Uppskattad kostnad:",
+    "disclaimer": "* Slutgiltigt pris bekräftas inom 24 timmar som längst och så snabbt som möjligt.",
+    "getQuote": "Få exakt pris",
+    "close": "Stäng",
+    "priceExplanationAria": "Läs förklaring om prisvariation och cirka",
+    "priceInfoHint": "Mer information för dig",
+    "priceExplanationTitle": "Varför varierar priset?",
+    "priceExplanationP1": "Det slutliga priset beror på vilka rätter du väljer, aktuella råvarupriser, samt eventuella extra tillbehör.",
+    "priceExplanationP2": "Om du önskar extra tillbehör eller dekoration, till exempel mer soja, wasabi, ingefära, olika såser eller andra tillbehör, kan priset komma att justeras efter dina önskemål.",
+    "priceExplanationP3": "Vi erbjuder flera alternativ inom varje meny, därför visas priserna som ett prisintervall för att ge dig en tydligare överblick.",
+    "priceExplanationP4": "\"Ca\" (cirka) betyder att priset är en uppskattning. Det exakta priset bekräftas efter att vi har tagit emot din beställning och gått igenom detaljerna tillsammans med dig.",
+    "priceExplanationP5": "Vi återkommer med en bekräftelse inom 24 timmar och hör av oss så snart som möjligt."
   }
 }

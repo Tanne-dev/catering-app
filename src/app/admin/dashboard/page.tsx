@@ -42,7 +42,7 @@ export default function AdminDashboardPage() {
             className="font-serif text-2xl font-semibold tracking-tight text-[#EAC84E]"
             style={{ fontFamily: "Georgia, Cambria, 'Times New Roman', serif" }}
           >
-            Admin Dashboard
+            Administratör Dashboard
           </h1>
           <p className="mt-2 text-[#E5E7E3]/80">
             Välkommen, {session?.user?.name ?? "Admin"}! Här kan du hantera webbplatsen.
@@ -84,12 +84,6 @@ export default function AdminDashboardPage() {
                   className="rounded-lg border border-[#707164]/30 bg-[#12110D]/80 px-4 py-2 text-sm font-medium text-[#E5E7E3] transition-colors hover:border-[#C49B38]/50 hover:bg-[#1a1916]"
                 >
                   Asiatisk
-                </Link>
-                <Link
-                  href="/admin/menus?menu=sallader"
-                  className="rounded-lg border border-[#707164]/30 bg-[#12110D]/80 px-4 py-2 text-sm font-medium text-[#E5E7E3] transition-colors hover:border-[#C49B38]/50 hover:bg-[#1a1916]"
-                >
-                  Sallader
                 </Link>
               </div>
             </div>

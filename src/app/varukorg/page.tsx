@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
-import { signIn, useSession } from "next-auth/react";
 import LazyBackground from "@/components/LazyBackground";
 import { useCart } from "@/contexts/CartContext";
 
@@ -13,20 +12,9 @@ export default function VarukorgPage() {
   const t = useTranslations("varukorg");
   const tCommon = useTranslations("common");
   const router = useRouter();
-  const { data: session, status } = useSession();
   const { items, removeItem, totalQuantity } = useCart();
-  const isGuest = status === "authenticated" && (session?.user as { role?: string })?.role === "guest";
-  const isAdmin = status === "authenticated" && (session?.user as { role?: string })?.role === "admin";
-  const canRequestQuote = status === "authenticated" && (isGuest || isAdmin);
 
   function handleBegarOffert() {
-    if (!canRequestQuote) {
-      if (typeof window !== "undefined") {
-        window.sessionStorage.setItem(SCROLL_TO_QUOTE_KEY, "1");
-      }
-      signIn("google", { callbackUrl: "/#quote" });
-      return;
-    }
     if (typeof window !== "undefined") {
       window.sessionStorage.setItem(SCROLL_TO_QUOTE_KEY, "1");
     }

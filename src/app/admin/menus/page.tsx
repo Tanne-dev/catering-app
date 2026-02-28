@@ -21,7 +21,7 @@ type MenuItem = {
   allergens: string | null;
 };
 
-const MENU_SLUGS = ["sushi", "asiatisk", "sallader"] as const;
+const MENU_SLUGS = ["sushi", "asiatisk"] as const;
 
 function AdminMenusContent() {
   const router = useRouter();
@@ -348,11 +348,7 @@ function AdminMenusContent() {
                     : "bg-[#12110D] text-[#E5E7E3] hover:bg-[#1a1916]"
                 }`}
               >
-                {slug === "sushi"
-                  ? "Sushi"
-                  : slug === "asiatisk"
-                    ? "Asiatisk"
-                    : "Sallader"}
+                {slug === "sushi" ? "Sushi" : "Asiatisk"}
               </button>
             ))}
           </div>

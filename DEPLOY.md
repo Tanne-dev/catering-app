@@ -11,12 +11,10 @@ npm run start
 ```
 Mở http://localhost:3000 – nếu chạy bình thường thì có thể deploy.
 
-### Biến môi trường (tùy chọn)
-- Form ID Formspree đã đặt sẵn trong code. Nếu muốn đổi khi deploy, tạo file `.env.production` hoặc cấu hình trên nền tảng:
-  ```bash
-  NEXT_PUBLIC_FORMSPREE_FORM_ID=mbdarvlw
-  ```
-- **Không** cần biến này nếu giữ Form ID hiện tại.
+### Biến môi trường (bắt buộc cho email)
+- **RESEND_API_KEY** – API key từ [resend.com](https://resend.com). Đăng ký miễn phí (3.000 email/tháng). Thêm vào `.env.local` hoặc biến môi trường trên nền tảng deploy.
+- **RESEND_FROM** (tùy chọn) – Địa chỉ gửi (phải xác minh domain trong Resend). Mặc định: `onboarding@resend.dev` (chỉ dùng để test).
+- **RESEND_WEBHOOK_SECRET** (tùy chọn) – Signing secret khi tạo webhook trong Resend (whsec_...). Dùng để xác thực webhook events. Nếu không set, webhook vẫn nhận nhưng không verify.
 
 ---
 
@@ -28,7 +26,7 @@ Mở http://localhost:3000 – nếu chạy bình thường thì có thể deplo
 4. **Root Directory:** chọn `catering-app` (nếu repo là thư mục gốc chứa cả catering-app).
 5. **Build Command:** `npm run build` (mặc định).
 6. **Output Directory:** để mặc định (Next.js tự nhận).
-7. (Tùy chọn) **Environment Variables:** thêm `NEXT_PUBLIC_FORMSPREE_FORM_ID` nếu dùng khác với code.
+7. **Environment Variables:** thêm `RESEND_API_KEY` (bắt buộc để gửi email từ form Skicka förfrågan và Skicka omdöme).
 8. Bấm **Deploy**. Sau vài phút bạn có link dạng `https://catering-app-xxx.vercel.app`.
 9. Có thể gắn tên miền riêng (ví dụ `cateringtanne.se`) trong **Project → Settings → Domains**.
 
@@ -153,7 +151,7 @@ pm2 restart catering-tanne
 
 ## 5. Sau khi deploy
 
-- Kiểm tra form **Begär offert** và **Skicka omdöme** (Formspree) có gửi email đúng.
+- Kiểm tra form **Skicka förfrågan** và **Skicka omdöme** (Resend) có gửi email đúng.
 - Kiểm tra link **tel:** và **mailto:** (số +46 709394679, email).
 - Nếu dùng tên miền riêng: trỏ DNS (A record hoặc CNAME) tới IP/server hoặc Vercel/Netlify theo hướng dẫn của từng nền tảng.
 

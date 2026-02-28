@@ -123,16 +123,16 @@ export default function ServicesSection() {
 
           {/* Bildkolumn */}
           <aside
-            className="hidden shrink-0 md:block lg:sticky lg:top-24 lg:w-[340px] xl:w-[380px]"
+            className="hidden shrink-0 md:block lg:sticky lg:top-24 lg:w-[420px] xl:w-[480px]"
             aria-hidden
           >
             <div className="overflow-hidden rounded-lg border border-[#707164]/25 bg-[#1a1916]/50 shadow-lg">
               <Image
                 src="/vara-tjanster-sushi.png"
                 alt={t("imageAlt")}
-                width={380}
-                height={507}
-                sizes="(max-width: 1024px) 100vw, 380px"
+                width={480}
+                height={640}
+                sizes="(max-width: 1024px) 100vw, 480px"
                 className="h-auto w-full object-cover"
                 loading="lazy"
               />
