@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 /**
  * Resend webhook endpoint – nhận events từ Resend (email.sent, email.delivered, email.bounced, v.v.)
  *
@@ -39,6 +37,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const resend = new Resend(process.env.RESEND_API_KEY ?? "re_build_only");
     const result = resend.webhooks.verify({
       payload,
       headers: {
