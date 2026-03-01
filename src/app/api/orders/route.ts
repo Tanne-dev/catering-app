@@ -34,6 +34,14 @@ export async function GET() {
   }
 }
 
+function formatOrderNumber(date: Date, seq: number): string {
+  const yyyy = date.getFullYear();
+  const mm = String(date.getMonth() + 1).padStart(2, "0");
+  const dd = String(date.getDate()).padStart(2, "0");
+  const seqStr = String(seq).padStart(3, "0");
+  return `CT-${yyyy}${mm}${dd}-${seqStr}`;
+}
+
 export async function POST(request: Request) {
   try {
     const body = await request.json();
@@ -44,6 +52,17 @@ export async function POST(request: Request) {
     }
 
     const supabase = createSupabaseAdminClient();
+    const today = new Date();
+    const prefix = `CT-${today.getFullYear()}${String(today.getMonth() + 1).padStart(2, "0")}${String(today.getDate()).padStart(2, "0")}-`;
+
+    const { count } = await supabase
+      .from("orders")
+      .select("*", { count: "exact", head: true })
+      .like("order_number", `${prefix}%`);
+
+    const seq = (count ?? 0) + 1;
+    const order_number = formatOrderNumber(today, seq);
+
     const { data, error } = await supabase
       .from("orders")
       .insert({
@@ -57,6 +76,7 @@ export async function POST(request: Request) {
         message: message ? String(message).trim() : null,
         cart_summary: cart_summary ? String(cart_summary).trim() : null,
         status: "pending",
+        order_number,
       })
       .select()
       .single();
@@ -69,7 +89,7 @@ export async function POST(request: Request) {
         { status: 500 }
       );
     }
-    agentLog({ location: "orders:POST", message: "success", data: { id: (data as { id?: string })?.id }, timestamp: Date.now(), hypothesisId: "H4" });
+    agentLog({ location: "orders:POST", message: "success", data: { id: (data as { id?: string })?.id, order_number: (data as { order_number?: string })?.order_number }, timestamp: Date.now(), hypothesisId: "H4" });
     return NextResponse.json(data);
   } catch (err) {
     const message = err instanceof Error ? err.message : "Kunde inte spara beställningen.";

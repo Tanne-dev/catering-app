@@ -101,8 +101,8 @@ export default function ContactSection() {
       // #region agent log
       fetch('http://127.0.0.1:7242/ingest/0cdeab99-f7cb-4cee-9943-94270784127d',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'ContactSection.tsx:handleSubmit',message:'order submit ok',data:{ok:true,status:orderRes.status},timestamp:Date.now(),hypothesisId:'H4'})}).catch(()=>{});
       // #endregion
-      const orderData = (await orderRes.json()) as { id?: string };
-      savedOrderId = orderData?.id ?? null;
+      const orderData = (await orderRes.json()) as { id?: string; order_number?: string };
+      savedOrderId = orderData?.order_number ?? orderData?.id ?? null;
       setOrderId(savedOrderId);
     } catch {
         setError(t("errorSave"));
