@@ -66,7 +66,7 @@ export async function POST(request: Request) {
         const confirmSubject = `Bekräftelse – Offertförfrågan${order_id ? ` #${order_id}` : ""}`;
         const confirmHtml = `
           <h2>Tack för din förfrågan!</h2>
-          <p>Vi har tagit emot din offertförfrågan och återkommer så snart vi kan.</p>
+          <p>Vi har tagit emot din förfrågan och återkommer så snart vi kan.</p>
           ${order_id ? `<p><strong>Ordernummer:</strong> ${order_id}</p>` : ""}
           <p>Om du har frågor, kontakta oss på ${CONTACT.email} eller ${CONTACT.phone}.</p>
           <p>Med vänliga hälsningar,<br>Catering Tanne</p>
