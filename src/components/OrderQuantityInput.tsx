@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useRef } from "react";
 import { useCart, type CartItemUnit } from "@/contexts/CartContext";
+import { useFlyToCart } from "@/contexts/FlyToCartContext";
 
 type OrderQuantityInputProps = {
   menuSlug: string;
@@ -18,20 +18,22 @@ export default function OrderQuantityInput({
   price,
   unit = "portion",
 }: OrderQuantityInputProps) {
-  const router = useRouter();
   const { addOrUpdateItem, getItemQuantity } = useCart();
+  const flyToCart = useFlyToCart();
+  const addButtonRef = useRef<HTMLButtonElement>(null);
   const [inputVal, setInputVal] = useState("");
-  const [confirmed, setConfirmed] = useState(false);
 
   const currentQty = getItemQuantity(menuSlug, itemName);
 
-  function handleConfirm() {
+  function handleAdd() {
     const num = parseInt(inputVal, 10);
     if (isNaN(num) || num < 0) return;
+    const rect = addButtonRef.current?.getBoundingClientRect();
+    if (rect && flyToCart) {
+      flyToCart.triggerFly(rect, itemName);
+    }
     addOrUpdateItem(menuSlug, itemName, price, num, unit);
     setInputVal("");
-    setConfirmed(false);
-    router.push("/varukorg");
   }
 
   return (
@@ -50,19 +52,11 @@ export default function OrderQuantityInput({
         className="h-9 w-16 rounded border border-[#707164]/50 bg-[#12110D] px-2 text-center text-sm text-[#E5E7E3] focus:border-[#C49B38] focus:outline-none focus:ring-1 focus:ring-[#C49B38]"
         aria-label={`Antal ${unit} för ${itemName}`}
       />
-      <label className="flex cursor-pointer items-center gap-1.5 text-sm text-[#E5E7E3]/90">
-        <input
-          type="checkbox"
-          checked={confirmed}
-          onChange={(e) => setConfirmed(e.target.checked)}
-          className="h-4 w-4 rounded border-[#707164]/50 text-[#C49B38] focus:ring-[#C49B38]"
-        />
-        Bekräfta
-      </label>
       <button
+        ref={addButtonRef}
         type="button"
-        onClick={handleConfirm}
-        disabled={!confirmed || !inputVal || parseInt(inputVal, 10) <= 0}
+        onClick={handleAdd}
+        disabled={!inputVal || parseInt(inputVal, 10) <= 0}
         className="rounded-lg bg-[#C49B38] px-3 py-1.5 text-xs font-semibold text-[#12110D] transition-colors hover:bg-[#D4A83E] disabled:opacity-50 disabled:cursor-not-allowed"
       >
         Lägg till

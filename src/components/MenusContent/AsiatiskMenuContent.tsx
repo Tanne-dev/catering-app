@@ -37,8 +37,7 @@ export default function AsiatiskMenuContent() {
 
   return (
     <div
-      className="mx-auto mt-10 max-w-2xl rounded-xl border border-[#707164]/50 bg-[#12110D] p-6 text-center"
-      style={{ borderColor: "rgba(112, 113, 100, 0.5)" }}
+      className="mx-auto mt-10 max-w-2xl rounded-2xl border border-[#707164]/30 bg-[#1a1916]/95 p-6 text-center shadow-lg shadow-black/10 sm:p-8"
     >
       <h3 className="mb-6 text-2xl font-semibold uppercase tracking-wide text-[#EAC84E]">
         {ASIATISK_MENU_TITLE}
@@ -48,7 +47,7 @@ export default function AsiatiskMenuContent() {
       ) : (
       <ul className="space-y-6" role="list">
         {menuItems.map((item) => (
-          <li key={item.name} className="border-b border-[#707164]/30 pb-5 last:border-0 last:pb-0">
+          <li key={item.name} className="border-b border-[#707164]/20 pb-6 last:border-0 last:pb-0">
             {item.image && (
               <div className="mx-auto mb-3 max-w-xs">
                 <ImageLightbox
@@ -72,7 +71,7 @@ export default function AsiatiskMenuContent() {
         ))}
       </ul>
       )}
-      <div className="mt-6 rounded-lg border border-[#707164]/40 bg-[#12110D]/80 p-4 text-center">
+      <div className="mt-6 rounded-xl border border-[#707164]/25 bg-[#12110D]/70 p-4 text-center">
         <p className="text-sm font-semibold uppercase tracking-wide text-[#EAC84E]">
           Viktig information
         </p>

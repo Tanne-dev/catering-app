@@ -237,3 +237,38 @@ button:active:not(:disabled) {
   opacity: 0;
   transform-origin: center;
 }
+
+/* Fly-in for OrderSidebar items – slide from left, slight bounce */
+@keyframes flyIn {
+  0% {
+    opacity: 0;
+    transform: translateX(-24px) scale(0.92);
+  }
+  70% {
+    opacity: 1;
+    transform: translateX(4px) scale(1.02);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+.animate-fly-in {
+  animation: flyIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* Fly-to-cart orb – bay từ món ăn sang bảng bên phải */
+@keyframes flyToCart {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(calc(-50% + 70vw), calc(-50% - 80px)) scale(0.4);
+  }
+}

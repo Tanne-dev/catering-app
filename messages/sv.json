@@ -47,7 +47,8 @@
   },
   "menusFallback": {
     "sushi": "Sushimeny",
-    "asiatisk": "Asiatisk meny"
+    "asiatisk": "Asiatisk meny",
+    "kombinera": "Kombinera meny"
   },
   "contact": {
     "heading": "Kontakt",
@@ -64,6 +65,7 @@
     "successMessage": "Vi har tagit emot din förfrågan och återkommer så snart vi kan.",
     "orderNumber": "Ordernummer",
     "checkEmail": "Kontrollera gärna din e-post – du får bekräftelse med ordernummer. Vi svarar ofta inom 24 timmar.",
+    "emailNotSentNote": "E-post kunde inte skickas. Er beställning är sparad i vårt system – vi ser den i vår administration och återkommer till er.",
     "name": "Namn",
     "emailLabel": "E-post",
     "phone": "Telefon",
@@ -77,7 +79,20 @@
     "emailPlaceholder": "din@epost.se",
     "phonePlaceholder": "07X-XXX XX XX",
     "guestsPlaceholder": "t.ex. 25",
-    "messagePlaceholder": "Berätta gärna om evenemanget, önskemål om meny, allergier m.m.",
+    "allergiesLabel": "Allergier – klicka på de som gäller",
+    "allergiesNone": "Inga allergier",
+    "allergyGluten": "Gluten",
+    "allergyLaktos": "Laktos",
+    "allergyNots": "Nötter",
+    "allergySkaldjur": "Skaldjur",
+    "allergyAgg": "Ägg",
+    "allergySoja": "Soja",
+    "allergyFisk": "Fisk",
+    "allergySelleri": "Selleri",
+    "allergySenap": "Senap",
+    "allergySesam": "Sesam",
+    "allergyOvrigt": "Övrigt",
+    "messagePlaceholder": "Berätta gärna om evenemanget, önskemål om meny m.m.",
     "sendRequest": "Skicka förfrågan",
     "sending": "Skickar…",
     "selectCatering": "Välj typ av catering",
@@ -146,6 +161,7 @@
     "empty": "Din varukorg är tom.",
     "seeMenus": "Se våra menyer",
     "requestQuote": "Skicka förfrågan",
+    "sidebarCta": "Skicka till förfrågan – fyll i mer information",
     "items": "st totalt",
     "total": "Totalt",
     "addMore": "Lägg till mer"

@@ -8,7 +8,7 @@ import {
   type ReactNode,
 } from "react";
 
-export type MenuId = "sushi" | "asiatisk" | null;
+export type MenuId = "sushi" | "asiatisk" | "kombinera" | null;
 
 type SelectedMenuContextValue = {
   selectedMenu: MenuId;

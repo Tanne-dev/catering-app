@@ -13,6 +13,7 @@ export function resolveMenuImageUrl(src: string | null | undefined): string | un
   const s = src.trim();
   if (!s) return undefined;
   if (s.startsWith("http://") || s.startsWith("https://")) return s;
+  if (s.startsWith("/dishes/")) return s;
   return s.startsWith("/") ? MENU_IMAGES_BASE_URL + s : MENU_IMAGES_BASE_URL + "/" + s;
 }
 

@@ -7,7 +7,6 @@ import { signIn, signOut, useSession } from "next-auth/react";
 import { useState, useRef, useEffect } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { useSelectedMenu, type MenuId } from "@/contexts/SelectedMenuContext";
-import { useCart } from "@/contexts/CartContext";
 import { useMenus } from "@/hooks/useMenus";
 import { CONTACT } from "@/data/contact";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
@@ -27,27 +26,6 @@ function PhoneIcon() {
       aria-hidden
     >
       <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
-    </svg>
-  );
-}
-
-function CartIcon() {
-  return (
-    <svg
-      width="20"
-      height="20"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className="shrink-0"
-      aria-hidden
-    >
-      <circle cx="9" cy="21" r="1" />
-      <circle cx="20" cy="21" r="1" />
-      <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
     </svg>
   );
 }
@@ -121,7 +99,7 @@ type OrderNotification = {
   event_date?: string | null;
 };
 
-const FALLBACK_MENUS_IDS: MenuId[] = ["sushi", "asiatisk"];
+const FALLBACK_MENUS_IDS: MenuId[] = ["sushi", "asiatisk", "kombinera"];
 
 export default function Header() {
   const t = useTranslations("header");
@@ -130,17 +108,16 @@ export default function Header() {
   const pathname = usePathname();
   const { data: session, status } = useSession();
   const { setSelectedMenu } = useSelectedMenu();
-  const { totalQuantity } = useCart();
   const { menus } = useMenus();
   const menuList =
     menus.length > 0
-      ? menus
-          .filter((m) => m.slug !== "sallader")
-          .map((m) => ({
-            label: m.title,
-            id: m.slug as MenuId,
-          }))
-      : FALLBACK_MENUS_IDS.map((id) => ({ label: tMenus(id as "sushi" | "asiatisk"), id }));
+      ? [
+          ...menus
+            .filter((m) => m.slug !== "sallader")
+            .map((m) => ({ label: m.title, id: m.slug as MenuId })),
+          ...(menus.some((m) => m.slug === "kombinera") ? [] : [{ label: tMenus("kombinera"), id: "kombinera" as MenuId }]),
+        ]
+      : FALLBACK_MENUS_IDS.map((id) => ({ label: tMenus(id as "sushi" | "asiatisk" | "kombinera"), id }));
   const [menusDropdownOpen, setMenusDropdownOpen] = useState(false);
   const menusDropdownRef = useRef<HTMLDivElement>(null);
 
@@ -347,21 +324,6 @@ export default function Header() {
 
           <div className="ml-auto flex items-center gap-1 sm:gap-2 md:gap-2.5">
             <LanguageSwitcher />
-            <Link
-              href="/varukorg"
-              className="relative flex h-10 w-10 items-center justify-center rounded-xl text-[#EAC84E] transition-all duration-200 hover:bg-[#EAC84E]/12 hover:text-[#f0d96a] focus:outline-none focus:ring-2 focus:ring-[#EAC84E]/60 focus:ring-offset-2 focus:ring-offset-[#12110D] sm:h-11 sm:w-11"
-              aria-label={totalQuantity > 0 ? t("cartWithItems", { count: totalQuantity }) : t("cart")}
-            >
-              <CartIcon />
-              {totalQuantity > 0 && (
-                <span
-                  className="absolute -right-0.5 -top-0.5 flex min-w-[18px] items-center justify-center rounded-full bg-[#EAC84E] px-1.5 py-0.5 text-[10px] font-bold leading-none text-[#12110D] shadow-sm"
-                  aria-hidden
-                >
-                  {totalQuantity > 99 ? "99+" : totalQuantity}
-                </span>
-              )}
-            </Link>
             <div className="relative" ref={helpDropdownRef}>
               <button
                 type="button"

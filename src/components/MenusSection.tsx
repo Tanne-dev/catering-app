@@ -2,7 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { useTranslations } from "next-intl";
-import { useSelectedMenu, type MenuId } from "@/contexts/SelectedMenuContext";
+import { useSelectedMenu } from "@/contexts/SelectedMenuContext";
 
 function MenuLoadingPlaceholder() {
   const t = useTranslations("menus");
@@ -27,13 +27,19 @@ const AsiatiskMenuContent = dynamic(
   { ssr: false, loading: () => <MenuLoadingPlaceholder /> }
 );
 
+const KombineratMenuContent = dynamic(
+  () => import("@/components/MenusContent/KombineratMenuContent"),
+  { ssr: false, loading: () => <MenuLoadingPlaceholder /> }
+);
+
 export default function MenusSection() {
   const t = useTranslations("menus");
   const { selectedMenu } = useSelectedMenu();
+
   return (
     <section
       id="menus"
-      className="relative min-h-[50vh] overflow-hidden py-16 md:min-h-screen md:snap-start"
+      className="relative min-h-[50vh] overflow-x-hidden py-16 md:min-h-screen md:snap-start"
       aria-label="Sample menus and dishes"
     >
       <img
@@ -55,6 +61,8 @@ export default function MenusSection() {
         <p className="mx-auto mt-3 max-w-xl text-lg text-[#E5E7E3]">
           {t("intro")}
         </p>
+        <div className="relative mt-10">
+          <div className="mx-auto w-full max-w-2xl">
         {selectedMenu === "sushi" ? (
           <div className="animate-menu-enter">
             <SushiMenuContent />
@@ -63,11 +71,17 @@ export default function MenusSection() {
           <div className="animate-menu-enter">
             <AsiatiskMenuContent />
           </div>
+        ) : selectedMenu === "kombinera" ? (
+          <div className="animate-menu-enter">
+            <KombineratMenuContent />
+          </div>
         ) : (
           <p className="mt-8 text-base text-[#E5E7E3]/90">
             {t("selectMenu")}
           </p>
         )}
+          </div>
+        </div>
       </div>
     </section>
   );

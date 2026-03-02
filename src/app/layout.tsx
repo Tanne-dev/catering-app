@@ -5,6 +5,7 @@ import { getLocale, getMessages, getTranslations } from "next-intl/server";
 import Header from "@/components/Header";
 import JsonLd from "@/components/JsonLd";
 import ChatWidget from "@/components/ChatWidget";
+import OrderSidebar from "@/components/OrderSidebar";
 import ScrollToTop from "@/components/ScrollToTop";
 import ScrollToQuoteOnHash from "@/components/ScrollToQuoteOnHash";
 import ServiceDetailPanel from "@/components/ServiceDetailPanel";
@@ -12,6 +13,7 @@ import SessionProvider from "@/components/SessionProvider";
 import { SelectedMenuProvider } from "@/contexts/SelectedMenuContext";
 import { SelectedServiceProvider } from "@/contexts/SelectedServiceContext";
 import { CartProvider } from "@/contexts/CartContext";
+import { FlyToCartProvider } from "@/contexts/FlyToCartContext";
 import { SITE } from "@/data/site";
 import "./globals.css";
 
@@ -82,6 +84,7 @@ export default async function RootLayout({
         <SessionProvider>
         <SelectedMenuProvider>
           <CartProvider>
+          <FlyToCartProvider>
           <SelectedServiceProvider>
             <a
               href="#services"
@@ -95,9 +98,11 @@ export default async function RootLayout({
             <main suppressHydrationWarning>
             {children}
             </main>
+            <OrderSidebar />
             <ScrollToTop />
             <ChatWidget />
           </SelectedServiceProvider>
+          </FlyToCartProvider>
           </CartProvider>
         </SelectedMenuProvider>
         </SessionProvider>

@@ -47,7 +47,8 @@
   },
   "menusFallback": {
     "sushi": "Sushi menu",
-    "asiatisk": "Asian menu"
+    "asiatisk": "Asian menu",
+    "kombinera": "Kombinera meny"
   },
   "contact": {
     "heading": "Contact",
@@ -64,6 +65,7 @@
     "successMessage": "We have received your request and will get back to you as soon as possible.",
     "orderNumber": "Order number",
     "checkEmail": "Please check your email – you will receive a confirmation with your order number. We often respond within 24 hours.",
+    "emailNotSentNote": "Email could not be sent. Your order is saved in our system – we will see it in our admin and get back to you.",
     "name": "Name",
     "emailLabel": "Email",
     "phone": "Phone",
@@ -77,7 +79,20 @@
     "emailPlaceholder": "your@email.com",
     "phonePlaceholder": "07X-XXX XX XX",
     "guestsPlaceholder": "e.g. 25",
-    "messagePlaceholder": "Please tell us about the event, menu preferences, allergies, etc.",
+    "allergiesLabel": "Allergies – click those that apply",
+    "allergiesNone": "No allergies",
+    "allergyGluten": "Gluten",
+    "allergyLaktos": "Lactose",
+    "allergyNots": "Nuts",
+    "allergySkaldjur": "Shellfish",
+    "allergyAgg": "Eggs",
+    "allergySoja": "Soy",
+    "allergyFisk": "Fish",
+    "allergySelleri": "Celery",
+    "allergySenap": "Mustard",
+    "allergySesam": "Sesame",
+    "allergyOvrigt": "Other",
+    "messagePlaceholder": "Please tell us about the event, menu preferences, etc.",
     "sendRequest": "Send request",
     "sending": "Sending…",
     "selectCatering": "Select type of catering",
@@ -146,6 +161,7 @@
     "empty": "Your cart is empty.",
     "seeMenus": "See our menus",
     "requestQuote": "Request quote",
+    "sidebarCta": "Send to request – fill in more information",
     "items": "items total",
     "total": "Total",
     "addMore": "Add more"

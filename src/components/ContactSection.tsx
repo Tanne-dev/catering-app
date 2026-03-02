@@ -12,10 +12,18 @@ const SCROLL_TO_QUOTE_KEY = "scrollToQuote";
 
 export default function ContactSection() {
   const t = useTranslations("contact");
-  const SERVICE_OPTIONS = [
-    { value: "", label: t("selectCatering") },
-    { value: "cateringleverans", label: t("cateringDelivery") },
-    { value: "ovrigt", label: t("other") },
+  const ALLERGY_IDS = [
+    { id: "gluten", labelKey: "allergyGluten" as const },
+    { id: "laktos", labelKey: "allergyLaktos" as const },
+    { id: "nots", labelKey: "allergyNots" as const },
+    { id: "skaldjur", labelKey: "allergySkaldjur" as const },
+    { id: "agg", labelKey: "allergyAgg" as const },
+    { id: "soja", labelKey: "allergySoja" as const },
+    { id: "fisk", labelKey: "allergyFisk" as const },
+    { id: "selleri", labelKey: "allergySelleri" as const },
+    { id: "senap", labelKey: "allergySenap" as const },
+    { id: "sesam", labelKey: "allergySesam" as const },
+    { id: "ovrigt", labelKey: "allergyOvrigt" as const },
   ];
   const quoteRef = useRef<HTMLDivElement>(null);
   const { data: session } = useSession();
@@ -23,8 +31,19 @@ export default function ContactSection() {
   const { setSelectedServiceId } = useSelectedService();
   const [submitted, setSubmitted] = useState(false);
   const [orderId, setOrderId] = useState<string | null>(null);
+  const [emailSent, setEmailSent] = useState(true);
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [selectedAllergies, setSelectedAllergies] = useState<Set<string>>(new Set());
+
+  const toggleAllergy = (id: string) => {
+    setSelectedAllergies((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
 
   useEffect(() => {
     if (typeof window === "undefined" || !quoteRef.current) return;
@@ -53,7 +72,14 @@ export default function ContactSection() {
     const address = (form.querySelector('[name="address"]') as HTMLInputElement)?.value ?? "";
     const date = (form.querySelector('[name="date"]') as HTMLInputElement)?.value ?? "";
     const guests = (form.querySelector('[name="guests"]') as HTMLInputElement)?.value ?? "";
-    const service = (form.querySelector('[name="service"]') as HTMLSelectElement)?.selectedOptions?.[0]?.text ?? "";
+    const allergyLabels: Record<string, string> = {};
+    ALLERGY_IDS.forEach(({ id, labelKey }) => {
+      allergyLabels[id] = t(labelKey);
+    });
+    const allergiesStr = ALLERGY_IDS.filter(({ id }) => selectedAllergies.has(id))
+      .map(({ id }) => allergyLabels[id])
+      .join(", ");
+    const service = allergiesStr ? `Allergier: ${allergiesStr}` : t("allergiesNone");
     const message = (form.querySelector('[name="message"]') as HTMLTextAreaElement)?.value ?? "";
 
     const cartText = cartItems.length > 0
@@ -132,6 +158,8 @@ export default function ContactSection() {
         const errData = await res.json().catch(() => ({}));
         throw new Error((errData as { error?: string }).error ?? "Något gick fel.");
       }
+      const result = (await res.json()) as { emailSent?: boolean };
+      setEmailSent(result.emailSent !== false);
       setSubmitted(true);
     } catch (e) {
       setError(e instanceof Error ? e.message : t("errorSend"));
@@ -253,7 +281,7 @@ export default function ContactSection() {
                   </p>
                 )}
                 <p className="mt-4 text-sm text-[#C49B38]">
-                  {t("checkEmail")}
+                  {emailSent ? t("checkEmail") : t("emailNotSentNote")}
                 </p>
               </div>
             ) : (
@@ -355,20 +383,29 @@ export default function ContactSection() {
                   </div>
                 </div>
                 <div>
-                  <label htmlFor="quote-service" className="block text-sm font-medium text-[#E5E7E3]">
-                    {t("cateringType")}
-                  </label>
-                  <select
-                    id="quote-service"
-                    name="service"
-                    className="mt-1 w-full rounded-lg border border-[#707164]/50 bg-[#1a1916] px-4 py-2.5 text-[#E5E7E3] focus:border-[#C49B38] focus:outline-none focus:ring-1 focus:ring-[#C49B38]"
-                  >
-                    {SERVICE_OPTIONS.map((opt) => (
-                      <option key={opt.value || "empty"} value={opt.value}>
-                        {opt.label}
-                      </option>
-                    ))}
-                  </select>
+                  <p className="block text-sm font-medium text-[#E5E7E3]">
+                    {t("allergiesLabel")}
+                  </p>
+                  <div className="mt-2 flex flex-wrap gap-2" role="group" aria-label={t("allergiesLabel")}>
+                    {ALLERGY_IDS.map(({ id, labelKey }) => {
+                      const label = t(labelKey);
+                      const selected = selectedAllergies.has(id);
+                      return (
+                        <button
+                          key={id}
+                          type="button"
+                          onClick={() => toggleAllergy(id)}
+                          className={`rounded-full px-4 py-2 text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-[#C49B38] focus:ring-offset-2 focus:ring-offset-[#12110D] ${
+                            selected
+                              ? "bg-[#C49B38] text-[#12110D]"
+                              : "border border-[#707164]/50 bg-[#1a1916] text-[#E5E7E3] hover:border-[#C49B38]/70"
+                          }`}
+                        >
+                          {label}
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
                 <div>
                   <label htmlFor="quote-message" className="block text-sm font-medium text-[#E5E7E3]">

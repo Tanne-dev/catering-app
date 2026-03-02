@@ -39,8 +39,7 @@ export default function SushiMenuContent() {
 
   return (
     <div
-      className="mx-auto mt-10 max-w-2xl rounded-xl border border-[#707164]/50 bg-[#12110D] p-6 text-center sm:p-8"
-      style={{ borderColor: "rgba(112, 113, 100, 0.5)" }}
+      className="mx-auto mt-10 max-w-2xl rounded-2xl border border-[#707164]/30 bg-[#1a1916]/95 p-6 text-center shadow-lg shadow-black/10 sm:p-8"
     >
       <h3 className="mb-6 text-2xl font-semibold tracking-wide text-[#EAC84E]">
         {CATERINGMENY_SUSHI.title}
@@ -55,7 +54,7 @@ export default function SushiMenuContent() {
       tiers.map((tier, i) => (
         <div
           key={i}
-          className="border-t border-[#707164]/30 pt-6 first:border-0 first:pt-0 first:mt-0 mt-6"
+          className="border-t border-[#707164]/20 pt-6 first:border-0 first:pt-0 first:mt-0 mt-6"
         >
           <p className="font-semibold text-[#E5E7E3]">
             <span className="text-[#EAC84E]" aria-hidden>⭐ </span>

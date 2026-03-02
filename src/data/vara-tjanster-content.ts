@@ -30,41 +30,6 @@ export const CATERINGMENY_SUSHI = {
   /** Dùng dishes/ trên Supabase vì sushi-*.png đã xóa local và chưa upload. Có thể thay bằng ảnh sushi riêng khi đã có. */
   tiers: [
     {
-      name: "Lax Nigiri",
-      price: "24 kr / par",
-      description: "Klassisk nigiri med färsk lax på sushiris.",
-      nigiri: ["Lax"],
-      image: `${MENU_IMAGES_BASE_URL}/dishes/dish-nigiri-trays.png`,
-    },
-    {
-      name: "Räka Nigiri",
-      price: "24 kr / par",
-      description: "Nigiri med kokta räkor, serveras med färsk gräslök.",
-      nigiri: ["Räkor"],
-      image: `${MENU_IMAGES_BASE_URL}/dishes/dish-nigiri-sauce.png`,
-    },
-    {
-      name: "Avokado Nigiri",
-      price: "24 kr / par",
-      description: "Vegetarisk nigiri med färsk avokado, nori och sesamfrön.",
-      nigiri: ["Avokado"],
-      image: `${MENU_IMAGES_BASE_URL}/dishes/dish-avocado-rolls.png`,
-    },
-    {
-      name: "Tonfisk Nigiri",
-      price: "28 kr / par",
-      description: "Nigiri med färsk röd tonfisk (maguro) på sushiris.",
-      nigiri: ["Tonfisk"],
-      image: `${MENU_IMAGES_BASE_URL}/dishes/dish-salmon-sashimi.png`,
-    },
-    {
-      name: "Inari",
-      price: "11 kr / bit",
-      description: "Vegetarisk inari – friterade tofupåsar fyllda med wakamesallad, sesamfrön och sås.",
-      nigiri: [],
-      image: `${MENU_IMAGES_BASE_URL}/dishes/dish-seaweed-salad.png`,
-    },
-    {
       name: "Familjetallrik 1",
       price: "från 895 kr",
       description: "Blandad sushitallrik med lax-, tonfisk- och avokadonigiri, maki-roller, inari med wakame och ingefära. Perfekt för 4–6 personer.",
@@ -87,6 +52,15 @@ export const CATERINGMENY_SUSHI = {
       nigiri: ["Tonfisk"],
       uramaki: ["Avokado & krispig lök", "Lax & sås", "Rom"],
       image: `${MENU_IMAGES_BASE_URL}/dishes/dish-salmon-platter.png`,
+    },
+    {
+      name: "Sushitallrik 3",
+      price: "från 1 095 kr",
+      description: "Stor rund sushitallrik med blandade maki och uramaki – lax, avokado, krispiga toppingar och rom. Perfekt för 5–8 personer.",
+      nigiri: ["Lax", "Tonfisk"],
+      uramaki: ["Avokado & krispig", "Lax & sås", "Rom"],
+      maki: ["Blandat urval"],
+      image: `${MENU_IMAGES_BASE_URL}/dishes/sushi-talrik-3.png`,
     },
   ] as SushiTier[],
 };

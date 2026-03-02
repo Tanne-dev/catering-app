@@ -7,6 +7,26 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 /** From address – must be verified in Resend. Use onboarding@resend.dev for testing. */
 const FROM_EMAIL = process.env.RESEND_FROM ?? "onboarding@resend.dev";
 
+/** Resend i testläge tillåter endast mottagare som kontots e-post. Returnera ett användarvänligt meddelande istället för att visa Resends tekniska fel. */
+function isResendTestingError(resendError: { message?: string } | null): boolean {
+  if (!resendError?.message) return false;
+  const m = resendError.message.toLowerCase();
+  return (
+    m.includes("only send") ||
+    m.includes("testing emails") ||
+    m.includes("verify a domain") ||
+    m.includes("resend.com/domains")
+  );
+}
+
+function toFriendlyEmailError(resendError: { message?: string } | null): string {
+  if (!resendError?.message) return "Kunde inte skicka e-post. Försök igen eller ring oss.";
+  if (isResendTestingError(resendError)) {
+    return "E-post kunde inte skickas just nu. Din beställning är sparad – vi återkommer till er. Ring oss gärna om det är brådskande.";
+  }
+  return resendError.message;
+}
+
 export async function POST(request: Request) {
   if (!process.env.RESEND_API_KEY) {
     return NextResponse.json(
@@ -43,7 +63,7 @@ export async function POST(request: Request) {
         <p><strong>Leveransadress:</strong> ${address ?? "—"}</p>
         <p><strong>Datum:</strong> ${event_date ?? "—"}</p>
         <p><strong>Antal gäster:</strong> ${guests ?? "—"}</p>
-        <p><strong>Typ av catering:</strong> ${service ?? "—"}</p>
+        <p><strong>Allergier:</strong> ${service ?? "—"}</p>
         ${cart_summary ? `<pre style="white-space: pre-wrap; background: #f4f4f4; padding: 1rem; border-radius: 4px;">${cart_summary}</pre>` : ""}
         ${message ? `<p><strong>Meddelande:</strong></p><p>${message}</p>` : ""}
       `;
@@ -58,7 +78,13 @@ export async function POST(request: Request) {
 
       if (error) {
         console.error("Resend error:", error);
-        return NextResponse.json({ error: error.message }, { status: 500 });
+        if (isResendTestingError(error)) {
+          return NextResponse.json({ ok: true, emailSent: false });
+        }
+        return NextResponse.json(
+          { error: toFriendlyEmailError(error) },
+          { status: 500 }
+        );
       }
 
       // Bekräftelsemail till kunden
@@ -71,15 +97,18 @@ export async function POST(request: Request) {
           <p>Om du har frågor, kontakta oss på ${CONTACT.email} eller ${CONTACT.phone}.</p>
           <p>Med vänliga hälsningar,<br>Catering Tanne</p>
         `;
-        await resend.emails.send({
+        const confirmResult = await resend.emails.send({
           from: FROM_EMAIL,
           to: email,
           subject: confirmSubject,
           html: confirmHtml,
         });
+        if (confirmResult.error) {
+          console.error("Resend confirm error:", confirmResult.error);
+        }
       }
 
-      return NextResponse.json(data);
+      return NextResponse.json(data ? { ...data, emailSent: true } : { ok: true, emailSent: true });
     }
 
     if (type === "review") {
@@ -104,15 +133,22 @@ export async function POST(request: Request) {
 
       if (error) {
         console.error("Resend error:", error);
-        return NextResponse.json({ error: error.message }, { status: 500 });
+        if (isResendTestingError(error)) {
+          return NextResponse.json({ ok: true, emailSent: false });
+        }
+        return NextResponse.json(
+          { error: toFriendlyEmailError(error) },
+          { status: 500 }
+        );
       }
-      return NextResponse.json(data);
+      return NextResponse.json(data ? { ...data, emailSent: true } : { ok: true, emailSent: true });
     }
 
     return NextResponse.json({ error: "Invalid type" }, { status: 400 });
   } catch (err) {
     const msg = err instanceof Error ? err.message : "Kunde inte skicka e-post.";
     console.error("POST /api/send-email:", err);
-    return NextResponse.json({ error: msg }, { status: 500 });
+    const friendly = toFriendlyEmailError(err instanceof Error ? { message: msg } : null) ?? msg;
+    return NextResponse.json({ error: friendly }, { status: 500 });
   }
 }
