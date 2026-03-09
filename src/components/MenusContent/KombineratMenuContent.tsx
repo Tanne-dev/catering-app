@@ -83,14 +83,14 @@ export default function KombineratMenuContent() {
                   className="flex flex-col gap-3 rounded-lg border border-[#707164]/30 bg-[#12110D]/80 p-4 text-left sm:flex-row sm:items-center"
                 >
                   {tier.image && (
-                    <div className="shrink-0 overflow-hidden rounded-lg sm:w-24">
+                    <div className="w-full shrink-0 overflow-hidden rounded-lg sm:w-24">
                       <Image
                         src={tier.image}
                         alt={tier.name}
-                        width={96}
-                        height={96}
-                        className="h-20 w-full object-cover sm:h-24 sm:w-24"
-                        sizes="96px"
+                        width={400}
+                        height={225}
+                        className="h-40 w-full object-cover sm:h-24 sm:w-24"
+                        sizes="(max-width: 640px) 100vw, 96px"
                         loading="lazy"
                         unoptimized={tier.image?.startsWith("http")}
                       />
@@ -123,14 +123,14 @@ export default function KombineratMenuContent() {
                   className="flex flex-col gap-3 rounded-lg border border-[#707164]/30 bg-[#12110D]/80 p-4 text-left sm:flex-row sm:items-center"
                 >
                   {item.image && (
-                    <div className="shrink-0 overflow-hidden rounded-lg sm:w-24">
+                    <div className="w-full shrink-0 overflow-hidden rounded-lg sm:w-24">
                       <Image
                         src={item.image}
                         alt={item.name}
-                        width={96}
-                        height={96}
-                        className="h-20 w-full object-cover sm:h-24 sm:w-24"
-                        sizes="96px"
+                        width={400}
+                        height={225}
+                        className="h-40 w-full object-cover sm:h-24 sm:w-24"
+                        sizes="(max-width: 640px) 100vw, 96px"
                         loading="lazy"
                         unoptimized={item.image?.startsWith("http")}
                       />

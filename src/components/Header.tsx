@@ -308,6 +308,12 @@ export default function Header() {
         <div className="relative z-10 flex w-full items-center gap-4">
           <a
             href="/"
+            onClick={(e) => {
+              if (pathname === "/") {
+                e.preventDefault();
+                window.scrollTo({ top: 0, behavior: "smooth" });
+              }
+            }}
             className="group relative flex h-11 shrink-0 items-center transition-transform duration-200 hover:scale-[1.02] active:scale-[0.98] sm:h-12 md:h-14"
             aria-label="Catering Tanne - startsida"
           >

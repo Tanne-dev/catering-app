@@ -62,7 +62,7 @@ export default function SushiMenuContent() {
           </p>
           <p className={`mt-1.5 ${styles.body}`}>{tier.description}</p>
           {tier.image && (
-            <div className="mx-auto mt-4 max-w-md overflow-hidden rounded-lg border border-[#707164]/30">
+            <div className="mx-auto mt-4 w-full max-w-none overflow-hidden rounded-lg border border-[#707164]/30 sm:max-w-md">
               <Image
                 src={tier.image}
                 alt={tier.name}

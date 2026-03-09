@@ -92,7 +92,7 @@ export default function AsiatiskMenuContent() {
         {menuItems.map((item) => (
           <li key={item.name} className="border-b border-[#707164]/20 pb-6 last:border-0 last:pb-0">
             {item.image && (
-              <div className="mx-auto mb-3 max-w-xs">
+              <div className="mx-auto mb-3 w-full max-w-none sm:max-w-xs">
                 <ImageLightbox
                   src={item.image}
                   alt={item.name}
