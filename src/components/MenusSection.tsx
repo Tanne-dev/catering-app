@@ -68,23 +68,26 @@ export default function MenusSection() {
         </p>
 
         <div className="mx-auto mt-8 flex max-w-2xl flex-wrap items-center justify-center gap-2 sm:gap-3" role="tablist" aria-label={t("chooseMenuBelow")}>
-          {MENU_IDS.map((id) => (
-            <button
-              key={id}
-              type="button"
-              role="tab"
-              aria-selected={selectedMenu === id}
-              aria-label={tFallback(id)}
-              onClick={() => setSelectedMenu(id)}
-              className={`rounded-xl border-2 px-5 py-3 text-base font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#EAC84E] focus:ring-offset-2 focus:ring-offset-[#12110D] sm:px-6 sm:py-3.5 sm:text-lg ${
-                selectedMenu === id
-                  ? "border-[#EAC84E] bg-[#C49B38]/25 text-[#EAC84E] shadow-md"
-                  : "border-[#707164]/40 bg-[#1a1916]/80 text-[#E5E7E3] hover:border-[#C49B38]/60 hover:bg-[#C49B38]/15"
-              }`}
-            >
-              {tFallback(id)}
-            </button>
-          ))}
+          {MENU_IDS.map((id) => {
+            const label = tFallback(id) ?? "";
+            return (
+              <button
+                key={id}
+                type="button"
+                role="tab"
+                aria-selected={selectedMenu === id}
+                aria-label={label}
+                onClick={() => setSelectedMenu(id)}
+                className={`rounded-xl border-2 px-5 py-3 text-base font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#EAC84E] focus:ring-offset-2 focus:ring-offset-[#12110D] sm:px-6 sm:py-3.5 sm:text-lg ${
+                  selectedMenu === id
+                    ? "border-[#EAC84E] bg-[#C49B38]/25 text-[#EAC84E] shadow-md"
+                    : "border-[#707164]/40 bg-[#1a1916]/80 text-[#E5E7E3] hover:border-[#C49B38]/60 hover:bg-[#C49B38]/15"
+                }`}
+              >
+                {label}
+              </button>
+            );
+          })}
         </div>
 
         <div className="relative mt-10">
