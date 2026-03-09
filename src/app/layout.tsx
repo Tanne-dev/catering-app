@@ -4,9 +4,8 @@ import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages, getTranslations } from "next-intl/server";
 import Header from "@/components/Header";
 import JsonLd from "@/components/JsonLd";
-import ChatWidget from "@/components/ChatWidget";
+import QuickNavWidget from "@/components/QuickNavWidget";
 import OrderSidebar from "@/components/OrderSidebar";
-import ScrollToTop from "@/components/ScrollToTop";
 import ScrollToTopOnHome from "@/components/ScrollToTopOnHome";
 import ScrollToQuoteOnHash from "@/components/ScrollToQuoteOnHash";
 import ServiceDetailPanel from "@/components/ServiceDetailPanel";
@@ -76,11 +75,11 @@ export default async function RootLayout({
   return (
     <html lang={locale} suppressHydrationWarning>
       <body
-        className={`${lato.variable} ${geistMono.variable} antialiased`}
+        className={`${lato.variable} ${geistMono.variable} antialiased md:flex md:flex-col md:h-screen md:overflow-hidden`}
         suppressHydrationWarning
       >
         <NextIntlClientProvider messages={messages}>
-        <div suppressHydrationWarning>
+        <div className="md:flex md:flex-1 md:flex-col md:min-h-0" suppressHydrationWarning>
         <JsonLd />
         <SessionProvider>
         <SelectedMenuProvider>
@@ -97,12 +96,11 @@ export default async function RootLayout({
             <ScrollToTopOnHome />
             <ScrollToQuoteOnHash />
             <ServiceDetailPanel />
-            <main suppressHydrationWarning>
+            <main className="md:flex-1 md:min-h-0 md:overflow-hidden md:flex md:flex-col" suppressHydrationWarning>
             {children}
             </main>
             <OrderSidebar />
-            <ScrollToTop />
-            <ChatWidget />
+            <QuickNavWidget />
           </SelectedServiceProvider>
           </FlyToCartProvider>
           </CartProvider>

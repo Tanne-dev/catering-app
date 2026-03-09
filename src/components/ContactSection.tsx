@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { useSession } from "next-auth/react";
 import { useTranslations } from "next-intl";
 import LazyBackground from "@/components/LazyBackground";
+import ScrollReveal from "@/components/ScrollReveal";
 import { useCart } from "@/contexts/CartContext";
 import { CONTACT } from "@/data/contact";
 import { useSelectedService } from "@/contexts/SelectedServiceContext";
@@ -171,7 +172,7 @@ export default function ContactSection() {
   return (
     <section
       id="contact"
-      className="relative border-t border-[#707164]/25 py-16 md:min-h-screen md:snap-start md:py-20"
+      className="relative border-t border-[#707164]/25 pt-10 pb-16 md:min-h-screen md:snap-start md:py-20"
       aria-labelledby="contact-heading"
     >
       {/* Background image */}
@@ -185,7 +186,8 @@ export default function ContactSection() {
       <div className="relative z-10 mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         <div className="mx-auto grid max-w-4xl justify-items-center gap-10 sm:gap-12 lg:grid-cols-2 lg:justify-items-stretch lg:gap-16">
           {/* Kontaktinfo */}
-          <div className="w-full max-w-xl text-center lg:max-w-none lg:text-left">
+          <ScrollReveal side="left" className="w-full max-w-xl lg:max-w-none">
+          <div className="text-center lg:text-left">
             <h2
               id="contact-heading"
               className="font-serif text-2xl font-semibold tracking-tight text-[#EAC84E] sm:text-3xl"
@@ -220,12 +222,14 @@ export default function ContactSection() {
               )}
             </dl>
           </div>
+          </ScrollReveal>
 
           {/* Form Skicka förfrågan */}
+          <ScrollReveal side="right" className="w-full max-w-xl lg:max-w-none">
           <div
             id="quote"
             ref={quoteRef}
-            className="scroll-mt-24 w-full max-w-xl lg:max-w-none"
+            className="scroll-mt-24"
           >
             <h3 className="font-serif text-xl font-semibold text-[#EAC84E] sm:text-2xl" style={{ fontFamily: "Georgia, Cambria, 'Times New Roman', serif" }}>
               {t("requestQuote")}
@@ -429,6 +433,7 @@ export default function ContactSection() {
               </form>
             )}
           </div>
+          </ScrollReveal>
         </div>
       </div>
     </section>

@@ -24,7 +24,27 @@ export interface Testimonial {
   date?: string; // t.ex. "2024-01-15" eller "Januari 2024"
 }
 
-export const TESTIMONIALS: Testimonial[] = [
+const MONTHS: Record<string, number> = {
+  januari: 1, jan: 1, februari: 2, febr: 2, mars: 3, april: 4, maj: 5, juni: 6,
+  juli: 7, augusti: 8, september: 9, oktober: 10, november: 11, december: 12,
+};
+
+function parseDate(dateStr: string | undefined): number {
+  if (!dateStr) return 0;
+  const parts = dateStr.trim().toLowerCase().split(/\s+/);
+  if (parts.length < 2) return 0;
+  const year = parseInt(parts[1], 10) || 0;
+  const month = MONTHS[parts[0].replace(".", "")] ?? 0;
+  return year * 12 + month;
+}
+
+const TESTIMONIALS_RAW: Testimonial[] = [
+  {
+    name: "Emma och Filip",
+    rating: 5,
+    text: "Catering Tanne levererade till vår fest i mars – både sushi och vietnamesiska rätter. Allt var fräscht, snyggt upplagt och gästerna var helt enkelt imponerade. Vi beställer gärna igen!",
+    date: "Mars 2026",
+  },
   {
     name: "Maria L.",
     rating: 5,
@@ -85,4 +105,27 @@ export const TESTIMONIALS: Testimonial[] = [
     text: "Första gången vi beställde catering – blev jättenöjda. Enkelt att beställa och allt kom i tid. Tack Catering Tanne!",
     date: "Juli 2025",
   },
+  {
+    name: "Carolina N.",
+    rating: 5,
+    text: "Vi hade Catering Tanne till vår sommarfest i juni. Vietnamesiska vårrullar och bao buns var succé – alla frågade var vi hade beställt. Professionell service från start till mål.",
+    date: "Juni 2025",
+  },
+  {
+    name: "Thomas och Ingrid",
+    rating: 5,
+    text: "Beställde kombinerad meny till 50-årsfesten. Både kvaliteten och presentationen över förväntan. Personalen var hjälpsam och leveransen smidig. Fem plus!",
+    date: "Maj 2025",
+  },
+  {
+    name: "Jenny B.",
+    rating: 5,
+    text: "Företagsevent med sushi och wok – perfekt mix. Alla kollegor nöjda och vi fick många komplimanger. Tanne levererar verkligen.",
+    date: "April 2025",
+  },
 ];
+
+/** Sorterat med nyaste först. */
+export const TESTIMONIALS = [...TESTIMONIALS_RAW].sort(
+  (a, b) => parseDate(b.date) - parseDate(a.date)
+);

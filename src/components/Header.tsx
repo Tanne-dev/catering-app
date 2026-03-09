@@ -120,6 +120,7 @@ export default function Header() {
       : FALLBACK_MENUS_IDS.map((id) => ({ label: tMenus(id as "sushi" | "asiatisk" | "kombinera"), id }));
   const [menusDropdownOpen, setMenusDropdownOpen] = useState(false);
   const menusDropdownRef = useRef<HTMLDivElement>(null);
+  const menusDropdownRefDesktop = useRef<HTMLDivElement>(null);
 
   const [loginDropdownOpen, setLoginDropdownOpen] = useState(false);
   const loginDropdownRef = useRef<HTMLDivElement>(null);
@@ -195,9 +196,8 @@ export default function Header() {
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
       const target = e.target as Node;
-      if (menusDropdownRef.current && !menusDropdownRef.current.contains(target)) {
-        setMenusDropdownOpen(false);
-      }
+      const inMenus = menusDropdownRef.current?.contains(target) || menusDropdownRefDesktop.current?.contains(target);
+      if (!inMenus) setMenusDropdownOpen(false);
       if (loginDropdownRef.current && !loginDropdownRef.current.contains(target)) {
         setLoginDropdownOpen(false);
       }
@@ -304,7 +304,7 @@ export default function Header() {
             "linear-gradient(90deg, transparent 0%, #C49B38 15%, #EAC84E 50%, #C49B38 85%, transparent 100%)",
         }}
       />
-      <div className="relative mx-auto flex min-h-[60px] max-w-6xl items-center px-4 py-3 sm:px-5 md:px-6">
+      <div className="relative mx-auto flex min-h-[60px] max-w-6xl items-center px-[26px] py-3 sm:px-[34px] lg:px-[42px]">
         <div className="relative z-10 flex w-full items-center gap-4">
           <a
             href="/"
@@ -321,6 +321,50 @@ export default function Header() {
               priority
             />
           </a>
+
+          {/* Meny – centrerad endast på små skärmar */}
+          <div className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 md:hidden" ref={menusDropdownRef}>
+            <button
+              type="button"
+              onClick={() => setMenusDropdownOpen((o) => !o)}
+              className="flex h-10 items-center justify-center gap-2 rounded-xl border border-[#B8923A]/50 bg-[#C49B38] px-4 text-xs font-semibold uppercase tracking-[0.18em] text-[#12110D] shadow-[0_1px_3px_rgba(0,0,0,0.25)] transition-all duration-200 hover:border-[#D4A83E]/70 hover:bg-[#D4A83E] hover:text-white hover:shadow-[0_2px_10px_rgba(196,155,56,0.4)] focus:outline-none focus:ring-2 focus:ring-[#EAC84E]/60 focus:ring-offset-2 focus:ring-offset-[#12110D] active:scale-[0.98] sm:h-11 sm:px-5 sm:text-sm sm:tracking-[0.2em]"
+              aria-haspopup="menu"
+              aria-expanded={menusDropdownOpen}
+            >
+              {t("menu")}
+              <span
+                className="inline-block transition-transform duration-200 ease-out"
+                style={{ transform: menusDropdownOpen ? "rotate(180deg)" : "rotate(0deg)" }}
+                aria-hidden
+              >
+                <ChevronDownIcon />
+              </span>
+            </button>
+            {menusDropdownOpen && (
+              <div className="absolute left-1/2 top-full z-50 mt-2" style={{ transform: "translateX(calc(-50% - 20px))" }}>
+                <div
+                  role="menu"
+                  className="min-w-[200px] overflow-hidden rounded-xl border py-1 shadow-xl"
+                  style={{
+                    backgroundColor: "#161510",
+                    borderColor: "#2a2924",
+                  }}
+                >
+                  {menuList.map(({ label, id }) => (
+                    <button
+                      key={id}
+                      type="button"
+                      role="menuitem"
+                      onClick={() => handleMenuClick(id)}
+                      className="w-full px-5 py-3 text-center text-sm font-medium tracking-wide text-[#E5E7E3] transition-all duration-150 hover:bg-[#EAC84E]/10 hover:text-[#EAC84E]"
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
 
           <div className="ml-auto flex items-center gap-1 sm:gap-2 md:gap-2.5">
             <LanguageSwitcher />
@@ -360,7 +404,7 @@ export default function Header() {
                     <ol className="list-decimal space-y-3 px-4 pb-2 pl-7 text-sm leading-relaxed text-[#E5E7E3]/95">
                       <li>{t.rich("helpStep1", { menuLink: (chunks) => <a href="#menus" onClick={() => setHelpOpen(false)} className="text-[#EAC84E] underline-offset-2 hover:underline">{chunks}</a> })}</li>
                       <li>{t("helpStep2")}</li>
-                      <li>{t.rich("helpStep3", { cartLink: (chunks) => <Link href="/varukorg" onClick={() => setHelpOpen(false)} className="text-[#EAC84E] underline-offset-2 hover:underline">{chunks}</Link> })}</li>
+                      <li>{t.rich("helpStep3", { quoteLink: (chunks) => <a href="#quote" onClick={() => setHelpOpen(false)} className="text-[#EAC84E] underline-offset-2 hover:underline">{chunks}</a> })}</li>
                       <li>{t("helpStep4")}</li>
                       <li>{t("helpStep5")}</li>
                     </ol>
@@ -516,19 +560,26 @@ export default function Header() {
                 </div>
               )}
             </div>
-            <div className="relative" ref={menusDropdownRef}>
+            {/* Meny – i högergruppen endast på desktop */}
+            <div className="relative hidden md:block" ref={menusDropdownRefDesktop}>
               <button
                 type="button"
                 onClick={() => setMenusDropdownOpen((o) => !o)}
-                className="flex h-10 items-center justify-center gap-2 rounded-lg border border-[#B8923A]/40 bg-[#C49B38] px-4 text-xs font-semibold tracking-wide text-[#12110D] shadow-[0_1px_2px_rgba(0,0,0,0.2)] transition-all duration-200 hover:border-[#D4A83E]/60 hover:bg-[#D4A83E] hover:shadow-[0_2px_8px_rgba(196,155,56,0.35)] focus:outline-none focus:ring-2 focus:ring-[#EAC84E]/60 focus:ring-offset-2 focus:ring-offset-[#12110D] active:scale-[0.98] sm:h-11 sm:px-5 sm:text-sm"
+                className="flex h-10 items-center justify-center gap-2 rounded-xl border border-[#B8923A]/50 bg-[#C49B38] px-4 text-xs font-semibold uppercase tracking-[0.18em] text-[#12110D] shadow-[0_1px_3px_rgba(0,0,0,0.25)] transition-all duration-200 hover:border-[#D4A83E]/70 hover:bg-[#D4A83E] hover:text-white hover:shadow-[0_2px_10px_rgba(196,155,56,0.4)] focus:outline-none focus:ring-2 focus:ring-[#EAC84E]/60 focus:ring-offset-2 focus:ring-offset-[#12110D] active:scale-[0.98] sm:h-11 sm:px-5 sm:text-sm sm:tracking-[0.2em]"
                 aria-haspopup="menu"
                 aria-expanded={menusDropdownOpen}
               >
                 {t("menu")}
-                <ChevronDownIcon />
+                <span
+                  className="inline-block transition-transform duration-200 ease-out"
+                  style={{ transform: menusDropdownOpen ? "rotate(180deg)" : "rotate(0deg)" }}
+                  aria-hidden
+                >
+                  <ChevronDownIcon />
+                </span>
               </button>
               {menusDropdownOpen && (
-                <div className="absolute left-0 right-0 top-full z-50 mt-2 flex justify-center">
+                <div className="absolute left-0 right-0 top-full z-50 mt-2 flex justify-center -translate-x-5">
                   <div
                     role="menu"
                     className="min-w-[200px] overflow-hidden rounded-xl border py-1 shadow-xl"
@@ -543,14 +594,7 @@ export default function Header() {
                         type="button"
                         role="menuitem"
                         onClick={() => handleMenuClick(id)}
-                        className="w-full px-4 py-2.5 text-center text-sm transition-colors"
-                        style={{ color: "#D5D7D3" }}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.backgroundColor = "#ffffff08";
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.backgroundColor = "transparent";
-                        }}
+                        className="w-full px-5 py-3 text-center text-sm font-medium tracking-wide text-[#E5E7E3] transition-all duration-150 hover:bg-[#EAC84E]/10 hover:text-[#EAC84E]"
                       >
                         {label}
                       </button>
@@ -559,7 +603,6 @@ export default function Header() {
                 </div>
               )}
             </div>
-
             <div className="relative hidden sm:block" ref={loginDropdownRef}>
               {!showSessionUI || (showSessionUI && !isAdmin && !isGuest) ? (
                 <Link

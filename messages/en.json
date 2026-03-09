@@ -4,7 +4,8 @@
     "portion": "portion",
     "loading": "Loading…",
     "remove": "Remove",
-    "close": "Close"
+    "close": "Close",
+    "scrollToTop": "Scroll to top"
   },
   "hero": {
     "alt": "Catering Tanne – Vietnamese & Swedish catering",
@@ -42,7 +43,8 @@
     "heading": "Menu",
     "intro": "Browse our selection below and choose a menu to see the full content. Each option can be adapted to your event.",
     "loading": "Loading menu…",
-    "selectMenu": "Select a menu in the header to see its content here.",
+    "selectMenu": "Choose a menu below to see our dishes.",
+    "chooseMenuBelow": "Choose an option below – click Sushi, Asian or Kombinerat to see the dishes.",
     "addToCart": "Add to cart"
   },
   "menusFallback": {
@@ -172,9 +174,9 @@
     "howToOrder": "How to order from Catering Tanne",
     "helpFlow": "Order flow",
     "helpStep1": "Choose dishes from our <menuLink>menu</menuLink> and enter the desired quantity.",
-    "helpStep2": "Click \"Add to cart\" to add the dishes to your cart.",
-    "helpStep3": "Open the <cartLink>cart</cartLink> and review your selected dishes.",
-    "helpStep4": "Click \"Request quote\" and fill in the form with contact details, date, number of guests and other information. Then click \"Request quote\" to submit.",
+    "helpStep2": "Click \"Add\" – the dishes appear in the \"Din beställning\" panel on the right.",
+    "helpStep3": "When ready, click <quoteLink>\"Skicka till förfrågan\"</quoteLink> in the panel to scroll to the request form.",
+    "helpStep4": "Fill in the form with contact details, date, number of guests, allergies, etc. and submit the request.",
     "helpStep5": "Catering Tanne will get back with a proposal. Approve to complete your order.",
     "notifications": "Notifications",
     "notificationsNew": "Notifications – {count} new",

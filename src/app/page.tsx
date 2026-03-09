@@ -6,6 +6,7 @@ import ContactSection from "@/components/ContactSection";
 import DishSlider from "@/components/DishSlider";
 import Hero from "@/components/Hero";
 import MenusSection from "@/components/MenusSection";
+import ScrollReveal from "@/components/ScrollReveal";
 import ScrollToMenuOnQuery from "@/components/ScrollToMenuOnQuery";
 import ServicesSection from "@/components/ServicesSection";
 import TestimonialsSection from "@/components/TestimonialsSection";
@@ -20,7 +21,7 @@ export default async function Home() {
   return (
     <main
       id="main-content"
-      className="md:h-screen md:overflow-y-scroll md:snap-y md:snap-mandatory"
+      className="md:h-full md:min-h-0 md:overflow-y-scroll md:snap-y md:snap-mandatory"
     >
       <Suspense fallback={null}>
         <ScrollToMenuOnQuery />
@@ -38,7 +39,8 @@ export default async function Home() {
         aria-labelledby="goals-heading"
       >
         <div className="mx-auto flex max-w-6xl flex-col items-center gap-8 px-4 md:flex-row md:items-center md:gap-12 md:px-6 lg:gap-16 lg:px-8">
-          <div className="max-w-3xl flex-1 text-center lg:px-0 lg:text-left">
+          <ScrollReveal side="left" className="max-w-3xl flex-1">
+          <div className="text-center lg:px-0 lg:text-left">
           <h2 id="goals-heading" className="font-serif text-2xl font-semibold tracking-tight text-[#EAC84E] sm:text-3xl" style={{ fontFamily: "Georgia, Cambria, 'Times New Roman', serif" }}>
             {tGoals("heading")}
           </h2>
@@ -71,7 +73,9 @@ export default async function Home() {
             {tGoals("p4")}
           </p>
           </div>
-          <div className="relative shrink-0 w-full max-w-md overflow-hidden rounded-xl border border-[#707164]/30 shadow-xl md:max-w-sm lg:max-w-md">
+          </ScrollReveal>
+          <ScrollReveal side="right" className="relative shrink-0 w-full max-w-md md:max-w-sm lg:max-w-md">
+          <div className="overflow-hidden rounded-xl border border-[#707164]/30 shadow-xl">
             <Image
               src="/goals-kitchen.png"
               alt={tGoals("imageAlt")}
@@ -82,6 +86,7 @@ export default async function Home() {
               priority={false}
             />
           </div>
+          </ScrollReveal>
         </div>
       </section>
       <footer
@@ -89,6 +94,7 @@ export default async function Home() {
         className="bg-[#12110D] border-t border-[#707164]/40 py-8 sm:py-10 md:snap-start"
         role="contentinfo"
       >
+        <ScrollReveal side="left">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col items-center gap-6 text-center sm:flex-row sm:items-center sm:justify-between sm:gap-8 sm:text-left">
             <nav className="flex flex-wrap items-center justify-center gap-4 sm:justify-start sm:gap-6" aria-label="Footer navigation">
@@ -123,6 +129,7 @@ export default async function Home() {
             {tFooter("developedBy")}
           </p>
         </div>
+        </ScrollReveal>
       </footer>
     </main>
   );

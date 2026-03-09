@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import LazyBackground from "@/components/LazyBackground";
+import ScrollReveal from "@/components/ScrollReveal";
 import { TESTIMONIALS, type Testimonial } from "@/data/testimonials";
 
 const AUTO_SLIDE_INTERVAL_MS = 3500;
@@ -115,6 +116,7 @@ export default function TestimonialsSection() {
       </LazyBackground>
       <div className="absolute inset-0 bg-[#12110D]/85" aria-hidden />
       <div className="relative z-10 mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <ScrollReveal side="left">
         <div className="mx-auto max-w-2xl text-center">
           <h2
             id="testimonials-heading"
@@ -273,6 +275,7 @@ export default function TestimonialsSection() {
             </form>
           )}
         </div>
+        </ScrollReveal>
       </div>
     </section>
   );

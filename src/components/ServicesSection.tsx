@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import LazyBackground from "@/components/LazyBackground";
+import ScrollReveal from "@/components/ScrollReveal";
 import { useSelectedService } from "@/contexts/SelectedServiceContext";
 import { SERVICES } from "@/data/services";
 import type { ServiceId } from "@/data/services";
@@ -27,7 +28,7 @@ export default function ServicesSection() {
   return (
     <section
       id="services"
-      className="relative border-t border-[#707164]/25 overflow-hidden py-16 md:min-h-screen md:snap-start md:py-20 lg:py-24"
+      className="relative border-t border-[#707164]/25 overflow-hidden pt-16 pb-10 md:min-h-screen md:snap-start md:pb-20 md:pt-20 lg:py-24"
       aria-labelledby="services-heading"
     >
       <LazyBackground
@@ -46,8 +47,9 @@ export default function ServicesSection() {
         aria-hidden
       />
       <div className="relative z-10 mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-        <header className="mx-auto mb-12 max-w-2xl border-b border-[#707164]/20 pb-10 text-center md:mb-14 md:pb-12">
-          <h2
+        <ScrollReveal side="left">
+          <header className="mx-auto mb-12 max-w-2xl border-b border-[#707164]/20 pb-10 text-center md:mb-14 md:pb-12">
+            <h2
             id="services-heading"
             className="text-2xl font-semibold tracking-tight text-[#EAC84E] sm:text-3xl"
           >
@@ -57,9 +59,11 @@ export default function ServicesSection() {
             {t("subheading")}
           </p>
         </header>
+        </ScrollReveal>
 
         <div className="flex flex-col items-center gap-12 lg:flex-row lg:items-start lg:gap-14">
-          <div className="min-w-0 max-w-2xl flex-1 text-center lg:max-w-[36rem] lg:text-left">
+          <ScrollReveal side="left" className="min-w-0 max-w-2xl flex-1 lg:max-w-[36rem]">
+          <div className="text-center lg:text-left">
             {/* Beställ Catering */}
             <div>
               <h3 className={SECTION_STYLES.heading}>
@@ -120,8 +124,10 @@ export default function ServicesSection() {
               </ul>
             </div>
           </div>
+          </ScrollReveal>
 
           {/* Bildkolumn */}
+          <ScrollReveal side="right">
           <aside
             className="hidden shrink-0 md:block lg:sticky lg:top-24 lg:w-[420px] xl:w-[480px]"
             aria-hidden
@@ -138,6 +144,7 @@ export default function ServicesSection() {
               />
             </div>
           </aside>
+          </ScrollReveal>
         </div>
       </div>
     </section>

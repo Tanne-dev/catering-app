@@ -18,7 +18,7 @@ type SelectedMenuContextValue = {
 const SelectedMenuContext = createContext<SelectedMenuContextValue | null>(null);
 
 export function SelectedMenuProvider({ children }: { children: ReactNode }) {
-  const [selectedMenu, setSelectedMenuState] = useState<MenuId>(null);
+  const [selectedMenu, setSelectedMenuState] = useState<MenuId>("kombinera");
   const setSelectedMenu = useCallback((menu: MenuId) => {
     setSelectedMenuState(menu);
   }, []);

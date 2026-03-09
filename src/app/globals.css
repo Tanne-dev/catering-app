@@ -28,6 +28,15 @@ body {
   font-family: var(--font-lato), 'Lato', system-ui, sans-serif;
 }
 
+/* Desktop: en scrollbar – bara main rullar */
+@media (min-width: 768px) {
+  html,
+  body {
+    height: 100%;
+    overflow: hidden;
+  }
+}
+
 /* Global button hover effect */
 button {
   transition:
