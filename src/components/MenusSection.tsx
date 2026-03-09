@@ -33,7 +33,8 @@ const KombineratMenuContent = dynamic(
   { ssr: false, loading: () => <MenuLoadingPlaceholder /> }
 );
 
-const MENU_IDS: MenuId[] = ["sushi", "asiatisk", "kombinera"];
+/** Tab IDs only (no null); use for iteration so tFallback(id) gets string. */
+const MENU_IDS: ("sushi" | "asiatisk" | "kombinera")[] = ["sushi", "asiatisk", "kombinera"];
 
 export default function MenusSection() {
   const t = useTranslations("menus");
