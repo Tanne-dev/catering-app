@@ -17,23 +17,66 @@ function getStaticImageByName(name: string): string | undefined {
   return item?.image;
 }
 
+const DEBUG_LOG_ENDPOINT = "http://127.0.0.1:7242/ingest/0cdeab99-f7cb-4cee-9943-94270784127d";
+
 export default function AsiatiskMenuContent() {
   const { items, loading } = useMenuItems("asiatisk");
   const menuItems = items.length > 0
     ? items.map((i) => {
-        const rawImage = (i.image ?? undefined) || getStaticImageByName(i.name);
+        const fromApi = i.image ?? undefined;
+        const fromStatic = getStaticImageByName(i.name);
+        const rawImage = fromApi || fromStatic;
+        const resolved = resolveMenuImageUrl(rawImage);
+        // #region agent log
+        fetch(DEBUG_LOG_ENDPOINT, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            location: "AsiatiskMenuContent.tsx:map",
+            message: "asiatisk item image resolution",
+            data: {
+              name: i.name,
+              fromApi: !!fromApi,
+              fromStatic: !!fromStatic,
+              rawImage: rawImage ? rawImage.substring(0, 80) : null,
+              resolved: !!resolved,
+              resolvedUrl: resolved ? resolved.substring(0, 80) : null,
+            },
+            timestamp: Date.now(),
+            hypothesisId: "H1",
+          }),
+        }).catch(() => {});
+        // #endregion
         return {
           name: i.name,
           price: i.price,
           description: i.description ?? "",
           allergens: i.allergens ?? undefined,
-          image: resolveMenuImageUrl(rawImage),
+          image: resolved,
         };
       })
     : ASIATISK_MENU_ITEMS.map((item) => ({
         ...item,
         image: resolveMenuImageUrl(item.image),
       }));
+
+  // #region agent log
+  if (menuItems.length > 0 && items.length === 0) {
+    const withImage = menuItems.filter((m) => m.image).length;
+    const withoutImage = menuItems.filter((m) => !m.image).map((m) => m.name);
+    fetch(DEBUG_LOG_ENDPOINT, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        location: "AsiatiskMenuContent.tsx:static",
+        message: "asiatisk using static list (no API items)",
+        data: { count: menuItems.length, withImage, withoutImage },
+        timestamp: Date.now(),
+        hypothesisId: "H3",
+      }),
+    }).catch(() => {});
+  }
+  // #endregion
 
   return (
     <div

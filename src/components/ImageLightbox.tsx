@@ -4,6 +4,8 @@ import Image from "next/image";
 import { useEffect, useCallback, useState } from "react";
 import { createPortal } from "react-dom";
 
+const DEBUG_LOG_ENDPOINT = "http://127.0.0.1:7242/ingest/0cdeab99-f7cb-4cee-9943-94270784127d";
+
 type ImageLightboxProps = {
   src: string;
   alt: string;
@@ -23,6 +25,22 @@ export default function ImageLightbox({
 }: ImageLightboxProps) {
   const [open, setOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
+
+  // #region agent log
+  const logImageError = useCallback(() => {
+    fetch(DEBUG_LOG_ENDPOINT, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        location: "ImageLightbox.tsx:onError",
+        message: "image load failed",
+        data: { src: src.substring(0, 120), alt: alt.substring(0, 40) },
+        timestamp: Date.now(),
+        hypothesisId: "H2",
+      }),
+    }).catch(() => {});
+  }, [src, alt]);
+  // #endregion
 
   useEffect(() => {
     setMounted(true);
@@ -60,7 +78,8 @@ export default function ImageLightbox({
           className="h-48 w-full object-cover transition hover:opacity-95"
           sizes="(max-width: 640px) 100vw, 320px"
           loading="lazy"
-          unoptimized={src.startsWith("http")}
+          unoptimized={src.startsWith("http") || src.startsWith("/dishes/")}
+          onError={logImageError}
         />
       </button>
 
@@ -92,7 +111,8 @@ export default function ImageLightbox({
                 className="max-h-[90vh] w-auto max-w-full rounded-lg object-contain"
                 sizes="100vw"
                 loading="lazy"
-                unoptimized={src.startsWith("http")}
+                unoptimized={src.startsWith("http") || src.startsWith("/dishes/")}
+                onError={logImageError}
               />
               {caption && (
                 <p className="mt-2 text-center text-sm text-white/90">{caption}</p>

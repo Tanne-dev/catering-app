@@ -11,7 +11,7 @@ const SECTION_STYLES = {
   heading: "text-lg font-semibold tracking-tight text-[#EAC84E] sm:text-xl",
   subheading: "text-base font-semibold text-[#E5E7E3] mt-8 sm:mt-10",
   body: "text-[15px] leading-relaxed text-[#E5E7E3]/92 sm:text-base",
-  listItem: "flex gap-2.5 text-[15px] leading-relaxed text-[#E5E7E3]/92 sm:text-base",
+  listItem: "flex justify-center gap-2.5 text-[15px] leading-relaxed text-[#E5E7E3]/92 sm:text-base lg:justify-start",
   bullet: "text-[#C49B38] shrink-0 mt-0.5",
 } as const;
 
@@ -58,8 +58,8 @@ export default function ServicesSection() {
           </p>
         </header>
 
-        <div className="flex flex-col gap-12 lg:flex-row lg:items-start lg:gap-14">
-          <div className="min-w-0 flex-1 lg:max-w-[36rem]">
+        <div className="flex flex-col items-center gap-12 lg:flex-row lg:items-start lg:gap-14">
+          <div className="min-w-0 max-w-2xl flex-1 text-center lg:max-w-[36rem] lg:text-left">
             {/* Beställ Catering */}
             <div>
               <h3 className={SECTION_STYLES.heading}>

@@ -183,9 +183,9 @@ export default function ContactSection() {
       {/* Dark overlay for readability */}
       <div className="absolute inset-0 bg-[#12110D]/90" aria-hidden />
       <div className="relative z-10 mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-        <div className="mx-auto grid max-w-4xl gap-10 sm:gap-12 lg:grid-cols-2 lg:gap-16">
+        <div className="mx-auto grid max-w-4xl justify-items-center gap-10 sm:gap-12 lg:grid-cols-2 lg:justify-items-stretch lg:gap-16">
           {/* Kontaktinfo */}
-          <div className="mx-auto w-full max-w-xl text-center md:max-w-none md:text-left">
+          <div className="w-full max-w-xl text-center lg:max-w-none lg:text-left">
             <h2
               id="contact-heading"
               className="font-serif text-2xl font-semibold tracking-tight text-[#EAC84E] sm:text-3xl"
@@ -225,7 +225,7 @@ export default function ContactSection() {
           <div
             id="quote"
             ref={quoteRef}
-            className="scroll-mt-24 mx-auto w-full max-w-xl md:max-w-none"
+            className="scroll-mt-24 w-full max-w-xl lg:max-w-none"
           >
             <h3 className="font-serif text-xl font-semibold text-[#EAC84E] sm:text-2xl" style={{ fontFamily: "Georgia, Cambria, 'Times New Roman', serif" }}>
               {t("requestQuote")}

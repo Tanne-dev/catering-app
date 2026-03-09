@@ -7,14 +7,15 @@ export const MENU_IMAGES_BASE_URL =
   (process.env.NEXT_PUBLIC_SUPABASE_URL ?? "https://tneqkuvuvttjdymvrbiq.supabase.co").replace(/\/$/, "") +
   "/storage/v1/object/public/menu-images";
 
-/** Chuyển đường dẫn local hoặc relative thành URL Supabase cho ảnh menu */
+/** Chuyển đường dẫn local hoặc relative thành URL Supabase cho ảnh menu. */
 export function resolveMenuImageUrl(src: string | null | undefined): string | undefined {
   if (!src || typeof src !== "string") return undefined;
   const s = src.trim();
   if (!s) return undefined;
   if (s.startsWith("http://") || s.startsWith("https://")) return s;
-  if (s.startsWith("/dishes/")) return s;
-  return s.startsWith("/") ? MENU_IMAGES_BASE_URL + s : MENU_IMAGES_BASE_URL + "/" + s;
+  // /dishes/xxx → Supabase URL så att bilden laddas lika på desktop och mobil (undvik Next Image-optimizer "received null")
+  const path = s.startsWith("/") ? s : "/" + s;
+  return MENU_IMAGES_BASE_URL + path;
 }
 
 const supabaseAnonKey = process.env.SUPABASE_ANON_KEY ?? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;

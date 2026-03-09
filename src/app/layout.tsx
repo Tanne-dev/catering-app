@@ -7,6 +7,7 @@ import JsonLd from "@/components/JsonLd";
 import ChatWidget from "@/components/ChatWidget";
 import OrderSidebar from "@/components/OrderSidebar";
 import ScrollToTop from "@/components/ScrollToTop";
+import ScrollToTopOnHome from "@/components/ScrollToTopOnHome";
 import ScrollToQuoteOnHash from "@/components/ScrollToQuoteOnHash";
 import ServiceDetailPanel from "@/components/ServiceDetailPanel";
 import SessionProvider from "@/components/SessionProvider";
@@ -93,6 +94,7 @@ export default async function RootLayout({
               {t("skipToContent")}
             </a>
             <Header />
+            <ScrollToTopOnHome />
             <ScrollToQuoteOnHash />
             <ServiceDetailPanel />
             <main suppressHydrationWarning>

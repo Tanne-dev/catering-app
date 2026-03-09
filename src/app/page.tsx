@@ -38,11 +38,11 @@ export default async function Home() {
         aria-labelledby="goals-heading"
       >
         <div className="mx-auto flex max-w-6xl flex-col items-center gap-8 px-4 md:flex-row md:items-center md:gap-12 md:px-6 lg:gap-16 lg:px-8">
-          <div className="max-w-3xl flex-1 text-center sm:px-6 sm:text-left lg:px-0">
+          <div className="max-w-3xl flex-1 text-center lg:px-0 lg:text-left">
           <h2 id="goals-heading" className="font-serif text-2xl font-semibold tracking-tight text-[#EAC84E] sm:text-3xl" style={{ fontFamily: "Georgia, Cambria, 'Times New Roman', serif" }}>
             {tGoals("heading")}
           </h2>
-          <div className="mx-auto mt-4 h-px w-16 bg-[#C49B38]/70 sm:mx-0" aria-hidden />
+          <div className="mx-auto mt-4 h-px w-16 bg-[#C49B38]/70 lg:mx-0" aria-hidden />
           <p className="mt-6 text-[#E5E7E3]/90 leading-relaxed">
             {tGoals("p1")}
           </p>
