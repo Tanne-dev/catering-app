@@ -5,8 +5,12 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState, useCallback, useRef } from "react";
 import Link from "next/link";
 import LazyBackground from "@/components/LazyBackground";
+import DietTypeBadge, { parseDietTypes } from "@/components/DietTypeBadge";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 type Menu = { id: string; slug: string; title: string; display_order: number };
+type DietType = "meat" | "fish" | "skaldjur" | "vegetarian";
+
 type MenuItem = {
   id: string;
   menu_id: string;
@@ -19,9 +23,16 @@ type MenuItem = {
   uramaki: string[];
   maki: string[];
   allergens: string | null;
+  diet_type?: DietType | null;
 };
 
-const MENU_SLUGS = ["sushi", "asiatisk"] as const;
+const MENU_SLUGS = ["sushi", "asiatisk", "specialrollar"] as const;
+
+const MENU_LABELS: Record<(typeof MENU_SLUGS)[number], string> = {
+  sushi: "Sushi",
+  asiatisk: "Asiatisk",
+  specialrollar: "Special rollar",
+};
 
 function AdminMenusContent() {
   const router = useRouter();
@@ -42,6 +53,7 @@ function AdminMenusContent() {
     nigiri: "",
     uramaki: "",
     maki: "",
+    diet_types: [] as DietType[],
   });
   const [submitting, setSubmitting] = useState(false);
   const [feedback, setFeedback] = useState<{ type: "success" | "error"; msg: string } | null>(null);
@@ -68,6 +80,13 @@ function AdminMenusContent() {
     setLoading(true);
     try {
       await fetchMenus();
+      // Ensure specialrollar menu exists in DB (admin can edit it)
+      await fetch("/api/menus", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ slug: "specialrollar", title: "Special rollar" }),
+      }).catch(() => {});
+      await fetchMenus(); // re-fetch so menus includes specialrollar
       const all: Record<string, MenuItem[]> = {};
       for (const slug of MENU_SLUGS) {
         all[slug] = await fetchItems(slug);
@@ -109,6 +128,7 @@ function AdminMenusContent() {
       nigiri: "",
       uramaki: "",
       maki: "",
+      diet_types: [],
     });
     setImageFile(null);
     if (fileInputRef.current) fileInputRef.current.value = "";
@@ -175,6 +195,7 @@ function AdminMenusContent() {
       nigiri: Array.isArray(item.nigiri) ? item.nigiri.join(", ") : "",
       uramaki: Array.isArray(item.uramaki) ? item.uramaki.join(", ") : "",
       maki: Array.isArray(item.maki) ? item.maki.join(", ") : "",
+      diet_types: parseDietTypes(item.diet_type),
     });
     setShowForm(true);
   }
@@ -228,6 +249,7 @@ function AdminMenusContent() {
             nigiri: selectedSlug === "sushi" ? parseArray(form.nigiri) : [],
             uramaki: selectedSlug === "sushi" ? parseArray(form.uramaki) : [],
             maki: selectedSlug === "sushi" ? parseArray(form.maki) : [],
+            diet_type: form.diet_types.length > 0 ? form.diet_types.join(",") : null,
           }),
         });
         if (!res.ok) {
@@ -249,6 +271,7 @@ function AdminMenusContent() {
             nigiri: selectedSlug === "sushi" ? parseArray(form.nigiri) : [],
             uramaki: selectedSlug === "sushi" ? parseArray(form.uramaki) : [],
             maki: selectedSlug === "sushi" ? parseArray(form.maki) : [],
+            diet_type: form.diet_types.length > 0 ? form.diet_types.join(",") : null,
           }),
         });
         if (!res.ok) {
@@ -288,7 +311,7 @@ function AdminMenusContent() {
   if (status === "loading" || loading) {
     return (
       <div className="flex min-h-[60vh] items-center justify-center">
-        <div className="text-[#EAC84E]">Laddar...</div>
+        <LoadingSpinner size="lg" className="border-t-[#EAC84E]" />
       </div>
     );
   }
@@ -297,7 +320,7 @@ function AdminMenusContent() {
   const menu = menus.find((m) => m.slug === selectedSlug);
 
   return (
-    <div className="relative min-h-[70vh] px-4 py-16">
+    <div className="relative min-h-0 flex-1 overflow-y-auto px-4 py-16">
       <LazyBackground
         src="/admin-bg.png"
         className="fixed inset-y-0 left-5 right-5 -z-10 bg-cover bg-center bg-no-repeat"
@@ -348,7 +371,7 @@ function AdminMenusContent() {
                     : "bg-[#12110D] text-[#E5E7E3] hover:bg-[#1a1916]"
                 }`}
               >
-                {slug === "sushi" ? "Sushi" : "Asiatisk"}
+                {MENU_LABELS[slug]}
               </button>
             ))}
           </div>
@@ -409,6 +432,11 @@ function AdminMenusContent() {
                 </label>
                 <div className="min-w-0 flex-1">
                   <span className="font-medium text-[#E5E7E3]">{item.name}</span>
+                  {item.diet_type && (
+                    <span className="ml-2">
+                      <DietTypeBadge dietType={item.diet_type} />
+                    </span>
+                  )}
                 </div>
                 <div className="flex shrink-0 gap-2">
                   <button
@@ -498,6 +526,38 @@ function AdminMenusContent() {
                   className="mt-1 w-full rounded-lg border border-[#707164]/50 bg-[#12110D] px-3 py-2 text-sm text-[#E5E7E3] placeholder-[#707164] focus:border-[#C49B38] focus:outline-none disabled:opacity-50"
                 />
               </div>
+              <div>
+                <label className="block text-xs text-[#E5E7E3]/80">Typ (välj en eller flera)</label>
+                <div className="mt-2 flex flex-wrap gap-3">
+                  {(["meat", "fish", "skaldjur", "vegetarian"] as const).map((type) => (
+                    <label
+                      key={type}
+                      className="flex cursor-pointer items-center gap-2 rounded-lg border border-[#707164]/50 px-4 py-2 text-sm text-[#E5E7E3] hover:border-[#C49B38]/50 has-[:checked]:border-[#C49B38] has-[:checked]:bg-[#C49B38]/15"
+                    >
+                      <input
+                        type="checkbox"
+                        checked={form.diet_types.includes(type)}
+                        onChange={(e) => {
+                          setForm((f) => ({
+                            ...f,
+                            diet_types: e.target.checked
+                              ? [...f.diet_types, type]
+                              : f.diet_types.filter((t) => t !== type),
+                          }));
+                        }}
+                        className="rounded border-[#707164]/50 text-[#C49B38] focus:ring-[#C49B38]"
+                      />
+                      <span>
+                        {type === "meat" && "🥩 Kött"}
+                        {type === "fish" && "🐟 Fisk"}
+                        {type === "skaldjur" && "🦐 Skaldjur"}
+                        {type === "vegetarian" && "🌱 Vegetarisk"}
+                      </span>
+                    </label>
+                  ))}
+                </div>
+                <p className="mt-1 text-xs text-[#707164]">Välj alla som passar rätten.</p>
+              </div>
               {selectedSlug === "asiatisk" && (
                 <div>
                   <label className="block text-xs text-[#E5E7E3]/80">Allergener</label>
@@ -585,7 +645,7 @@ export default function AdminMenusPage() {
   return (
     <Suspense fallback={
       <div className="flex min-h-[60vh] items-center justify-center">
-        <div className="text-[#EAC84E]">Laddar...</div>
+        <LoadingSpinner size="lg" className="border-t-[#EAC84E]" />
       </div>
     }>
       <AdminMenusContent />

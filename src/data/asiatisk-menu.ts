@@ -1,5 +1,7 @@
 import { MENU_IMAGES_BASE_URL } from "@/lib/supabase";
 
+export type DietType = "meat" | "fish" | "skaldjur" | "vegetarian";
+
 export type AsiatiskMenuItem = {
   name: string;
   price: string;
@@ -7,6 +9,7 @@ export type AsiatiskMenuItem = {
   allergens?: string;
   /** Bild på rätten (sökväg i public), t.ex. /dishes/dish-bun-cha.png */
   image?: string;
+  diet_type?: DietType;
 };
 
 export const ASIATISK_MENU_TITLE = "ASIATISK MENY";
@@ -15,6 +18,7 @@ export const ASIATISK_MENU_ITEMS: AsiatiskMenuItem[] = [
   {
     name: "GYOZA – STEKTA DUMPLINGS",
     price: "135,00 kr",
+    diet_type: "meat",
     description:
       "Stekta japanska dumplings med krispig botten, fyllda med köttfärs och grönsaker. Serveras med dipsås.",
     allergens: "gluten, soja",
@@ -23,6 +27,7 @@ export const ASIATISK_MENU_ITEMS: AsiatiskMenuItem[] = [
   {
     name: "VÅRRULLAR – STEKTA",
     price: "125,00 kr",
+    diet_type: "vegetarian",
     description:
       "Krispiga stekta vårrullar med färska grönsaker. Serveras med sötsur dipsås och färska örter.",
     allergens: "gluten, ägg",
@@ -31,6 +36,7 @@ export const ASIATISK_MENU_ITEMS: AsiatiskMenuItem[] = [
   {
     name: "FÄRSKA VÅRRULLAR – GỎI CUỐN",
     price: "130,00 kr",
+    diet_type: "fish",
     description:
       "Vietnamesiska färska vårrullar i rispapper med räkor, sallad och risnudlar. Serveras med kryddig nuoc cham-dipsås.",
     allergens: "skaldjur",
@@ -39,6 +45,7 @@ export const ASIATISK_MENU_ITEMS: AsiatiskMenuItem[] = [
   {
     name: "BAO BUNS – FLÄSKMAGE",
     price: "145,00 kr",
+    diet_type: "meat",
     description:
       "Mjuka ångade bao-bullar fyllda med glaserad fläskmage, inlagda morötter, grönlök och sesamfrön.",
     allergens: "gluten, soja",
@@ -47,6 +54,7 @@ export const ASIATISK_MENU_ITEMS: AsiatiskMenuItem[] = [
   {
     name: "BÁNH MÌ – VIETNAMESISK SANDWICH",
     price: "140,00 kr",
+    diet_type: "meat",
     description:
       "Krispig baguette med fläsk, inlagda morötter och rättika, färsk koriander, gurka och jalapeño.",
     allergens: "gluten, jordnötter (kan tillagas utan)",
@@ -55,6 +63,7 @@ export const ASIATISK_MENU_ITEMS: AsiatiskMenuItem[] = [
   {
     name: "PAD THAI",
     price: "155,00 kr",
+    diet_type: "vegetarian",
     description:
       "Klassiska thailändska wokade nudlar med ägg, grönsaker och sötsur sås.",
     allergens: "jordnötter, ägg, gluten",
@@ -63,6 +72,7 @@ export const ASIATISK_MENU_ITEMS: AsiatiskMenuItem[] = [
   {
     name: "STEKTA RIS MED KYCKLING",
     price: "145,00 kr",
+    diet_type: "meat",
     description:
       "Asiatiskt wokat ris med kyckling och blandade grönsaker.",
     allergens: "ägg, soja",
@@ -71,6 +81,7 @@ export const ASIATISK_MENU_ITEMS: AsiatiskMenuItem[] = [
   {
     name: "WOK MED RYGGBIFF OCH HARICOTS VERTS",
     price: "165,00 kr",
+    diet_type: "meat",
     description:
       "Wokade nudlar med möra ryggbiffstrimlor, krispiga haricots verts och kryddig sås.",
     allergens: "gluten, soja",
@@ -79,6 +90,7 @@ export const ASIATISK_MENU_ITEMS: AsiatiskMenuItem[] = [
   {
     name: "OXGRYTA I RÖDVIN",
     price: "159,00 kr",
+    diet_type: "meat",
     description:
       "Långkokt oxgryta i rödvinssås, serveras med ris eller potatis.",
     allergens: "gluten, alkohol (rödvin)",
@@ -87,6 +99,7 @@ export const ASIATISK_MENU_ITEMS: AsiatiskMenuItem[] = [
   {
     name: "TERIYAKI LAX",
     price: "175,00 kr",
+    diet_type: "fish",
     description:
       "Stekt lax med teriyakisås, serveras med grönsaker och ris.",
     allergens: "fisk, soja",
@@ -95,6 +108,7 @@ export const ASIATISK_MENU_ITEMS: AsiatiskMenuItem[] = [
   {
     name: "BARNMENY – STEKT RIS",
     price: "95,00 kr",
+    diet_type: "vegetarian",
     description:
       "Enkelt stekt ris med mild smak, lämplig för barn.",
     allergens: "ägg",

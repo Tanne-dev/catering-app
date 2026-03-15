@@ -23,6 +23,7 @@ export async function POST(request: Request) {
       uramaki,
       maki,
       allergens,
+      diet_type,
     } = body;
 
     if (!menu_id || !name) {
@@ -46,6 +47,9 @@ export async function POST(request: Request) {
       return [];
     };
 
+    const validTypes = ["meat", "fish", "skaldjur", "vegetarian"];
+    const parts = typeof diet_type === "string" ? diet_type.split(",").map((s) => s.trim().toLowerCase()) : [];
+    const validDietType = parts.every((p) => validTypes.includes(p)) && parts.length > 0 ? parts.join(",") : null;
     const { data, error } = await supabase
       .from("menu_items")
       .insert({
@@ -59,6 +63,7 @@ export async function POST(request: Request) {
         uramaki: toArray(uramaki),
         maki: toArray(maki),
         allergens: allergens ?? null,
+        diet_type: validDietType,
       })
       .select()
       .single();

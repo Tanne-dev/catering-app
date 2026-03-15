@@ -45,6 +45,11 @@ export async function PUT(
           ? JSON.parse(body.maki || "[]")
           : [];
     }
+    if (body.diet_type !== undefined) {
+      const validTypes = ["meat", "fish", "skaldjur", "vegetarian"];
+      const parts = typeof body.diet_type === "string" ? body.diet_type.split(",").map((s: string) => s.trim().toLowerCase()) : [];
+      updates.diet_type = parts.every((p: string) => validTypes.includes(p)) && parts.length > 0 ? parts.join(",") : null;
+    }
     updates.updated_at = new Date().toISOString();
 
     const supabase = createSupabaseAdminClient();

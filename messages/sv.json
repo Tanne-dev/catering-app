@@ -50,7 +50,14 @@
   "menusFallback": {
     "sushi": "Sushimeny",
     "asiatisk": "Asiatisk meny",
-    "kombinera": "Kombinera meny"
+    "kombinera": "Kombinera meny",
+    "specialrollar": "Special rollar"
+  },
+  "dietType": {
+    "meat": "Kött",
+    "fish": "Fisk",
+    "skaldjur": "Skaldjur",
+    "vegetarian": "Vegetarisk"
   },
   "contact": {
     "heading": "Kontakt",

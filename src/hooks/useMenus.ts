@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 
 export type MenuFromApi = { id: string; slug: string; title: string; display_order: number };
 
+export type DietType = "meat" | "fish" | "skaldjur" | "vegetarian";
+
 export type MenuItemFromApi = {
   id: string;
   menu_id: string;
@@ -16,6 +18,7 @@ export type MenuItemFromApi = {
   uramaki: string[];
   maki: string[];
   allergens: string | null;
+  diet_type?: DietType | null;
 };
 
 export function useMenus() {

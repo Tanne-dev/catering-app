@@ -1,6 +1,8 @@
 "use client";
 
 import Image from "next/image";
+import DietTypeBadge from "@/components/DietTypeBadge";
+import LoadingSpinner from "@/components/LoadingSpinner";
 import OrderQuantityInput from "@/components/OrderQuantityInput";
 import { useMenuItems } from "@/hooks/useMenus";
 import { CATERINGMENY_SUSHI } from "@/data/vara-tjanster-content";
@@ -27,17 +29,22 @@ export default function KombineratMenuContent() {
 
   const sushiTiers =
     sushiItems.length > 0
-      ? sushiItems.map((i) => ({
-          name: i.name,
-          price: i.price,
-          description: i.description ?? "",
-          image: resolveMenuImageUrl(i.image ?? getStaticSushiImageByName(i.name)),
-        }))
+      ? sushiItems.map((i) => {
+          const staticTier = CATERINGMENY_SUSHI.tiers.find((t) => t.name.toLowerCase().trim() === i.name.toLowerCase().trim());
+          return {
+            name: i.name,
+            price: i.price,
+            description: i.description ?? "",
+            image: resolveMenuImageUrl(i.image ?? getStaticSushiImageByName(i.name)),
+            diet_type: i.diet_type ?? staticTier?.diet_type,
+          };
+        })
       : CATERINGMENY_SUSHI.tiers.map((t) => ({
           name: t.name,
           price: t.price,
           description: t.description,
           image: resolveMenuImageUrl(t.image),
+          diet_type: t.diet_type,
         }));
 
   const asiatiskList =
@@ -47,6 +54,7 @@ export default function KombineratMenuContent() {
           price: i.price,
           description: i.description ?? "",
           image: resolveMenuImageUrl(i.image ?? getStaticAsiatiskImageByName(i.name)),
+          diet_type: i.diet_type,
         }))
       : ASIATISK_MENU_ITEMS.map((item) => ({
           ...item,
@@ -68,7 +76,9 @@ export default function KombineratMenuContent() {
 
       {/* Välj rätter – options från sushi och asiatisk */}
       {loading ? (
-        <p className="text-[#E5E7E3]/80">Laddar meny…</p>
+        <div className="flex justify-center py-12">
+          <LoadingSpinner size="lg" />
+        </div>
       ) : (
         <div className="space-y-10">
           {/* Sushi */}
@@ -97,7 +107,14 @@ export default function KombineratMenuContent() {
                     </div>
                   )}
                   <div className="flex-1">
-                    <p className="font-semibold text-[#E5E7E3]">{tier.name}</p>
+                    <p className="font-semibold text-[#E5E7E3]">
+                      {tier.name}
+                      {tier.diet_type && (
+                        <span className="ml-2 align-middle">
+                          <DietTypeBadge dietType={tier.diet_type} />
+                        </span>
+                      )}
+                    </p>
                     <p className="text-sm text-[#E5E7E3]/85">{tier.description}</p>
                   </div>
                   <div className="shrink-0">
@@ -137,7 +154,14 @@ export default function KombineratMenuContent() {
                     </div>
                   )}
                   <div className="flex-1">
-                    <p className="font-semibold text-[#E5E7E3]">{item.name}</p>
+                    <p className="font-semibold text-[#E5E7E3]">
+                      {item.name}
+                      {item.diet_type && (
+                        <span className="ml-2 align-middle">
+                          <DietTypeBadge dietType={item.diet_type} />
+                        </span>
+                      )}
+                    </p>
                     <p className="text-sm text-[#E5E7E3]/85">{item.description}</p>
                   </div>
                   <div className="shrink-0">

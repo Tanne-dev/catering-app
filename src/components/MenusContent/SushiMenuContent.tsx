@@ -1,6 +1,8 @@
 "use client";
 
 import Image from "next/image";
+import DietTypeBadge from "@/components/DietTypeBadge";
+import LoadingSpinner from "@/components/LoadingSpinner";
 import OrderQuantityInput from "@/components/OrderQuantityInput";
 import { useMenuItems } from "@/hooks/useMenus";
 import { CATERINGMENY_SUSHI } from "@/data/vara-tjanster-content";
@@ -18,10 +20,11 @@ function getStaticImageByName(name: string): string | undefined {
   return tier?.image;
 }
 
-function toTier(item: { name: string; price: string; description: string | null; nigiri?: string[]; uramaki?: string[]; maki?: string[]; image?: string | null }) {
+function toTier(item: { name: string; price: string; description: string | null; nigiri?: string[]; uramaki?: string[]; maki?: string[]; image?: string | null; diet_type?: string | null }) {
   const apiImage = item.image ?? undefined;
   const fallbackImage = !apiImage ? getStaticImageByName(item.name) : undefined;
   const rawImage = apiImage || fallbackImage;
+  const staticTier = CATERINGMENY_SUSHI.tiers.find((t) => t.name.toLowerCase().trim() === item.name.toLowerCase().trim());
   return {
     name: item.name,
     price: item.price,
@@ -30,6 +33,7 @@ function toTier(item: { name: string; price: string; description: string | null;
     uramaki: item.uramaki ?? [],
     maki: item.maki ?? [],
     image: resolveMenuImageUrl(rawImage),
+    diet_type: item.diet_type ?? staticTier?.diet_type ?? undefined,
   };
 }
 
@@ -45,7 +49,9 @@ export default function SushiMenuContent() {
         {CATERINGMENY_SUSHI.title}
       </h3>
       {loading ? (
-        <p className="text-[#E5E7E3]/80">Laddar meny…</p>
+        <div className="flex justify-center py-12">
+          <LoadingSpinner size="lg" />
+        </div>
       ) : tiers.length === 0 ? (
         <p className="text-[#E5E7E3]/80">
           Nya sushier kommer snart. Kontakta oss för att höra vad vi kan erbjuda.
@@ -59,6 +65,11 @@ export default function SushiMenuContent() {
           <p className="font-semibold text-[#E5E7E3]">
             <span className="text-[#EAC84E]" aria-hidden>⭐ </span>
             {tier.name}
+            {tier.diet_type && (
+              <span className="ml-2 align-middle">
+                <DietTypeBadge dietType={tier.diet_type} />
+              </span>
+            )}
           </p>
           <p className={`mt-1.5 ${styles.body}`}>{tier.description}</p>
           {tier.image && (

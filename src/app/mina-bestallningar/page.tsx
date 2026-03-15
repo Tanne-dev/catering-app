@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import LazyBackground from "@/components/LazyBackground";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 type Order = {
   id: string;
@@ -73,7 +74,7 @@ export default function MinaBestallningarPage() {
   if (status === "loading" || (status === "authenticated" && loading)) {
     return (
       <div className="flex min-h-[60vh] items-center justify-center">
-        <div className="text-[#EAC84E]">Laddar...</div>
+        <LoadingSpinner size="lg" className="border-t-[#EAC84E]" />
       </div>
     );
   }

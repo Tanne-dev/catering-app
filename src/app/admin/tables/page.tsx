@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useMemo } from "react";
 import LazyBackground from "@/components/LazyBackground";
+import LoadingSpinner from "@/components/LoadingSpinner";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 
@@ -221,7 +222,7 @@ export default function AdminTablesPage() {
   if (loading || status === "loading") {
     return (
       <div className="flex min-h-[60vh] items-center justify-center">
-        <div className="text-[#EAC84E]">Laddar...</div>
+        <LoadingSpinner size="lg" className="border-t-[#EAC84E]" />
       </div>
     );
   }

@@ -1,6 +1,8 @@
 "use client";
 
+import DietTypeBadge from "@/components/DietTypeBadge";
 import ImageLightbox from "@/components/ImageLightbox";
+import LoadingSpinner from "@/components/LoadingSpinner";
 import OrderQuantityInput from "@/components/OrderQuantityInput";
 import { useMenuItems } from "@/hooks/useMenus";
 import {
@@ -53,11 +55,13 @@ export default function AsiatiskMenuContent() {
           description: i.description ?? "",
           allergens: i.allergens ?? undefined,
           image: resolved,
+          diet_type: i.diet_type ?? undefined,
         };
       })
     : ASIATISK_MENU_ITEMS.map((item) => ({
         ...item,
         image: resolveMenuImageUrl(item.image),
+        diet_type: item.diet_type,
       }));
 
   // #region agent log
@@ -86,7 +90,9 @@ export default function AsiatiskMenuContent() {
         {ASIATISK_MENU_TITLE}
       </h3>
       {loading ? (
-        <p className="text-[#E5E7E3]/80">Laddar meny…</p>
+        <div className="flex justify-center py-12">
+          <LoadingSpinner size="lg" />
+        </div>
       ) : (
       <ul className="space-y-6" role="list">
         {menuItems.map((item) => (
@@ -102,7 +108,14 @@ export default function AsiatiskMenuContent() {
                 />
               </div>
             )}
-            <div className="text-lg font-semibold text-[#E5E7E3]">{item.name}</div>
+            <div className="text-lg font-semibold text-[#E5E7E3]">
+              {item.name}
+              {item.diet_type && (
+                <span className="ml-2 align-middle">
+                  <DietTypeBadge dietType={item.diet_type} />
+                </span>
+              )}
+            </div>
             <p className="mt-1.5 text-base text-[#E5E7E3]/95">{item.description}</p>
             {item.allergens && (
               <p className="mt-1 text-sm text-[#E5E7E3]/85">

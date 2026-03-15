@@ -3,17 +3,13 @@
 import dynamic from "next/dynamic";
 import { useTranslations } from "next-intl";
 import ScrollReveal from "@/components/ScrollReveal";
+import LoadingSpinner from "@/components/LoadingSpinner";
 import { useSelectedMenu, type MenuId } from "@/contexts/SelectedMenuContext";
 
 function MenuLoadingPlaceholder() {
-  const t = useTranslations("menus");
   return (
-    <div className="mx-auto mt-10 flex max-w-2xl flex-col items-center gap-4 py-12">
-      <div
-        className="h-10 w-10 animate-spin rounded-full border-2 border-[#707164]/40 border-t-[#EAC84E]"
-        aria-hidden
-      />
-      <p className="animate-menu-loading text-base text-[#E5E7E3]">{t("loading")}</p>
+    <div className="mx-auto mt-10 flex max-w-2xl flex-col items-center justify-center py-12">
+      <LoadingSpinner size="lg" />
     </div>
   );
 }
@@ -33,8 +29,13 @@ const KombineratMenuContent = dynamic(
   { ssr: false, loading: () => <MenuLoadingPlaceholder /> }
 );
 
+const SpecialRollarMenuContent = dynamic(
+  () => import("@/components/MenusContent/SpecialRollarMenuContent"),
+  { ssr: false, loading: () => <MenuLoadingPlaceholder /> }
+);
+
 /** Tab IDs only (no null); use for iteration so tFallback(id) gets string. */
-const MENU_IDS: ("sushi" | "asiatisk" | "kombinera")[] = ["sushi", "asiatisk", "kombinera"];
+const MENU_IDS: ("sushi" | "asiatisk" | "kombinera" | "specialrollar")[] = ["sushi", "asiatisk", "kombinera", "specialrollar"];
 
 export default function MenusSection() {
   const t = useTranslations("menus");
@@ -68,7 +69,11 @@ export default function MenusSection() {
           {t("intro")}
         </p>
 
-        <div className="mx-auto mt-8 flex max-w-2xl flex-wrap items-center justify-center gap-2 sm:gap-3" role="tablist" aria-label={t("chooseMenuBelow")}>
+        <div
+          className="mx-auto mt-8 grid max-w-2xl grid-cols-2 justify-items-stretch gap-2 sm:grid-cols-4 sm:gap-3"
+          role="tablist"
+          aria-label={t("chooseMenuBelow")}
+        >
           {MENU_IDS.map((id) => {
             const label = tFallback(id) ?? "";
             return (
@@ -79,7 +84,7 @@ export default function MenusSection() {
                 aria-selected={selectedMenu === id}
                 aria-label={label}
                 onClick={() => setSelectedMenu(id)}
-                className={`rounded-xl border-2 px-5 py-3 text-base font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#EAC84E] focus:ring-offset-2 focus:ring-offset-[#12110D] sm:px-6 sm:py-3.5 sm:text-lg ${
+                className={`min-w-0 rounded-xl border-2 px-4 py-3 text-center text-sm font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#EAC84E] focus:ring-offset-2 focus:ring-offset-[#12110D] sm:px-5 sm:py-3.5 sm:text-base ${
                   selectedMenu === id
                     ? "border-[#EAC84E] bg-[#C49B38]/25 text-[#EAC84E] shadow-md"
                     : "border-[#707164]/40 bg-[#1a1916]/80 text-[#E5E7E3] hover:border-[#C49B38]/60 hover:bg-[#C49B38]/15"
@@ -104,6 +109,10 @@ export default function MenusSection() {
         ) : selectedMenu === "kombinera" ? (
           <div className="animate-menu-enter">
             <KombineratMenuContent />
+          </div>
+        ) : selectedMenu === "specialrollar" ? (
+          <div className="animate-menu-enter">
+            <SpecialRollarMenuContent />
           </div>
         ) : (
           <p className="mt-8 text-base text-[#E5E7E3]/90">

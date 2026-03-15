@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import Link from "next/link";
 import LazyBackground from "@/components/LazyBackground";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 export default function AdminDashboardPage() {
   const router = useRouter();
@@ -21,7 +22,7 @@ export default function AdminDashboardPage() {
   if (status === "loading") {
     return (
       <div className="flex min-h-[60vh] items-center justify-center">
-        <div className="text-[#EAC84E]">Laddar...</div>
+        <LoadingSpinner size="lg" className="border-t-[#EAC84E]" />
       </div>
     );
   }
@@ -84,6 +85,12 @@ export default function AdminDashboardPage() {
                   className="rounded-lg border border-[#707164]/30 bg-[#12110D]/80 px-4 py-2 text-sm font-medium text-[#E5E7E3] transition-colors hover:border-[#C49B38]/50 hover:bg-[#1a1916]"
                 >
                   Asiatisk
+                </Link>
+                <Link
+                  href="/admin/menus?menu=specialrollar"
+                  className="rounded-lg border border-[#707164]/30 bg-[#12110D]/80 px-4 py-2 text-sm font-medium text-[#E5E7E3] transition-colors hover:border-[#C49B38]/50 hover:bg-[#1a1916]"
+                >
+                  Special rollar
                 </Link>
               </div>
             </div>

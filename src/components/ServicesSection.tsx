@@ -22,8 +22,8 @@ export default function ServicesSection() {
   const tVara = useTranslations("varaTjanster");
   const { setSelectedServiceId } = useSelectedService();
 
-  const LEVERANS_TILLVAL = [tVara("leveransTillval1"), tVara("leveransTillval2")];
-  const VILLKOR = [tVara("villkor1"), tVara("villkor2"), tVara("villkor3"), tVara("villkor4"), tVara("villkor5")];
+  const LEVERANS_TILLVAL = [tVara("leveransTillval1")];
+  const VILLKOR = [tVara("villkor4"), tVara("villkor5")];
 
   return (
     <section

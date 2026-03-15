@@ -10,6 +10,7 @@ import { useSelectedMenu, type MenuId } from "@/contexts/SelectedMenuContext";
 import { useMenus } from "@/hooks/useMenus";
 import { CONTACT } from "@/data/contact";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 function PhoneIcon() {
   return (
@@ -99,7 +100,7 @@ type OrderNotification = {
   event_date?: string | null;
 };
 
-const FALLBACK_MENUS_IDS: MenuId[] = ["sushi", "asiatisk", "kombinera"];
+const FALLBACK_MENUS_IDS: MenuId[] = ["sushi", "asiatisk", "kombinera", "specialrollar"];
 
 export default function Header() {
   const t = useTranslations("header");
@@ -116,8 +117,9 @@ export default function Header() {
             .filter((m) => m.slug !== "sallader")
             .map((m) => ({ label: m.title, id: m.slug as MenuId })),
           ...(menus.some((m) => m.slug === "kombinera") ? [] : [{ label: tMenus("kombinera"), id: "kombinera" as MenuId }]),
+          ...(menus.some((m) => m.slug === "specialrollar") ? [] : [{ label: tMenus("specialrollar"), id: "specialrollar" as MenuId }]),
         ]
-      : FALLBACK_MENUS_IDS.map((id) => ({ label: tMenus(id as "sushi" | "asiatisk" | "kombinera"), id }));
+      : FALLBACK_MENUS_IDS.map((id) => ({ label: tMenus(id as "sushi" | "asiatisk" | "kombinera" | "specialrollar"), id }));
   const [menusDropdownOpen, setMenusDropdownOpen] = useState(false);
   const menusDropdownRef = useRef<HTMLDivElement>(null);
   const menusDropdownRefDesktop = useRef<HTMLDivElement>(null);
@@ -311,6 +313,7 @@ export default function Header() {
             onClick={(e) => {
               if (pathname === "/") {
                 e.preventDefault();
+                document.getElementById("main-content")?.scrollTo({ top: 0, behavior: "smooth" });
                 window.scrollTo({ top: 0, behavior: "smooth" });
               }
             }}
@@ -454,8 +457,8 @@ export default function Header() {
                         {t("noNotifications")}
                       </div>
                     ) : notificationLoading ? (
-                      <div className="px-4 py-4 text-center text-sm text-[#E5E7E3]/70">
-                        {t("loading")}
+                      <div className="flex justify-center px-4 py-6">
+                        <LoadingSpinner size="sm" />
                       </div>
                     ) : isAdmin ? (
                       recentOrders.length === 0 ? (
